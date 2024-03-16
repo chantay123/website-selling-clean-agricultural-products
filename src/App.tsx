@@ -1,11 +1,15 @@
-function App() {
+import { Route, Routes } from "react-router-dom";
+import { publicRoute } from "./routes";
+
+const App = () => {
   return (
-    <>
-      <div>
-        <h1>hello</h1>
-      </div>
-    </>
+    <Routes>
+      {publicRoute.map((route, index) => {
+        const Page = route.component;
+        return <Route key={index} path={route.path} element={<Page />}></Route>;
+      })}
+    </Routes>
   );
-}
+};
 
 export default App;
