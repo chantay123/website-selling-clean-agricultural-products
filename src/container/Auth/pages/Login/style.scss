@@ -17,5 +17,14 @@
   &-btn {
     border-radius: 18px !important;
     height: 2.5rem;
+    &:hover {
+      background: green !important;
+      color: white !important;
+      border-color: green !important;
+    }
   }
+}
+
+.login-form-button {
+  background: green;
 }
