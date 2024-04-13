@@ -14,24 +14,24 @@ const Login = () => {
       />
       <Form
         name="normal_login"
-        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl  bg-white  xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-1/2 sm:w-[43%] sm:mt-20 md:w-[50%]  md:px-8 lg:w-[40%] xl:w-[23%] "
+        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl  bg-white  xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%]  md:w-[50%]  md:px-8 lg:w-[40%] xl:w-[25%] "
       >
         <h2 className="text-center text-4xl xs:mb-6 font-bold xs:text-3xl xs:mt-5 lg:mt-3 text-black  text-8xl  ">
           Login
         </h2>
         <Form.Item
-          className="text-xs ml-2 "
+          className="text-xs "
           name="username"
           rules={[{ required: true, message: "Please input your Username!" }]}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon w-full " />}
             placeholder="Username"
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14"
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
           />
         </Form.Item>
         <Form.Item
-          className="text-xs ml-2 bg-transparent "
+          className="text-xs  bg-transparent "
           name="password"
           rules={[{ required: true, message: "Please input your Password!" }]}
         >
@@ -39,7 +39,7 @@ const Login = () => {
             type="password"
             placeholder="Password"
             prefix={<LockOutlined className="site-form-item-icon" />}
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14"
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
           />
         </Form.Item>
 
@@ -50,7 +50,7 @@ const Login = () => {
             </Checkbox>
           </Form.Item>
           <a
-            className="login-form-forgot sm:text-[12px] sm:ml-30 ss:ml-12  text-[12px] xs:text-[12px] xs:ml-20 xss:ml-20  sm:ml-34 3xl:text-[15px] 3xl:ml-28  lg:ml-[135px] smm:ml-12"
+            className="login-form-forgot underline font-bold  sm:text-[12px] sm:ml-30 ss:ml-6  text-[15px] xs:text-[12px] xs:ml-16 xss:ml-12  3xl:text-[15px] 3xl:ml-32  lg:ml-28 smm:ml-32 sm:ml-14 md:ml-20"
             href=""
           >
             Forgot password?
@@ -67,7 +67,7 @@ const Login = () => {
           <div className="flex justify-center text-center mt-3  xs:flex xs:justify-between xs:px-3  3xl:text-[15px] sm:text-[12px]">
             <p> Don't have an account?</p>
             <a
-              className="register text-[13px] font-bold text-green-400 text-center ml-2  3xl:text-[15px] sm:text-[12px]"
+              className="register text-[13px] font-bold text-green-400 text-center 3xl:text-[15px] sm:text-[12px]"
               href=""
             >
               Register now

@@ -4,12 +4,11 @@
       min-height: none;
     }
     margin-bottom: 15px !important;
+    &-explain-error {
+      margin: 8px;
+    }
   }
   &-input {
-    &-affix-wrapper {
-      border-radius: 18px !important;
-      height: 2.5rem;
-    }
     &-outlined:hover {
       border-color: green !important;
     }
@@ -22,6 +21,9 @@
       color: white !important;
       border-color: green !important;
     }
+  }
+  &-checkbox-wrapper {
+    padding-left: 20px;
   }
 }
 

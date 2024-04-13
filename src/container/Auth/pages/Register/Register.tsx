@@ -16,18 +16,18 @@ const Register = () => {
         src={BG.MAIN_BG}
         alt="background"
       />
-
       <Form
         name="normal_login"
-        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-16 xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-1/2 sm:w-[43%] sm:mt-20 md:w-[50%] md:mt-1 md:px-8 lg:w-[40%]   xl:w-[22%]"
+        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-16 xs:px-3 xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%] sm:mt-20 md:w-[50%] md:mt-1 md:px-8 lg:w-[40%] xl:w-[25%]"
       >
         <h1 className="text-center text-4xl mb-8 font-bold">Sign up</h1>
         <Form.Item
-          className="text-xs"
+          className="text-xs "
           name="username"
           rules={[{ required: true, message: "Please input your Username!" }]}
         >
           <Input
+            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
             prefix={
               <UserOutlined className="site-form-item-icon w-full mr-2" />
             }
@@ -39,6 +39,7 @@ const Register = () => {
           rules={[{ required: true, message: "Please input your Email!" }]}
         >
           <Input
+            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
             type="Email"
             placeholder="Email"
             prefix={<MailOutlined className=" mr-2" />}
@@ -49,13 +50,14 @@ const Register = () => {
           rules={[{ required: true, message: "Please input your  Password!" }]}
         >
           <Input
-            type=""
+            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
+            type="Password"
             placeholder="Password"
             prefix={<LockOutlined className="site-form-item-icon mr-2" />}
           />
         </Form.Item>
         <Form.Item
-          name="confirm password"
+          name="Confirm password"
           rules={[
             {
               required: true,
@@ -64,8 +66,9 @@ const Register = () => {
           ]}
         >
           <Input
+            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
             type="password"
-            placeholder="Password"
+            placeholder="Confirm password"
             prefix={<LockOutlined className="site-form-item-icon mr-2" />}
           />
         </Form.Item>
@@ -74,6 +77,7 @@ const Register = () => {
           rules={[{ required: true, message: "Please input your Phone!" }]}
         >
           <Input
+            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
             type="phone"
             placeholder="Phone"
             prefix={<PhoneOutlined className="mr-2" />}
@@ -82,7 +86,7 @@ const Register = () => {
         <Form.Item>
           <Button
             htmlType="submit"
-            className="login-form-button w-full bg-green-400 text-white font-bold border-white "
+            className="login-form-button w-full bg-green-400 text-white font-bold border-white mt-5"
           >
             Sign up
           </Button>

@@ -18,6 +18,11 @@ const Verification = React.lazy(
 const Newpassword = React.lazy(
   () => import("../container/Auth/pages/NewPassword/NewPassword")
 );
+const NotFound = React.lazy(() => import("../components/NotFound/NotFound"));
+
+const Profile = React.lazy(
+  () => import("../container/Profile/Page/MainProfile")
+);
 
 const publicRoute = [
   {
@@ -47,6 +52,14 @@ const publicRoute = [
   {
     path: config.routes.newpassword,
     component: Newpassword,
+  },
+  {
+    path: config.routes.notFound,
+    component: NotFound,
+  },
+  {
+    path: config.routes.profile,
+    component: Profile,
   },
 ];
 
