@@ -1,0 +1,10 @@
+.button-primary {
+  font-weight: 600;
+  font-size: 17px;
+  width: 150px;
+  color: #81c408;
+  &:hover {
+    color: white;
+    background: orange;
+  }
+}

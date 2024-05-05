@@ -1,0 +1,26 @@
+.header__top {
+  background: url(http://127.0.0.1:5500/fruitables-1.0.0/img/hero-img.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.text {
+  &-primary {
+    color: #81c408;
+    font-weight: 800;
+  }
+  &-secondary {
+    color: #ffb524;
+  }
+}
+
+.btn {
+  &-search {
+    background-color: #81c408;
+    border-color: #ffb524;
+  }
+  &-border {
+    border-color: #ffb524;
+  }
+}

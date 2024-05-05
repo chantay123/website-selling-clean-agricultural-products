@@ -1,0 +1,14 @@
+.text_money {
+  color: #45595b;
+  font-size: 1.25rem;
+}
+.zoom-in-out-box {
+  display: block;
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+  transition: 0.5s;
+
+  &:hover {
+    transform: scale(1.3); /* cỡ zoom khi di chuột vào */
+  }
+}

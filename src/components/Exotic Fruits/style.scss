@@ -1,0 +1,20 @@
+.text {
+  &_store {
+    color: #45595b;
+  }
+  &_detail {
+    color: #45595b;
+  }
+
+  &_Kg {
+    color: #45595b;
+    font-weight: 500;
+  }
+}
+.btn_buy {
+  color: #45595b;
+  &:hover {
+    background: #81c408;
+    color: white;
+  }
+}

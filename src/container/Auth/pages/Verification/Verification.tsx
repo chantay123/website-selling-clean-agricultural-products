@@ -40,7 +40,6 @@ const Verification = () => {
       setStore("remainingTime", val);
     }
   };
-
   // Handling text change in the input fields const
   const handleTextChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -58,7 +57,6 @@ const Verification = () => {
       }
     }
   };
-
   // Handling keyboard events for the input fields const
   const handleKeyDown = (
     event: KeyboardEvent<HTMLInputElement>,
@@ -125,12 +123,12 @@ const Verification = () => {
           </div>
           <Button
             onClick={handleSendOTP}
-            className="mt-10  w-full font-bold text-white bg-green-400 h-10 rounded-full "
+            className="mt-10 xs:w-[250px] md:w-[500px] lg:w-[500px] font-bold text-white bg-green-400 h-10 rounded-full "
           >
             Submit
           </Button>
           <Button
-            className="mt-2  w-full font-bold text-white bg-green-400 h-10 rounded-full"
+            className="mt-2 xs:w-[250px] w-[500px] md:w-[500px] lg:w-[500px]  font-bold text-white bg-green-400 h-10 rounded-full"
             onClick={handleResendOTP}
             disabled={disableResendOTP}
           >

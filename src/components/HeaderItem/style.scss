@@ -1,0 +1,15 @@
+h1 {
+  color: #81c408;
+}
+.nav-item {
+  color: #81c408;
+}
+li {
+  color: rgba(0, 0, 0, 0.55);
+  &:hover {
+    color: #81c408;
+  }
+}
+.item:hover {
+  color: #81c408;
+}
