@@ -9,6 +9,17 @@ export type userType = {
   cover_photo?: string;
 };
 
+export type userState = {
+  login: userType | null;
+  register: userType | null;
+  verify: userType | null;
+  resendOTP: userType | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  email: string | null;
+};
+
 export type userLoginType = {
   _id: string;
   username: string;

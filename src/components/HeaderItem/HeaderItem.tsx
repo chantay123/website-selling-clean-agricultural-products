@@ -41,13 +41,16 @@ const HearderItem = () => {
           </ul>
         </div>
 
-        <div className="flex">
-          {/* <a href="#" className=" ">
-            <i className="">
+        <div className="">
+          <a href="#" className=" mr-10 relative">
+            <i className="w-6 h-24">
               <ShoppingCartOutlined />
             </i>
-          </a> */}
-          <button className="btn btn-search border  w-10 h-10 rounded-full border-orange-300 bg-white me-4">
+            <a className="absolute text-white bg-red-700 rounded-full px-1 ">
+              0
+            </a>
+          </a>
+          <button className="btn border  w-10 h-10 rounded-full border-orange-300 bg-white me-4">
             <i>
               <SearchOutlined />
             </i>
@@ -62,6 +65,9 @@ const HearderItem = () => {
             Login
           </button>
           <button
+            onClick={() => {
+              navigate("./register");
+            }}
             type="submit"
             className="border-2 border-secondary py-2 px-8 rounded-full text-orange-500 ml-2  "
           >
