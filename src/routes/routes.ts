@@ -23,6 +23,7 @@ const NotFound = React.lazy(() => import("../components/NotFound/NotFound"));
 const Profile = React.lazy(
   () => import("../container/Profile/Page/MainProfile")
 );
+const Shop = React.lazy(() => import("../container/Shop/Page/Shop"));
 
 const publicRoute = [
   {
@@ -60,6 +61,10 @@ const publicRoute = [
   {
     path: config.routes.profile,
     component: Profile,
+  },
+  {
+    path: config.routes.shop,
+    component: Shop,
   },
 ];
 

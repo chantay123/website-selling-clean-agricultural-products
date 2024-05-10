@@ -21,7 +21,7 @@ const Footer = () => {
               ></input>
               <button
                 type="submit"
-                className="btn-search border-2 absolute  py-3 px-3 rounded-full text-white -ml-[110px]  "
+                className=" btn-search border-2 absolute  py-3 px-3 rounded-full text-white -ml-[110px]  "
               >
                 Subscribe Now
               </button>

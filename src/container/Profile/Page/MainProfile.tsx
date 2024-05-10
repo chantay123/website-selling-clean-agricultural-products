@@ -177,7 +177,7 @@ const MainProfile = () => {
 
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
+                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md ">
                         Bio
                       </h3>
                       <Form.Item
@@ -187,7 +187,7 @@ const MainProfile = () => {
                             required: true,
                             message: (
                               <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700"
+                                className="bg-transparent xs:text-xs lg:text-base text-red-700 "
                                 message="Please input your bio"
                                 banner
                                 type="error"
@@ -197,7 +197,7 @@ const MainProfile = () => {
                         ]}
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col h-24"
                       >
-                        <TextArea className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none " />
+                        <TextArea className=" bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none " />
                       </Form.Item>
                     </div>
                   </div>

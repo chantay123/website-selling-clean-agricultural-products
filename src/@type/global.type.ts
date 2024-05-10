@@ -8,4 +8,5 @@ export type routeTypes = {
   forgotpassword: string;
   verification: string;
   notFound: string;
+  shop: string;
 };

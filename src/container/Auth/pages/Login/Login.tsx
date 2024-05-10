@@ -12,7 +12,13 @@ import {
 } from "../../../../utils/setting";
 import { toast } from "react-toastify";
 
+import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   //call api login
   const loginSubmit = async (values: any) => {
     const { username, password } = values;
@@ -28,8 +34,9 @@ const Login = () => {
 
       const { message } = response.data;
       toast.success(message);
+      dispatch(setAuthenticationStatus(true));
+      navigate("/");
     } catch (error: any) {
-      console.log(error);
       const { message } = error.response.data;
       let receivedmessage = message;
 
@@ -65,7 +72,7 @@ const Login = () => {
           <Input
             prefix={<UserOutlined className="site-form-item-icon w-full " />}
             placeholder="Username"
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
           />
         </Form.Item>
         <Form.Item
@@ -73,11 +80,11 @@ const Login = () => {
           name="password"
           rules={[{ required: true, message: "Please input your Password!" }]}
         >
-          <Input
+          <Input.Password
             type="password"
             placeholder="Password"
             prefix={<LockOutlined className="site-form-item-icon" />}
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14 rounded-full"
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
           />
         </Form.Item>
 
