@@ -3,8 +3,7 @@ import { Alert, Button, Form, Input, Layout, Radio } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { Content } from "antd/es/layout/layout";
 import { BG } from "../../../constants/images";
-import "tailwindcss/tailwind.css";
-
+import "./style.scss";
 const MainProfile = () => {
   return (
     <Layout className="min-h-screen overflow-hidden">
@@ -24,19 +23,19 @@ const MainProfile = () => {
             <form action="">
               <div className="relative ">
                 <img
-                  className="absolute xs:-top-32 lg:-top-40 xs:left-3 lg:left-32 3xl:-top-[16rem] z-10 rounded-full lg:w-[150px] lg:h-[150px] xs:w-[80px] xs:h-[80px]"
+                  className="absolute xs:-top-32 lg:-top-40 xs:left-3 lg:left-32 3xl:-top-[16rem] z-10 rounded-full lg:w-[150px] lg:h-[150px]  xs:w-[80px] xs:h-[80px] "
                   src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"
                   alt=""
                 />
-                <span className="absolute xs:-top-[85px] lg:-top-[115px] 3xl:-top-[180px] xl:-top-[110px] xs:left-28 lg:left-64 xl:left-64 3xl:left-72 z-10 text-xl font-popins text-white">
+                <span className="absolute mt-[30px] ml-[30px] xs:-top-[85px] lg:-top-[115px] 3xl:-top-[180px] xl:-top-[110px] xs:left-28 lg:left-64 xl:left-64 3xl:left-72 z-10 text-xl font-popins text-white">
                   Tay Phan
                 </span>
                 <input name="image" style={{ display: "none" }} />
                 <Button
-                  className="absolute btn-avatar xs:-top-20 smm:-top-[70px] lg:-top-[100px] xl:-top-[75px] 3xl:-top-[135px] xs:left-16 smm:left-[70px] lg:left-52 xl:left-52 3xl:left-56 z-10 bg-blue-700 text-white rounded-full p-0 m-0 border-4 border-blue-900"
+                  className="absolute btn-avatar mt-[30px] ml-[30px] xs:-top-20 smm:-top-[70px] lg:-top-[100px] xl:-top-[75px] 3xl:-top-[135px] xs:left-16 smm:left-[70px] lg:left-52 xl:left-52 3xl:left-56 z-10 bg-blue-700 text-white rounded-full p-0 m-0 border-4 border-blue-900"
                   icon={<CameraOutlined />}
                 ></Button>
-                <div className="w-full xs:mt-20 lg:mt-24 3xl:mt-44 3xl:px-40 lg:px-40 xs:px-5">
+                <div className="w-full xs:mt-20 lg:mt-24 3xl:mt-44 3xl:px-40 lg:px-40 xs:px-5 mt-3">
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
@@ -59,7 +58,10 @@ const MainProfile = () => {
                         ]}
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
                       >
-                        <Input className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none" />
+                        <Input
+                          className="bg-transparent h-12  border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
+                          style={{ background: "none" }}
+                        />
                       </Form.Item>
                     </div>
                     <div className="w-full relative">
@@ -70,7 +72,10 @@ const MainProfile = () => {
                         name="fullname"
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
                       >
-                        <Input className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none " />
+                        <Input
+                          className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
+                          style={{ background: "none" }}
+                        />
                       </Form.Item>
                     </div>
                   </div>
@@ -97,7 +102,10 @@ const MainProfile = () => {
                         ]}
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
                       >
-                        <Input className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none " />
+                        <Input
+                          className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
+                          style={{ background: "none" }}
+                        />
                       </Form.Item>
                     </div>
                     <div className="w-full relative">
@@ -124,6 +132,7 @@ const MainProfile = () => {
                         <Input
                           className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
                           placeholder="YYYY-MM-DD"
+                          style={{ background: "none" }}
                         />
                       </Form.Item>
                     </div>
@@ -151,7 +160,10 @@ const MainProfile = () => {
                         ]}
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
                       >
-                        <Input className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none" />
+                        <Input
+                          className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
+                          style={{ background: "none" }}
+                        />
                       </Form.Item>
                     </div>
                     <div className="w-full relative flex mt-3">
@@ -197,7 +209,10 @@ const MainProfile = () => {
                         ]}
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col h-24"
                       >
-                        <TextArea className=" bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none " />
+                        <TextArea
+                          className=" bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
+                          style={{ background: "none" }}
+                        />
                       </Form.Item>
                     </div>
                   </div>

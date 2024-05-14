@@ -1,5 +1,5 @@
 import config from "../config";
-import React from "react";
+import React, { Component } from "react";
 
 const MainHome = React.lazy(() => import("../container/Home/page/MainHome"));
 const ProductDetail = React.lazy(
@@ -24,6 +24,9 @@ const Profile = React.lazy(
   () => import("../container/Profile/Page/MainProfile")
 );
 const Shop = React.lazy(() => import("../container/Shop/Page/Shop"));
+const ChangePassword = React.lazy(
+  () => import("../container/Auth/pages/ChangePassword")
+);
 
 const publicRoute = [
   {
@@ -65,6 +68,10 @@ const publicRoute = [
   {
     path: config.routes.shop,
     component: Shop,
+  },
+  {
+    path: config.routes.changepassword,
+    component: ChangePassword,
   },
 ];
 

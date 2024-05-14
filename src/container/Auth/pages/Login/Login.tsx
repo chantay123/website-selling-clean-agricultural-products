@@ -12,9 +12,13 @@ import {
 } from "../../../../utils/setting";
 import { toast } from "react-toastify";
 
-import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
+import {
+  setAuthenticationStatus,
+  setChangePassword,
+} from "../../../../redux/userReducer/userReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+``;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,9 +43,7 @@ const Login = () => {
     } catch (error: any) {
       const { message } = error.response.data;
       let receivedmessage = message;
-
       const { status } = error.response;
-
       if (status == 422) {
         const { msg } = error.response.data.errors.password;
         receivedmessage = msg;
@@ -111,6 +113,9 @@ const Login = () => {
           <div className="flex justify-center text-center mt-3  xs:flex xs:justify-between xs:px-3  3xl:text-[15px] sm:text-[12px]">
             <p> Don't have an account?</p>
             <a
+              onClick={() => {
+                navigate("/register");
+              }}
               className="register text-[13px] font-bold text-green-400 text-center 3xl:text-[15px] sm:text-[12px]"
               href=""
             >

@@ -12,13 +12,26 @@ import { BG } from "../../../../constants/images";
 import { Button, CountdownProps, Statistic } from "antd";
 import { getStore, setStore } from "../../../../utils/setting";
 import "./style.scss";
+import requestApi from "../../../../utils/interceptors";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../redux/config";
+import { useNavigate } from "react-router-dom";
+
 const { Countdown } = Statistic;
 
 const Verification = () => {
   const [deadline, setDeadline] = useState<number>(Date.now() + 1000 * 60 * 5); // Setting deadline for OTP verification
-  const [disableResendOTP, setDisableResendOTP] = useState<boolean>(false); // Setting whether to disable OTP resending
+  const [disableResendOTP] = useState<boolean>(false); // Setting whether to disable OTP resending
   const [OTP, setOTP] = useState<string[]>(Array(6).fill("")); // Setting OTP as an array of 6 empty strings
   const inputRef = useRef<HTMLInputElement[]>(Array(6).fill(null)); // Creating a ref for input elements
+
+  const email = useSelector((state: RootState) => state.user.email);
+  const forgotpassword = useSelector(
+    (state: RootState) => state.user.isForgotPassword
+  );
+  const navigate = useNavigate();
+
   useEffect(() => {
     const remainingTime = getStore("remainingTime");
     if (remainingTime) {
@@ -27,12 +40,6 @@ const Verification = () => {
       setDeadline(Date.now() + 1000 * 60 * 5);
     }
   }, []);
-
-  // // Function to handle OTP verification
-  const handleSendOTP = async () => {};
-
-  // // Function to handle OTP resending
-  const handleResendOTP = async () => {};
 
   // Event handler for Countdown component's onChange event
   const onChange: CountdownProps["onChange"] = (val) => {
@@ -76,6 +83,69 @@ const Verification = () => {
     }
   };
 
+  //call api verification otp
+  const handleConfirmClick = async () => {
+    const otpString = OTP.join("");
+    const OTP_LENGTH: number = Number(import.meta.env.VITE_OTP_LENGTH);
+
+    if (otpString.length === OTP_LENGTH) {
+      if (forgotpassword === true) {
+        try {
+          const response = await requestApi(
+            "users/password/forgot/authenticate",
+            "POST",
+            {
+              code: otpString,
+            }
+          );
+          const { message } = response.data;
+          toast.success(message);
+          navigate("/new-password");
+        } catch (error: any) {
+          const { status } = error.response;
+          if (status == 404) {
+            const { message } = error.response.data;
+            toast.error(message);
+          }
+        }
+      } else {
+        try {
+          const response = await requestApi("users/otp/authenticate", "POST", {
+            otp: otpString,
+          });
+          const { message } = response.data;
+          toast.success(message);
+          navigate("/");
+        } catch (error: any) {
+          console.log(error);
+          const { message } = error.response.data;
+          let receivedmessage = message;
+          const { status } = error.response;
+          if (status == 422) {
+            const { msg } = error.response.data.errors.otp;
+            receivedmessage = msg;
+          }
+          toast.error(receivedmessage);
+        }
+      }
+    } else {
+      toast.warn("Please enter all characters of otp string");
+    }
+  };
+  //call api resend otp
+  const handleResendClick = async () => {
+    try {
+      const response = await requestApi("users/otp/revalidate", "POST", {
+        email,
+      });
+      console.log(response);
+      const { message } = response.data;
+      toast.success(message);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
   // Handling paste events for the input fields
   const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
     const paste = event.clipboardData.getData("text");
@@ -91,7 +161,7 @@ const Verification = () => {
         src={BG.MAIN_BG}
         alt="background"
       />
-      <div className="text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-16 xs:w-full xs:h-full xs:p-5 ss:w-[90%] ss:h-[70%] smm:p-20 smm:w-[70%] smm:h-[60%] mds:h-[50%] lg:w-[60%] lg:h-[50%] xl:w-[40%] xl:h-[60%] ">
+      <div className="text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-16 xs:w-full xs:h-full xs:p-5 ss:w-[90%] ss:h-[70%] smm:p-20 smm:w-[70%] smm:h-[60%] mds:h-[50%] lg:w-[60%] lg:h-[50%] xl:w-[40%] xl:h-[70%] ">
         <div className="xs:mt-16 ss:mt-10 xss:mt-8 sm:mt-16  smm:mt-2 lg:mt-8 xl:mt-2">
           <h3 className="mb-6 text-3xl font-semibold sm:text-4xl ">
             Verification Email
@@ -122,14 +192,17 @@ const Verification = () => {
             ))}
           </div>
           <Button
-            onClick={handleSendOTP}
-            className="mt-10 xs:w-[250px] md:w-[500px] lg:w-[500px] font-bold text-white bg-green-400 h-10 rounded-full "
+            onClick={handleConfirmClick}
+            htmlType="submit"
+            className="  mt-10 xs:w-[250px] md:w-[200px] lg:w-[250px] font-bold text-white bg-green-400 h-10 rounded-full "
           >
             Submit
           </Button>
+          <br></br>
           <Button
-            className="mt-2 xs:w-[250px] w-[500px] md:w-[500px] lg:w-[500px]  font-bold text-white bg-green-400 h-10 rounded-full"
-            onClick={handleResendOTP}
+            className="mt-2 xs:w-[250px] w-[500px] md:w-[200px] lg:w-[250px]  font-bold text-white bg-green-400 h-10 rounded-full"
+            onClick={handleResendClick}
+            htmlType="submit"
             disabled={disableResendOTP}
           >
             Resend OTP

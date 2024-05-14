@@ -3,8 +3,34 @@ import { BG } from "../../../../constants/images";
 import "tailwindcss/tailwind.css";
 import { MailOutlined } from "@ant-design/icons";
 import "./sytle.scss";
+import requestApi from "../../../../utils/interceptors";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setIsFogotPassword } from "../../../../redux/userReducer/userReducer";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const ForgotPassword = async (values: any) => {
+    const { username } = values;
+    try {
+      const response = await requestApi("users/password/forgot", "POST", {
+        email: username,
+      });
+      const { message } = response.data;
+      toast.success(message);
+      navigate("/verification");
+      dispatch(setIsFogotPassword(true));
+    } catch (error: any) {
+      const { status } = error.response;
+      if (status == 400) {
+        const { message } = error.response.data;
+        toast.error(message);
+      }
+    }
+  };
+
   return (
     <div className=" login w-screen h-screen relative">
       <img
@@ -13,6 +39,7 @@ const ForgotPassword = () => {
         alt="background"
       />
       <Form
+        onFinish={ForgotPassword}
         name="normal_login"
         className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-16  xs:px-5  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-1/2 sm:w-[43%] sm:mt-20 md:w-[50%] md:mt-1 md:px-8 lg:w-[40%] xl:w-[23%] "
       >
@@ -26,10 +53,10 @@ const ForgotPassword = () => {
         <Form.Item
           className="text-xs pt-10 pb-5 xs:pt-5"
           name="username"
-          rules={[{ required: true, message: "Wrong email!" }]}
+          rules={[{ required: true, message: "Please input your email!" }]}
         >
           <Input
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-14 "
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-12 "
             prefix={<MailOutlined className="mr-2" />}
             placeholder="johnpham@gmail.com"
           />

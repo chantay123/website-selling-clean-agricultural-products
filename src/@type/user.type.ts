@@ -18,6 +18,8 @@ export type userState = {
   isAuthenticated: boolean;
   isAdmin: boolean;
   email: string | null;
+  isForgotPassword: boolean;
+  ChangePassWord: string | null;
 };
 
 export type userLoginType = {

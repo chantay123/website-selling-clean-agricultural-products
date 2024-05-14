@@ -11,7 +11,10 @@ import {
 import requestApi from "../../../../utils/interceptors";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setEmailResendOTP } from "../../../../redux/userReducer/userReducer";
 const Register = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerSubmit = async (values: any) => {
     const { full_name, email, password, confirm_password, phone } = values;
@@ -27,6 +30,7 @@ const Register = () => {
 
       const { message } = response.data;
       toast.success(message);
+      dispatch(setEmailResendOTP(email));
       navigate("/verification");
     } catch (error: any) {
       const { message } = error.response.data;
@@ -141,6 +145,9 @@ const Register = () => {
             <a
               className="register text-[13px] font-bold text-green-400 text-center ml-2"
               href="../Login/Login.tsx"
+              onClick={() => {
+                navigate("/login");
+              }}
             >
               Login now
             </a>

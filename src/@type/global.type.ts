@@ -9,4 +9,5 @@ export type routeTypes = {
   verification: string;
   notFound: string;
   shop: string;
+  changepassword: string;
 };

@@ -38,15 +38,10 @@ const HearderItem = () => {
     },
     {
       key: "2",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.aliyun.com"
-        >
-          2nd menu item
-        </a>
-      ),
+      label: "Change password",
+      onClick: () => {
+        navigate("/changepassword");
+      },
     },
     {
       key: "3",
@@ -127,7 +122,7 @@ const HearderItem = () => {
                   <SearchOutlined />
                 </i>
               </button>
-              <div className=" flex ">
+              <div className=" flex items-center ">
                 <Dropdown menu={{ items }}>
                   <Avatar
                     src="https://upload.wikimedia.org/wikipedia/en/8/86/Avatar_Aang.png"
@@ -135,6 +130,7 @@ const HearderItem = () => {
                     icon={<UserOutlined />}
                   />
                 </Dropdown>
+                <p className=" ml-2"> Phan Chan Tay </p>
               </div>
             </div>
           ) : (

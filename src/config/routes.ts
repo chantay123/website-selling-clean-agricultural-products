@@ -9,6 +9,7 @@ const routes: routeTypes = {
   newpassword: "/new-password",
   verification: "/verification",
   forgotpassword: "/forgot-password",
+  changepassword: "/changepassword",
   shop: "/shop",
   notFound: "*",
 } as const;

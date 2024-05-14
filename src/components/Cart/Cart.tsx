@@ -10,7 +10,7 @@ const Cart = () => {
     <Layout className="bg-white mt-7">
       <div className="  mb-8 ">
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col className="gutter-row " span={6}>
+          <Col className="gutter-row " span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
                 Fruits
@@ -35,7 +35,7 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
                 Fruits
@@ -54,7 +54,7 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
                 Fruits
@@ -74,31 +74,11 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
-            <div style={style} className="rounded-[10px] relative">
-              <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
-                Fruits
-              </div>
-              <img
-                className="w-[400px] h-[200px] rounded "
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6ChPzNZ5MCno36L0eyGl-kx-foUMGXIPKow&s"
-                alt=""
-              />
-              <h2 className="flex justify-center text-2xl font-bold mt-8 ">
-                Apples
-              </h2>
-
-              <div className="flex  mt-30 items-center justify-evenly mt-5">
-                <p className=" text_money p-4 text-xl font-bold ">$4.99 / kg</p>
-                <Button />
-              </div>
-            </div>
-          </Col>
         </Row>
       </div>
       <div className=" mb-8">
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Vegetable
@@ -125,7 +105,7 @@ const Cart = () => {
               </a>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Vegetable
@@ -145,7 +125,7 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Vegetable
@@ -165,31 +145,11 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
-            <div style={style} className="rounded-[10px] relative">
-              <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
-                Vegetable
-              </div>
-              <img
-                className="w-[300px] h-[200px] rounded"
-                src="https://th-thumbnailer.cdn-si-edu.com/yy6hMDBx8PTcCEaJZH0ZLiSDIeg=/1072x720/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/44/de/44de0f61-47cb-4289-aaf0-73e71d39fefb/2962762666_1237ff6eb4_o.jpg"
-                alt=""
-              />
-              <h2 className="flex justify-center text-2xl font-bold mt-8 ">
-                Tomato
-              </h2>
-
-              <div className="flex  mt-30 items-center justify-evenly mt-5">
-                <p className=" text_money p-4 text-xl font-bold ">$4.99 / kg</p>
-                <Button />
-              </div>
-            </div>
-          </Col>
         </Row>
       </div>
       <div className="mb-8">
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Bean
@@ -216,7 +176,7 @@ const Cart = () => {
               </a>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Bean
@@ -236,7 +196,7 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Bean
@@ -256,21 +216,72 @@ const Cart = () => {
               </div>
             </div>
           </Col>
-          <Col className="gutter-row" span={6}>
+        </Row>
+      </div>
+      <div className="mb-8">
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+          <Col className="gutter-row" span={8}>
+            <div style={style} className="rounded-[10px] relative">
+              <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
+                Bean
+              </div>
+              <a className="bg-red-700" href="">
+                <div>
+                  <img
+                    className="rounded  w-[400px] h-[200px]"
+                    src="https://blog-images-1.pharmeasy.in/blog/production/wp-content/uploads/2023/07/02074155/871.jpg "
+                    alt=""
+                  />
+                </div>
+
+                <h2 className="flex justify-center text-2xl font-bold mt-8 ">
+                  Yardlong bean
+                </h2>
+
+                <div className="flex  mt-30 items-center justify-evenly mt-5">
+                  <p className=" text_money p-4 text-xl font-bold ">
+                    $4.99 / kg
+                  </p>
+                  <Button />
+                </div>
+              </a>
+            </div>
+          </Col>
+          <Col className="gutter-row" span={8}>
             <div style={style} className="rounded-[10px] relative">
               <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
                 Bean
               </div>
               <img
-                className="w-[300px] h-[200px] rounded"
-                src="https://m.2lua.vn/temp/resize/400x300/upload/news/03-2018/be296b1c-5aaf2e67e4951901518b4567.jpg"
+                className="w-[400px] h-[200px] rounded"
+                src="https://png.pngtree.com/thumb_back/fw800/background/20231010/pngtree-texture-background-of-peanuts-in-their-shells-accompanied-by-whole-peanuts-image_13622640.png "
                 alt=""
               />
               <h2 className="flex justify-center text-2xl font-bold mt-8 ">
-                Bean green
+                Peanut
               </h2>
 
               <div className="flex  mt-30 items-center justify-evenly mt-5">
+                <p className=" text_money p-4 text-xl font-bold ">$4.99 / kg</p>
+                <Button />
+              </div>
+            </div>
+          </Col>
+          <Col className="gutter-row" span={8}>
+            <div style={style} className="rounded-[10px] relative">
+              <div className=" absolute text-white px-5 py-1 m-3 rounded-[10px] bg-green-400">
+                Bean
+              </div>
+              <img
+                className="w-[400px] h-[200px] rounded"
+                src="https://s1.storage.5giay.vn/image/2015/03/20150330_7c6c790cfde6fd9425f72956d08d32aa_1427704230.jpg"
+                alt=""
+              />
+              <h2 className="flex justify-center text-2xl font-bold mt-8 ">
+                Peas
+              </h2>
+
+              <div className="flex  mt-30 items-center justify-evenly mt-3">
                 <p className=" text_money p-4 text-xl font-bold ">$4.99 / kg</p>
                 <Button />
               </div>

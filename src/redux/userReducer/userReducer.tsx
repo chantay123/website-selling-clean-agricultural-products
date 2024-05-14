@@ -10,6 +10,8 @@ const initialState: userState = {
   isAuthenticated: false,
   isAdmin: false,
   email: null,
+  ChangePassWord: null,
+  isForgotPassword: false,
 };
 
 const userReducer = createSlice({
@@ -60,6 +62,13 @@ const userReducer = createSlice({
     setEmailResendOTP: (state: userState, action: PayloadAction<string>) => {
       state.email = action.payload;
     },
+
+    setIsFogotPassword: (state: userState, action: PayloadAction<boolean>) => {
+      state.isForgotPassword = action.payload;
+    },
+    setChangePassword: (state: userState, action: PayloadAction<string>) => {
+      state.ChangePassWord = action.payload;
+    },
   },
 });
 
@@ -72,6 +81,8 @@ export const {
   setAdminStatus,
   setAuthenticationStatus,
   setEmailResendOTP,
+  setIsFogotPassword,
+  setChangePassword,
 } = userReducer.actions;
 
 export default userReducer.reducer;
