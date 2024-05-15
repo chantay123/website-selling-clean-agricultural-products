@@ -1,3 +1,5 @@
+import { productTypes } from "./global.type";
+
 export type userType = {
   _id: string;
   username: string;
@@ -19,7 +21,7 @@ export type userState = {
   isAdmin: boolean;
   email: string | null;
   isForgotPassword: boolean;
-  ChangePassWord: string | null;
+  product: productTypes[] | [];
 };
 
 export type userLoginType = {

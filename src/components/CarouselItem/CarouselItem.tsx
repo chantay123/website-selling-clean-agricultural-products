@@ -13,16 +13,10 @@ const CarouselItem = () => {
   return (
     <Carousel autoplay>
       <div>
-        <img
-          style={contentStyle}
-          src="http://127.0.0.1:5500/fruitables-1.0.0/img/hero-img-2.jpg"
-        />
+        <img style={contentStyle} src="../../../public/image/hero-img-1.png" />
       </div>
       <div>
-        <img
-          style={contentStyle}
-          src="http://127.0.0.1:5500/fruitables-1.0.0/img/hero-img-1.png"
-        />
+        <img style={contentStyle} src="../../../public/image/hero-img-2.jpg" />
       </div>
       <div>
         <img

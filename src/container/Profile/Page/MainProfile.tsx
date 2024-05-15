@@ -1,10 +1,81 @@
 import { CameraOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Layout, Radio } from "antd";
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  Layout,
+  Radio,
+  RadioChangeEvent,
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { Content } from "antd/es/layout/layout";
 import { BG } from "../../../constants/images";
 import "./style.scss";
+
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/config";
+import { useState } from "react";
+
+import requestApi from "../../../utils/interceptors";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { StatusCodes } from "http-status-codes";
+
 const MainProfile = () => {
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
+  const [userData, setUserData] = useState({
+    username: "",
+    fullName: "",
+    phone: "",
+    date_of_birth: "",
+    address: "",
+    bio: "",
+    avatar: "",
+    cover_photo: "",
+  });
+  const [avatarURL, setAvatarURL] = useState("");
+  const [coverURL, setCoverURL] = useState("");
+  const [gender, setGender] = useState();
+  const onChange = (e: RadioChangeEvent) => {
+    setGender(e.target.value);
+  };
+  const onFinish = async (value: any) => {
+    console.log(value);
+    const user = { ...value, gender };
+    const loadingToast = toast.loading("Updating....");
+    try {
+      const response = await requestApi("users/@me/profile", "PUT", user);
+      const { message } = response.data;
+      console.log(message);
+      toast.update(loadingToast, {
+        render: message,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } catch (error: any) {
+      const { message } = error.respone.data;
+      let errMessage = message;
+      if (
+        error.response.status === StatusCodes.UNPROCESSABLE_ENTITY &&
+        error.response.data
+      ) {
+        const { msg } = error.response.data.errors.address;
+        errMessage = msg;
+      }
+      toast.update(loadingToast, {
+        render: errMessage,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
   return (
     <Layout className="min-h-screen overflow-hidden">
       <Layout>
@@ -20,7 +91,37 @@ const MainProfile = () => {
             </Button>
           </div>
           <div>
-            <form action="">
+            <Form
+              name="basic"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+              fields={[
+                {
+                  name: ["username"],
+                  value: userData.username,
+                },
+                {
+                  name: ["fullname"],
+                  value: userData.fullName,
+                },
+                {
+                  name: ["phone"],
+                  value: userData.phone,
+                },
+                {
+                  name: ["date_of_birth"],
+                  value: userData.date_of_birth.split("T")[0],
+                },
+                {
+                  name: ["address"],
+                  value: userData.address,
+                },
+                {
+                  name: ["bio"],
+                  value: userData.bio,
+                },
+              ]}
+            >
               <div className="relative ">
                 <img
                   className="absolute xs:-top-32 lg:-top-40 xs:left-3 lg:left-32 3xl:-top-[16rem] z-10 rounded-full lg:w-[150px] lg:h-[150px]  xs:w-[80px] xs:h-[80px] "
@@ -137,7 +238,6 @@ const MainProfile = () => {
                       </Form.Item>
                     </div>
                   </div>
-
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
@@ -171,18 +271,22 @@ const MainProfile = () => {
                         Gender
                       </h3>
                       <Form.Item className="xs:ml-8 lg:ml-20">
-                        {/* <Radio.Group onChange={onChange} value={gender}> */}
-                        <Radio value="Male" className="text-white font-popins">
-                          Male
-                        </Radio>
-                        <Radio
-                          value="Female"
-                          className="3xl:ml-20 lg:ml-10 xs:mt-2 ss:mt-0 text-white font-popins"
-                          // checked={gender === 'Female'}
-                        >
-                          Female
-                        </Radio>
-                        {/* </Radio.Group> */}
+                        <Radio.Group onChange={onChange} value={gender}>
+                          <Radio
+                            value="Male"
+                            className="text-white font-popins"
+                            checked={gender === "Male"}
+                          >
+                            Male
+                          </Radio>
+                          <Radio
+                            value="Female"
+                            className="3xl:ml-20 lg:ml-10 xs:mt-2 ss:mt-0 text-white font-popins"
+                            checked={gender === "Female"}
+                          >
+                            Female
+                          </Radio>
+                        </Radio.Group>
                       </Form.Item>
                     </div>
                   </div>
@@ -231,7 +335,9 @@ const MainProfile = () => {
                         type="primary"
                         htmlType="submit"
                         className="h-12 w-60 border-2 border-white rounded-full font-popins text-base btn-hover"
-                        onClick={() => {}}
+                        onClick={() => {
+                          navigate("/");
+                        }}
                       >
                         Back Home
                       </Button>
@@ -239,7 +345,7 @@ const MainProfile = () => {
                   </div>
                 </div>
               </div>
-            </form>
+            </Form>
           </div>
         </Content>
       </Layout>

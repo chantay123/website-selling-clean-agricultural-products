@@ -27,10 +27,7 @@ const ExoticFruits = () => {
           </Col>
           <Col span={12}>
             <div className="mr-20 mt-28 ml-20 relative">
-              <img
-                src="http://127.0.0.1:5500/fruitables-1.0.0/img/baner-1.png"
-                alt=""
-              />
+              <img src="../../../public/image/baner-1.png" alt="" />
               <div className="absolute rounded-full bg-gray-50 w-[140px] h-[140px] top-0 left-0">
                 <h4 className="text_Kg text-[50px] ml-2 mt-7 font-normal">
                   2$/kg

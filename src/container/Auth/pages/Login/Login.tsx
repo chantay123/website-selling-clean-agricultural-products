@@ -12,10 +12,7 @@ import {
 } from "../../../../utils/setting";
 import { toast } from "react-toastify";
 
-import {
-  setAuthenticationStatus,
-  setChangePassword,
-} from "../../../../redux/userReducer/userReducer";
+import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 ``;

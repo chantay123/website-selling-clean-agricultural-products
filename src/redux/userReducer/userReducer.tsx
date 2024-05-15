@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { userType, userState } from "../../@type/user.type";
+import { productTypes } from "../../@type/global.type";
 
 const initialState: userState = {
   login: null,
@@ -10,8 +11,8 @@ const initialState: userState = {
   isAuthenticated: false,
   isAdmin: false,
   email: null,
-  ChangePassWord: null,
   isForgotPassword: false,
+  product: [],
 };
 
 const userReducer = createSlice({
@@ -62,12 +63,12 @@ const userReducer = createSlice({
     setEmailResendOTP: (state: userState, action: PayloadAction<string>) => {
       state.email = action.payload;
     },
-
     setIsFogotPassword: (state: userState, action: PayloadAction<boolean>) => {
       state.isForgotPassword = action.payload;
     },
-    setChangePassword: (state: userState, action: PayloadAction<string>) => {
-      state.ChangePassWord = action.payload;
+    //Save product
+    setProduct: (state: userState, action: PayloadAction<productTypes[]>) => {
+      state.product = action.payload;
     },
   },
 });
@@ -82,7 +83,7 @@ export const {
   setAuthenticationStatus,
   setEmailResendOTP,
   setIsFogotPassword,
-  setChangePassword,
+  setProduct,
 } = userReducer.actions;
 
 export default userReducer.reducer;

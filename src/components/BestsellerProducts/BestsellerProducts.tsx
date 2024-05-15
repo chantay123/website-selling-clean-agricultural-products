@@ -28,11 +28,11 @@ const BestsellerProducts = () => {
                 <Fancybox>
                   <a
                     data-fancybox="gallery"
-                    href="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-4.jpg"
+                    href="../../../public/image/best-product-4.jpg"
                   >
                     <img
                       className="rounded-full  "
-                      src="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-4.jpg"
+                      src="../../../public/image/best-product-4.jpg"
                       alt=""
                     />
                   </a>
@@ -70,7 +70,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-2.jpg"
+                  src="../../../public/image/best-product-2.jpg"
                   alt=""
                 />
               </Col>
@@ -106,7 +106,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-6.jpg"
+                  src="../../../public/image/best-product-6.jpg"
                   alt=""
                 />
               </Col>
@@ -147,7 +147,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full  "
-                  src="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-1.jpg"
+                  src="../../../public/image/best-product-1.jpg"
                   alt=""
                 />
               </Col>
@@ -183,7 +183,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-5.jpg"
+                  src="../../../public/image/best-product-5.jpg"
                   alt=""
                 />
               </Col>
@@ -219,7 +219,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="http://127.0.0.1:5500/fruitables-1.0.0/img/best-product-3.jpg"
+                  src="../../../public/image/best-product-3.jpg"
                   alt=""
                 />
               </Col>
@@ -253,8 +253,8 @@ const BestsellerProducts = () => {
         <Col className="gutter-row" span={6}>
           <div style={style}>
             <img
-              className="rounded-xl"
-              src="http://127.0.0.1:5500/fruitables-1.0.0/img/fruite-item-3.jpg"
+              className="rounded-xl w-[400px] h-[250px]"
+              src="../../../public/image/vegetable-item-2.jpg"
               alt=""
             />
             <div className=" mt-4 ">
@@ -287,8 +287,8 @@ const BestsellerProducts = () => {
         <Col className="gutter-row" span={6}>
           <div style={style}>
             <img
-              className="rounded-xl"
-              src="http://127.0.0.1:5500/fruitables-1.0.0/img/fruite-item-3.jpg"
+              className="rounded-xl w-[400px] h-[250px]"
+              src="../../../public/image/vegetable-item-1.jpg"
               alt=""
             />
             <div className=" mt-4 ">
@@ -321,8 +321,8 @@ const BestsellerProducts = () => {
         <Col className="gutter-row" span={6}>
           <div style={style}>
             <img
-              className="rounded-xl"
-              src="http://127.0.0.1:5500/fruitables-1.0.0/img/fruite-item-3.jpg"
+              className="rounded-xl w-[400px] h-[250px]"
+              src="../../../public/image/vegetable-item-4.jpg"
               alt=""
             />
             <div className=" mt-4 ">
@@ -355,8 +355,8 @@ const BestsellerProducts = () => {
         <Col className="gutter-row" span={6}>
           <div style={style}>
             <img
-              className="rounded-xl"
-              src="http://127.0.0.1:5500/fruitables-1.0.0/img/fruite-item-3.jpg"
+              className="rounded-xl w-[400px] h-[250px]"
+              src="../../../public/image/vegetable-item-6.jpg"
               alt=""
             />
             <div className=" mt-4 ">
