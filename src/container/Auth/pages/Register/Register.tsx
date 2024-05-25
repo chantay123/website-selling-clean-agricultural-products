@@ -144,7 +144,7 @@ const Register = () => {
             <p> Don't have an account?</p>
             <a
               className="register text-[13px] font-bold text-green-400 text-center ml-2"
-              href="../Login/Login.tsx"
+              href=""
               onClick={() => {
                 navigate("/login");
               }}

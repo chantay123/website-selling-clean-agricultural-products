@@ -9,7 +9,8 @@ export type routeTypes = {
   verification: string;
   notFound: string;
   shop: string;
-  changepassword: string;
+  admin: string;
+  payment: string;
 };
 
 export type productTypes = {
@@ -24,4 +25,25 @@ export type productTypes = {
   rating?: number;
   numberOfReview?: number;
   hot?: boolean;
+  attributes: ProductAttribute[];
+  category: CategoryType;
+  total_price: number;
+};
+
+export type extendedProductType = productTypes & { key: string };
+export type ProductAttribute = {
+  weight: number;
+  original_price: number;
+  discounted_percent?: number;
+  discount_price?: number;
+};
+export type CategoryType = {
+  _id: string;
+  name: string;
+  slug: string;
+};
+export type cartTypes = {
+  _id: string;
+  user_id: string;
+  total_price: number;
 };

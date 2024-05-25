@@ -17,3 +17,14 @@ svg {
   width: 24px;
   height: 24px;
 }
+.btn-login {
+  border-color: #81c408;
+  &:hover {
+    background: #81c408;
+    color: white;
+    border-color: #ffb524;
+  }
+}
+.active {
+  color: #81c408;
+}

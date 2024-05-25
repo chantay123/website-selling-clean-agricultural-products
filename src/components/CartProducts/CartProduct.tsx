@@ -1,5 +1,5 @@
 import "./style.scss";
-import { Flex, Layout, Row } from "antd";
+import { Flex, Layout } from "antd";
 import Button from "../Button";
 import { useEffect } from "react";
 import requestApi from "../../utils/interceptors";
@@ -19,8 +19,8 @@ const CartProduct = () => {
       const respone = await requestApi("products", "GET", {});
       const arr = respone.data.data;
       console.log(arr);
+
       dispatch(setProduct(arr));
-      console.log(respone);
     } catch (error) {
       console.log(error);
     }
@@ -28,7 +28,11 @@ const CartProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
-  const setproduct = useSelector((state: RootState) => state.user.product);
+  const product = useSelector((state: RootState) => state.user.product);
+  const lengthProduct = product.length;
+  const filterProduct = lengthProduct > 5 ? product.slice(0, 4) : product;
+  console.log(filterProduct);
+
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
       <div className="mt-20 items-center flex ">
@@ -67,33 +71,37 @@ const CartProduct = () => {
           </ul>
         </div>
       </div>
-      <Flex wrap="wrap" gap="35px">
-        {Array.from({ length: 4 }, (_, i) => (
-          <div className="gutter-row ">
-            <div style={style} className="rounded-[10px] relative">
-              <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
-                Fruits
-              </div>
-              <div className=" ">
-                <a href="">
-                  <img
-                    className="w-[400px] h-[200px] rounded"
-                    src="https://hinh365.com/wp-content/uploads/2020/06/7165fb65d84513110399991ed216e99a.jpg "
-                    alt=""
-                  />
-                </a>
-              </div>
-              <h2 className="flex justify-center text-2xl font-bold mt-8 ">
-                Cherry
-              </h2>
-              <div className="flex  mt-30 items-center justify-evenly mt-5">
-                <p className=" text_money p-4 text-xl font-bold ">$4.99 / kg</p>
-                <Button />
+      <div>
+        <Flex wrap="wrap" gap="35px">
+          {filterProduct.map((product) => (
+            <div key={product._id} className="gutter-row  ">
+              <div style={style} className="rounded-[10px] relative">
+                <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
+                  {product.category.name}
+                </div>
+                <div className=" ">
+                  <a href="">
+                    <img
+                      className="w-[400px] h-[200px] rounded"
+                      src={product.thumbnail_url}
+                      alt=""
+                    />
+                  </a>
+                </div>
+                <h2 className="flex justify-center text-2xl font-bold mt-8 ">
+                  {product.name}
+                </h2>
+                <div className="flex  mt-30 items-center justify-evenly mt-5">
+                  <p className=" text_money p-4 text-xl  font-popins font-semibold">
+                    {product.attributes.map((attr) => attr.original_price)}$/KG
+                  </p>
+                  <Button />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </Flex>
+          ))}
+        </Flex>
+      </div>
     </Layout>
   );
 };

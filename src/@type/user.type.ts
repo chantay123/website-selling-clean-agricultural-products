@@ -1,4 +1,4 @@
-import { productTypes } from "./global.type";
+import { cartTypes, productTypes } from "./global.type";
 
 export type userType = {
   _id: string;
@@ -22,6 +22,7 @@ export type userState = {
   email: string | null;
   isForgotPassword: boolean;
   product: productTypes[] | [];
+  cart: cartTypes[] | [];
 };
 
 export type userLoginType = {

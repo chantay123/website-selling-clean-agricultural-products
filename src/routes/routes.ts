@@ -24,9 +24,8 @@ const Profile = React.lazy(
   () => import("../container/Profile/Page/MainProfile")
 );
 const Shop = React.lazy(() => import("../container/Shop/Page/Shop"));
-const ChangePassword = React.lazy(
-  () => import("../container/Auth/pages/ChangePassword")
-);
+const Admin = React.lazy(() => import("../container/Admin/Admin"));
+const Payment = React.lazy(() => import("../container/Payment/Payment"));
 
 const publicRoute = [
   {
@@ -70,8 +69,12 @@ const publicRoute = [
     component: Shop,
   },
   {
-    path: config.routes.changepassword,
-    component: ChangePassword,
+    path: config.routes.admin,
+    component: Admin,
+  },
+  {
+    path: config.routes.payment,
+    component: Payment,
   },
 ];
 

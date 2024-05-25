@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import { persistor, store } from "./redux/config";
@@ -14,12 +13,10 @@ import { PersistGate } from "redux-persist/integration/react";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <PersistGate persistor={persistor} loading={null}>
-      <React.StrictMode>
-        <HistoryBrowserRouter history={history}>
-          <App />
-          <ToastContainer />
-        </HistoryBrowserRouter>
-      </React.StrictMode>
+      <HistoryBrowserRouter history={history}>
+        <App />
+        <ToastContainer />
+      </HistoryBrowserRouter>
     </PersistGate>
   </Provider>
 );

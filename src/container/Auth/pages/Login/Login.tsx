@@ -60,7 +60,7 @@ const Login = () => {
         name="normal_login"
         className=" login-form  absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl  bg-white  xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%]  md:w-[50%]  md:px-8 lg:w-[40%]  lg:p-12 xl:w-[25%] "
       >
-        <h2 className="text-center text-4xl xs:mb-6 font-bold xs:text-3xl xs:mt-5 lg:mt-3 text-black  text-8xl  ">
+        <h2 className="  text-center text-4xl xs:mb-6 font-bold xs:text-3xl xs:mt-5 lg:mt-3 text-black  text-8xl  ">
           Login
         </h2>
         <Form.Item
@@ -96,6 +96,9 @@ const Login = () => {
           <a
             className="login-form-forgot underline font-bold  sm:text-[12px] sm:ml-30 ss:ml-6  text-[15px] xs:text-[12px] xs:ml-16 xss:ml-12  3xl:text-[15px] 3xl:ml-24  lg:ml-12 smm:ml-32 sm:ml-14 md:ml-20"
             href=""
+            onClick={() => {
+              navigate("/forgot-password");
+            }}
           >
             Forgot password?
           </a>

@@ -1,5 +1,5 @@
 import { Carousel } from "antd";
-import "./style.scss";
+
 import "tailwindcss/tailwind.css";
 
 const contentStyle: React.CSSProperties = {

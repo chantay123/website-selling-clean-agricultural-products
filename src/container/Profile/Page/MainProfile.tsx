@@ -60,10 +60,7 @@ const MainProfile = () => {
     } catch (error: any) {
       const { message } = error.respone.data;
       let errMessage = message;
-      if (
-        error.response.status === StatusCodes.UNPROCESSABLE_ENTITY &&
-        error.response.data
-      ) {
+      if (error.response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
         const { msg } = error.response.data.errors.address;
         errMessage = msg;
       }
