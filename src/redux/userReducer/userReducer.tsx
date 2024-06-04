@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { userType, userState } from "../../@type/user.type";
-import { cartTypes, productTypes } from "../../@type/global.type";
+import { cartTypes, productTypes, profileType } from "../../@type/global.type";
+import { useState } from "react";
 
 const initialState: userState = {
   login: null,
@@ -13,7 +14,8 @@ const initialState: userState = {
   email: null,
   isForgotPassword: false,
   product: [],
-  cart: [],
+  cart: null,
+  profile: null,
 };
 
 const userReducer = createSlice({
@@ -72,8 +74,12 @@ const userReducer = createSlice({
       state.product = action.payload;
     },
     //save cart
-    setCart: (state: userState, action: PayloadAction<cartTypes[]>) => {
+    setCart: (state: userState, action: PayloadAction<cartTypes>) => {
       state.cart = action.payload;
+    },
+
+    setprofile: (state: userState, action: PayloadAction<profileType>) => {
+      state.profile = action.payload;
     },
   },
 });
@@ -90,6 +96,7 @@ export const {
   setIsFogotPassword,
   setProduct,
   setCart,
+  setprofile,
 } = userReducer.actions;
 
 export default userReducer.reducer;

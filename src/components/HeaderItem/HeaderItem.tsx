@@ -19,8 +19,12 @@ import {
   clearStore,
   getCookie,
 } from "../../utils/setting";
-import { setAuthenticationStatus } from "../../redux/userReducer/userReducer";
+import {
+  setAuthenticationStatus,
+  setprofile,
+} from "../../redux/userReducer/userReducer";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 const HearderItem = () => {
   const items: MenuProps["items"] = [
@@ -39,18 +43,29 @@ const HearderItem = () => {
     },
     {
       key: "2",
-      label: "Change password",
-
-      onClick: () => {
-        navigate("/changepassword");
-      },
+      label: (
+        <a
+          className="text-base"
+          onClick={() => {
+            navigate("/changepassword");
+          }}
+        >
+          Change Password{" "}
+        </a>
+      ),
     },
     {
       key: "3",
-      label: "  Log out ",
-      onClick: () => {
-        logout();
-      },
+      label: (
+        <a
+          className="text-base"
+          onClick={() => {
+            logout();
+          }}
+        >
+          Logout
+        </a>
+      ),
     },
   ];
   const dispatch = useDispatch();
@@ -75,6 +90,19 @@ const HearderItem = () => {
     (state: RootState) => state.user.isAuthenticated
   );
 
+  const fetchAvatar = async () => {
+    try {
+      const response = await requestApi("users/@me/profile", "GET", {});
+      const avatar = response.data.data;
+      dispatch(setprofile(avatar));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchAvatar();
+  }, []);
+  const isprofile = useSelector((state: RootState) => state.user.profile);
   return (
     <Layout className="bg-white background p-3 drop-shadow-xl fixed z-10 w-full">
       <div className="ml-[80px] mr-[80px] flex items-center justify-between ">
@@ -124,20 +152,16 @@ const HearderItem = () => {
                   </i>
                 </Badge>
               </a>
-              <button className="btn border  w-10 h-10 rounded-full border-orange-300 bg-white me-4">
-                <i>
-                  <SearchOutlined />
-                </i>
-              </button>
-              <div className=" flex items-center ">
+              <div className=" flex items-center  ">
                 <Dropdown menu={{ items }}>
                   <Avatar
-                    src="https://upload.wikimedia.org/wikipedia/en/8/86/Avatar_Aang.png"
+                    className="border"
+                    src={isprofile?.avatar}
                     size="large"
                     icon={<UserOutlined />}
                   />
                 </Dropdown>
-                <p className=" ml-2"> Phan Chan Tay </p>
+                <p className=" ml-2 text-base">{isprofile?.full_name} </p>
               </div>
             </div>
           ) : (

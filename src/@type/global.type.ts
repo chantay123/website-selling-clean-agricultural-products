@@ -1,3 +1,4 @@
+import { Avatar } from "antd";
 export type routeTypes = {
   home: string;
   profile: string;
@@ -11,6 +12,7 @@ export type routeTypes = {
   shop: string;
   admin: string;
   payment: string;
+  changepassword: string;
 };
 
 export type productTypes = {
@@ -32,10 +34,13 @@ export type productTypes = {
 
 export type extendedProductType = productTypes & { key: string };
 export type ProductAttribute = {
+  _id: string;
   weight: number;
   original_price: number;
   discounted_percent?: number;
+  product_id: string;
   discount_price?: number;
+  quantity: number;
 };
 export type CategoryType = {
   _id: string;
@@ -46,4 +51,29 @@ export type cartTypes = {
   _id: string;
   user_id: string;
   total_price: number;
+  carts: cartItemType[];
+};
+
+export type cartItemType = {
+  price: number;
+  ProductAttribute: string;
+  productDetails: productDetailTypes;
+};
+export type productDetailTypes = {
+  description: string;
+  name: string;
+  slug: string;
+  _id: string;
+  images: ImageType[];
+};
+export type ImageType = {
+  url: string;
+};
+export type profileType = {
+  _id: string;
+  full_name: string;
+  thumbnail: string;
+  address: string;
+  avatar: string;
+  gender: boolean;
 };

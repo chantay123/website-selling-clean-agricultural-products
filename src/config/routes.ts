@@ -13,6 +13,7 @@ const routes: routeTypes = {
   notFound: "*",
   admin: "/admin",
   payment: "/payment",
+  changepassword: "/changepassword",
 } as const;
 
 export default routes;

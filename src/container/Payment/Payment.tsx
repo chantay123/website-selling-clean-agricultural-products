@@ -11,8 +11,10 @@ import Footer from "../../components/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { setCart, setProduct } from "../../redux/userReducer/userReducer";
 import { RootState } from "../../redux/config";
+import { cartTypes } from "../../@type/global.type";
 
 const PayMent = () => {
+  const product = useSelector((state: RootState) => state.user.product);
   const [quantity, setQuantity] = useState(1);
 
   const handleIncrement = () => {
@@ -35,8 +37,13 @@ const PayMent = () => {
   };
   useEffect(() => {
     fetchCart();
-  });
-  const listcard = useSelector((state: RootState) => state.user.product);
+  }, []);
+  const listcard: cartTypes | null = useSelector(
+    (state: RootState) => state.user.cart
+  );
+
+  const renderlist = listcard?.carts;
+  console.log(renderlist);
   return (
     <div>
       <div>
@@ -72,59 +79,65 @@ const PayMent = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {listcard.map((cart) => (
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center ">
-                          <img
-                            className="w-24 h-24 rounded-full"
-                            src={cart.thumbnail_url}
-                          />
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="mb-0 mt-4">{cart.name}</p>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="mb-0 mt-4">
-                          {cart.attributes.map((attr) => attr.discount_price)}$
-                        </p>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center mt-4">
-                          <button
-                            className="btn-minus   "
-                            onClick={handleDecrement}
-                          >
-                            <i>
-                              <MinusCircleOutlined />
+                  {renderlist &&
+                    renderlist.map((cart, index) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center ">
+                            <img
+                              className="w-24 h-24 rounded-full"
+                              src={cart.productDetails.images[0]?.url}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <p className="mb-0 mt-4">
+                            {cart.productDetails.name}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <p className="mb-0 mt-4">{cart.price}$</p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center mt-4">
+                            <button
+                              className="btn-minus   "
+                              onClick={handleDecrement}
+                            >
+                              <i>
+                                <MinusCircleOutlined />
+                              </i>
+                            </button>
+
+                            <input
+                              type="text"
+                              className="mx-2 w-12 text-center border-0"
+                              value={quantity}
+                              readOnly
+                            />
+                            <button className="btn-plus ">
+                              <i
+                                onClick={() => {
+                                  handleIncrement();
+                                }}
+                              >
+                                <PlusCircleOutlined />
+                              </i>
+                            </button>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <p className="mb-0 mt-4"></p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button className="rounded-full  border-gray-300 p-2 mt-4">
+                            <i className="fa fa-times text-red-500">
+                              <CloseCircleOutlined />
                             </i>
                           </button>
-                          <input
-                            type="text"
-                            className="mx-2 w-12 text-center border-0"
-                            value={quantity}
-                            readOnly
-                          />
-                          <button className="btn-plus ">
-                            <i onClick={handleIncrement}>
-                              <PlusCircleOutlined />
-                            </i>
-                          </button>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="mb-0 mt-4">{cart.total_price}</p>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="rounded-full  border-gray-300 p-2 mt-4">
-                          <i className="fa fa-times text-red-500">
-                            <CloseCircleOutlined />
-                          </i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

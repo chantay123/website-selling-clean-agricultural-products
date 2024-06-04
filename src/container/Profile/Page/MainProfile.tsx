@@ -41,6 +41,7 @@ const MainProfile = () => {
   const [coverURL, setCoverURL] = useState("");
   const [gender, setGender] = useState();
   const onChange = (e: RadioChangeEvent) => {
+    e.preventDefault();
     setGender(e.target.value);
   };
   const onFinish = async (value: any) => {

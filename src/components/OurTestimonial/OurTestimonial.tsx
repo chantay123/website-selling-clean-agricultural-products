@@ -42,6 +42,7 @@ const OurTestimonial = () => {
             <div className="flex  items-center">
               <Avatar>
                 <img
+                  className=""
                   src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTu54ZVXa6AYq52ST3yGOmrr5TLzSWZd0KZwYjE6GCcxNnPwRv6"
                   alt=""
                 />

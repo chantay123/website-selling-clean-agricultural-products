@@ -6,6 +6,7 @@ import requestApi from "../../utils/interceptors";
 import { setProduct } from "../../redux/userReducer/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
+import ButtonClick from "../Button/ButtonClick";
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
   height: "380px",
@@ -18,8 +19,6 @@ const CartProduct = () => {
     try {
       const respone = await requestApi("products", "GET", {});
       const arr = respone.data.data;
-      console.log(arr);
-
       dispatch(setProduct(arr));
     } catch (error) {
       console.log(error);
@@ -31,8 +30,23 @@ const CartProduct = () => {
   const product = useSelector((state: RootState) => state.user.product);
   const lengthProduct = product.length;
   const filterProduct = lengthProduct > 5 ? product.slice(0, 4) : product;
-  console.log(filterProduct);
-
+  let attribute_id = null;
+  const buttonAdd = async (attribute_id: string, product_id: string) => {
+    try {
+      const respone = await requestApi("carts/items", "POST", {
+        items: [
+          {
+            product_id: product_id,
+            product_attribute_id: attribute_id,
+            quantity: 1,
+          },
+        ],
+      });
+      console.log(respone);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
       <div className="mt-20 items-center flex ">
@@ -95,7 +109,12 @@ const CartProduct = () => {
                   <p className=" text_money p-4 text-xl  font-popins font-semibold">
                     {product.attributes.map((attr) => attr.original_price)}$/KG
                   </p>
-                  <Button />
+                  {product.attributes.map((attr) => (
+                    <ButtonClick
+                      key={attr._id}
+                      onclick={() => buttonAdd(attr._id, product._id)}
+                    />
+                  ))}
                 </div>
               </div>
             </div>

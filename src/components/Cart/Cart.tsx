@@ -1,7 +1,10 @@
 import { Flex, Pagination } from "antd";
-import Button from "../Button";
+
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
+import requestApi from "../../utils/interceptors";
+import { useNavigate } from "react-router-dom";
+import ButtonClick from "../Button/ButtonClick";
 
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
@@ -10,6 +13,23 @@ const style: React.CSSProperties = {
 };
 
 const Cart = () => {
+  const navigate = useNavigate();
+
+  const handleAddtoCart = async (
+    product_id: string,
+    ProductAttribute_id: string
+  ) => {
+    try {
+      const respons = await requestApi("carts", "POST", {
+        product_id: product_id,
+        product_attribute_id: ProductAttribute_id,
+        quantity: 1,
+      });
+      console.log(respons);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const filterProduct = useSelector((state: RootState) => state.user.product);
   return (
     <Flex wrap="wrap" gap="35px">
@@ -19,7 +39,7 @@ const Cart = () => {
             <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
               {product.category.name}
             </div>
-            <div className=" ">
+            <div className="">
               <a href="">
                 <img
                   className="w-[400px] h-[200px] rounded"
@@ -35,7 +55,7 @@ const Cart = () => {
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
                 {product.attributes.map((attr) => attr.original_price)}$/KG
               </p>
-              <Button />
+              <ButtonClick />
             </div>
           </div>
         </div>
