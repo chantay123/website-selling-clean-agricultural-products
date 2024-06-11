@@ -1,11 +1,7 @@
 import Layout from "antd/es/layout/layout";
 import "tailwindcss/tailwind.css";
 import "./style.scss";
-import {
-  SearchOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Avatar, Badge, Dropdown, MenuProps } from "antd";
 
@@ -50,7 +46,7 @@ const HearderItem = () => {
             navigate("/changepassword");
           }}
         >
-          Change Password{" "}
+          Change Password
         </a>
       ),
     },
@@ -89,7 +85,7 @@ const HearderItem = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
   );
-
+  const cartnumber = useSelector((state: RootState) => state.user.cartnumber);
   const fetchAvatar = async () => {
     try {
       const response = await requestApi("users/@me/profile", "GET", {});
@@ -126,23 +122,22 @@ const HearderItem = () => {
               </NavLink>
             </li>
             <li>
-              <a className="item p-4" href="#">
+              {/* <a className="item p-4" href="#">
                 Contact
-              </a>
+              </a> */}
             </li>
             <li>
-              <a className="item p-4" href="#">
+              {/* <a className="item p-4" href="#">
                 Knowledge
-              </a>
+              </a> */}
             </li>
           </ul>
         </div>
-
         <div>
           {isAuthenticated === true ? (
             <div className=" flex items-center">
               <a href="#" className=" mr-10 relative">
-                <Badge count={1}>
+                <Badge count={cartnumber}>
                   <i className="w-6 h-24">
                     <ShoppingCartOutlined
                       onClick={() => {

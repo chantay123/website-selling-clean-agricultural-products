@@ -1,4 +1,4 @@
-import { Layout } from "antd";
+import { Button, Form, Input, Layout, Modal } from "antd";
 import HearderItem from "../../components/HeaderItem/HeaderItem";
 import {
   CloseCircleOutlined,
@@ -9,22 +9,51 @@ import requestApi from "../../utils/interceptors";
 import { useEffect, useState } from "react";
 import Footer from "../../components/Footer";
 import { useDispatch, useSelector } from "react-redux";
-import { setCart, setProduct } from "../../redux/userReducer/userReducer";
+import { setCart, setcartnumber } from "../../redux/userReducer/userReducer";
 import { RootState } from "../../redux/config";
 import { cartTypes } from "../../@type/global.type";
+import { toast } from "react-toastify";
+import CartProducts from "../../components/CartProducts";
 
 const PayMent = () => {
-  const product = useSelector((state: RootState) => state.user.product);
-  const [quantity, setQuantity] = useState(1);
+  const [open, setOpen] = useState(false);
 
-  const handleIncrement = () => {
-    setQuantity(quantity + 1);
+  const showModal = () => {
+    setOpen(true);
   };
 
-  const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+  const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen(false);
+  };
+  const listcard: cartTypes | null | undefined = useSelector(
+    (state: RootState) => state.user.cart
+  );
+
+  const renderlist = listcard?.carts;
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+
+  const handleIncrement = (productId: string) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: (prevQuantities[productId] || 0) + 1,
+    }));
+  };
+  useEffect(() => {
+    if (renderlist) {
+      const initialQuantities = renderlist.reduce((acc, item) => {
+        acc[item.productDetails._id] = item.quantity;
+        return acc;
+      }, {} as { [key: string]: number });
+      setQuantities(initialQuantities);
     }
+  }, [renderlist]);
+
+  const handleDecrement = (productid: string) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productid]: Math.max((prevQuantities[productid] || 0) - 1, 1),
+    }));
   };
   const dispatch = useDispatch();
   const fetchCart = async () => {
@@ -32,18 +61,58 @@ const PayMent = () => {
       const respone = await requestApi("carts", "GET", {});
       const list = respone.data.data;
       dispatch(setCart(list));
-      console.log(list);
+      dispatch(setcartnumber(list.carts.length));
     } catch (error) {}
   };
   useEffect(() => {
     fetchCart();
   }, []);
-  const listcard: cartTypes | null = useSelector(
-    (state: RootState) => state.user.cart
-  );
 
-  const renderlist = listcard?.carts;
-  console.log(renderlist);
+  const deletecart = async (id: string, product_id: string) => {
+    try {
+      const respone = await requestApi(
+        `carts/items/${id}?product_id=${product_id}`,
+        "DELETE",
+        {
+          product_id,
+        }
+      );
+
+      fetchCart();
+    } catch (error) {}
+  };
+
+  const order = async (value: any) => {
+    try {
+      const respone = await requestApi("orders", "POST", {
+        product_attribute_ids: renderlist?.map((v) => v.productAttributeId),
+        payment_method: value.payment,
+        address: value.address,
+        note: value.note,
+      });
+      setOpen(false);
+      const message = "Thanh toan thanh cong";
+      toast.success(message);
+      console.log(message);
+      await fetchCart();
+    } catch (error) {}
+  };
+
+  const updateCart = async () => {
+    try {
+      const respone = await requestApi(`carts/items/${listcard?._id}`, "PUT", {
+        items: listcard?.carts.map((c) => {
+          return {
+            product_id: c.productDetails._id,
+            product_attribute_id: c.productAttributeId,
+            quantity: quantities[c.productDetails._id] || 1,
+          };
+        }),
+      });
+      fetchCart();
+    } catch (error) {}
+  };
+
   return (
     <div>
       <div>
@@ -86,7 +155,7 @@ const PayMent = () => {
                           <div className="flex items-center ">
                             <img
                               className="w-24 h-24 rounded-full"
-                              src={cart.productDetails.images[0]?.url}
+                              src={cart.productDetails.thumbnail_url}
                             />
                           </div>
                         </td>
@@ -101,24 +170,23 @@ const PayMent = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mt-4">
                             <button
-                              className="btn-minus   "
-                              onClick={handleDecrement}
+                              className="btn-minus  "
+                              onClick={() =>
+                                handleDecrement(cart.productDetails._id)
+                              }
                             >
                               <i>
                                 <MinusCircleOutlined />
                               </i>
                             </button>
 
-                            <input
-                              type="text"
-                              className="mx-2 w-12 text-center border-0"
-                              value={quantity}
-                              readOnly
-                            />
+                            <div className="mx-2 w-12 text-center border-0">
+                              {quantities[cart.productDetails._id]}
+                            </div>
                             <button className="btn-plus ">
                               <i
                                 onClick={() => {
-                                  handleIncrement();
+                                  handleIncrement(cart.productDetails._id);
                                 }}
                               >
                                 <PlusCircleOutlined />
@@ -127,12 +195,21 @@ const PayMent = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <p className="mb-0 mt-4"></p>
+                          <p className="mb-0 mt-4">
+                            {quantities[cart.productDetails._id] * cart.price}$
+                          </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <button className="rounded-full  border-gray-300 p-2 mt-4">
                             <i className="fa fa-times text-red-500">
-                              <CloseCircleOutlined />
+                              <CloseCircleOutlined
+                                onClick={() =>
+                                  deletecart(
+                                    listcard._id,
+                                    cart.productDetails._id
+                                  )
+                                }
+                              />
                             </i>
                           </button>
                         </td>
@@ -146,16 +223,17 @@ const PayMent = () => {
       </div>
       <div className="">
         <div className="mt-5 ml-20">
-          <input
+          {/* <input
             type="text"
             className="border-0 border-b rounded me-5 py-3 mb-4"
             placeholder="Coupon Code"
-          />
+          /> */}
           <button
-            className="btn border border-secondary rounded-full px-4 py-3 text-primary"
+            onClick={() => updateCart()}
+            className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
             type="button"
           >
-            Apply Coupon
+            Save
           </button>
           <div className=" justify-end mt-5 flex mr-20 ">
             <div className="col-8"></div>
@@ -165,28 +243,67 @@ const PayMent = () => {
                   <h1 className="text-3xl mb-4">
                     Cart <span className="font-normal">Total</span>
                   </h1>
-                  <div className="flex justify-between mb-4">
+                  {/* <div className="flex justify-between mb-4">
                     <h5 className="mb-0 me-4">Subtotal:</h5>
-                    <p className="mb-0">$96.00</p>
-                  </div>
-                  <div className="flex justify-between">
+                    <p className="mb-0">{}</p>
+                  </div> */}
+                  {/* <div className="flex justify-between">
                     <h5 className="mb-0 me-4">Shipping</h5>
                     <div>
                       <p className="mb-0">Flat rate: $3.00</p>
                     </div>
-                  </div>
-                  <p className="mb-0 text-right">Shipping to Ukraine.</p>
+                  </div> */}
+                  <p className="mb-0 text-right">Shipping to Viet Nam.</p>
                 </div>
                 <div className="py-4 mb-4 border-t border-b flex justify-between">
                   <h5 className="mb-0 ps-4 me-4">Total</h5>
-                  <p className="mb-0 pe-4">$99.00</p>
+
+                  <p className="mb-0 pe-4"> {listcard?.total_price}$</p>
                 </div>
-                <button
-                  className="btn border border-secondary rounded-full px-4 py-3 text-primary uppercase mb-4 ms-4"
-                  type="button"
-                >
-                  Proceed Checkout
-                </button>
+                <div>
+                  <button
+                    className="btn border border-secondary rounded-full px-4 py-3 text-primary uppercase mb-4 ms-4"
+                    type="button"
+                    onClick={showModal}
+                  >
+                    Proceed Checkout
+                  </button>
+                  <Modal
+                    title="Checkout"
+                    open={open}
+                    onCancel={handleCancel}
+                    cancelButtonProps={{ disabled: false }}
+                    footer={null}
+                  >
+                    <Form
+                      onFinish={(value) => order(value)}
+                      name="wrap"
+                      labelCol={{ flex: "110px" }}
+                      labelAlign="left"
+                      labelWrap
+                      wrapperCol={{ flex: 1 }}
+                      colon={false}
+                      style={{ maxWidth: 600 }}
+                    >
+                      <Form.Item label="Address" name="address">
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item label="Payment" name="payment">
+                        <Input />
+                      </Form.Item>
+                      <Form.Item label="Note" name="note">
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item label=" ">
+                        <Button htmlType="submit" className="text_submit">
+                          Submit
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Modal>
+                </div>
               </div>
             </div>
           </div>

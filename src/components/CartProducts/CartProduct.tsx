@@ -1,9 +1,8 @@
 import "./style.scss";
 import { Flex, Layout } from "antd";
-import Button from "../Button";
 import { useEffect } from "react";
 import requestApi from "../../utils/interceptors";
-import { setProduct } from "../../redux/userReducer/userReducer";
+import { setProduct, setcartnumber } from "../../redux/userReducer/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import ButtonClick from "../Button/ButtonClick";
@@ -15,6 +14,8 @@ const style: React.CSSProperties = {
 
 const CartProduct = () => {
   const dispatch = useDispatch();
+
+  //call api get all product
   const fetchProduct = async () => {
     try {
       const respone = await requestApi("products", "GET", {});
@@ -27,10 +28,12 @@ const CartProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
+
   const product = useSelector((state: RootState) => state.user.product);
+
   const lengthProduct = product.length;
   const filterProduct = lengthProduct > 5 ? product.slice(0, 4) : product;
-  let attribute_id = null;
+
   const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
       const respone = await requestApi("carts/items", "POST", {
@@ -42,11 +45,23 @@ const CartProduct = () => {
           },
         ],
       });
-      console.log(respone);
+      const respones = await requestApi("carts", "GET", {});
+      const list = respones.data.data;
+      dispatch(setcartnumber(list.carts.length));
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const respone = await requestApi("carts", "GET", {});
+        const list = respone.data.data;
+        dispatch(setcartnumber(list.carts.length));
+      } catch (error) {}
+    };
+    fetchCart();
+  }, []);
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
       <div className="mt-20 items-center flex ">

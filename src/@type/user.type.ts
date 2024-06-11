@@ -22,8 +22,9 @@ export type userState = {
   email: string | null;
   isForgotPassword: boolean;
   product: productTypes[] | [];
-  cart: cartTypes | null;
+  cart?: cartTypes | null;
   profile: profileType | null;
+  cartnumber: number;
 };
 
 export type userLoginType = {

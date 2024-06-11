@@ -34,25 +34,24 @@ const OurTestimonial = () => {
       >
         <div className="flex justify-center">
           <Card
-            title="Client"
+            title="Card title"
             bordered={false}
             style={{ width: 400 }}
             className="bg-gray-200 "
           >
             <div className="flex  items-center">
-              <Avatar>
+              <Avatar className="w-16 h-16">
                 <img
-                  className=""
-                  src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTu54ZVXa6AYq52ST3yGOmrr5TLzSWZd0KZwYjE6GCcxNnPwRv6"
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"
                   alt=""
                 />
               </Avatar>
               <div className=" ml-3 leading-9">
-                <h4>wqeqwe</h4>
-                <p>234324</p>
+                <h4 className="text-xl"> Phan Chan Tay</h4>
+                <p className="text-base">Good</p>
               </div>
             </div>
-            <div className="flex ml-10 mt-3 ">
+            <div className="flex ml-20 mt-3 ">
               <Flex gap="middle" vertical>
                 <Flex gap="middle">
                   <Rate
@@ -73,18 +72,18 @@ const OurTestimonial = () => {
             className="bg-gray-200 "
           >
             <div className="flex  items-center">
-              <Avatar>
+              <Avatar className="w-16 h-16">
                 <img
-                  src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTu54ZVXa6AYq52ST3yGOmrr5TLzSWZd0KZwYjE6GCcxNnPwRv6"
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"
                   alt=""
                 />
               </Avatar>
               <div className=" ml-3 leading-9">
-                <h4>wqeqwe</h4>
-                <p>234324</p>
+                <h4 className="text-xl"> Phan Chan Tay</h4>
+                <p className="text-base">Good</p>
               </div>
             </div>
-            <div className="flex ml-10 mt-3 ">
+            <div className="flex ml-20 mt-3 ">
               <Flex gap="middle" vertical>
                 <Flex gap="middle">
                   <Rate
@@ -105,50 +104,18 @@ const OurTestimonial = () => {
             className="bg-gray-200 "
           >
             <div className="flex  items-center">
-              <Avatar>
+              <Avatar className="w-16 h-16">
                 <img
-                  src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTu54ZVXa6AYq52ST3yGOmrr5TLzSWZd0KZwYjE6GCcxNnPwRv6"
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"
                   alt=""
                 />
               </Avatar>
               <div className=" ml-3 leading-9">
-                <h4>wqeqwe</h4>
-                <p>234324</p>
+                <h4 className="text-xl"> Phan Chan Tay</h4>
+                <p className="text-base">Good</p>
               </div>
             </div>
-            <div className="flex ml-10 mt-3 ">
-              <Flex gap="middle" vertical>
-                <Flex gap="middle">
-                  <Rate
-                    disabled
-                    defaultValue={4}
-                    character={({ index = 0 }) => customIcons[index + 1]}
-                  />
-                </Flex>
-              </Flex>
-            </div>
-          </Card>
-        </div>
-        <div className="flex justify-center">
-          <Card
-            title="Card title"
-            bordered={false}
-            style={{ width: 400 }}
-            className="bg-gray-200 "
-          >
-            <div className="flex  items-center">
-              <Avatar>
-                <img
-                  src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTu54ZVXa6AYq52ST3yGOmrr5TLzSWZd0KZwYjE6GCcxNnPwRv6"
-                  alt=""
-                />
-              </Avatar>
-              <div className=" ml-3 leading-9">
-                <h4>Client Name</h4>
-                <p>Profession</p>
-              </div>
-            </div>
-            <div className="flex ml-10 mt-3 ">
+            <div className="flex ml-20 mt-3 ">
               <Flex gap="middle" vertical>
                 <Flex gap="middle">
                   <Rate

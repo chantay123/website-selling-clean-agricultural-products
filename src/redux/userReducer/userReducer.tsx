@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { userType, userState } from "../../@type/user.type";
 import { cartTypes, productTypes, profileType } from "../../@type/global.type";
-import { useState } from "react";
 
 const initialState: userState = {
   login: null,
@@ -16,6 +15,7 @@ const initialState: userState = {
   product: [],
   cart: null,
   profile: null,
+  cartnumber: 0,
 };
 
 const userReducer = createSlice({
@@ -81,6 +81,9 @@ const userReducer = createSlice({
     setprofile: (state: userState, action: PayloadAction<profileType>) => {
       state.profile = action.payload;
     },
+    setcartnumber: (state: userState, action: PayloadAction<number>) => {
+      state.cartnumber = action.payload;
+    },
   },
 });
 
@@ -97,6 +100,7 @@ export const {
   setProduct,
   setCart,
   setprofile,
+  setcartnumber,
 } = userReducer.actions;
 
 export default userReducer.reducer;

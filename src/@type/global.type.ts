@@ -56,19 +56,18 @@ export type cartTypes = {
 
 export type cartItemType = {
   price: number;
-  ProductAttribute: string;
+  productAttributeId: string;
   productDetails: productDetailTypes;
+  quantity: number;
 };
 export type productDetailTypes = {
+  thumbnail_url: string;
   description: string;
   name: string;
   slug: string;
   _id: string;
-  images: ImageType[];
 };
-export type ImageType = {
-  url: string;
-};
+
 export type profileType = {
   _id: string;
   full_name: string;

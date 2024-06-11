@@ -59,7 +59,7 @@ export default function requestApi(
       if (err.response && err.response.status === 401 && refresh && access) {
         try {
           const result = await instance.post(
-            "http://localhost:8080/api/v1/users/token/refresh",
+            "https://agrimarket-z5f0.onrender.com/api/v1/users/token/refresh",
             {
               refresh_token: refresh,
             }
@@ -85,7 +85,7 @@ export default function requestApi(
 
   return instance.request({
     method: method,
-    url: `http://localhost:8080/api/v1/${endpoint}`,
+    url: `https://agrimarket-z5f0.onrender.com/api/v1/${endpoint}`,
     data: body,
   });
 }

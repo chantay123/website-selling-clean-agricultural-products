@@ -1,10 +1,12 @@
 import { Flex, Pagination } from "antd";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import requestApi from "../../utils/interceptors";
 import { useNavigate } from "react-router-dom";
 import ButtonClick from "../Button/ButtonClick";
+import { setcartnumber } from "../../redux/userReducer/userReducer";
+import { useEffect } from "react";
 
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
@@ -13,23 +15,38 @@ const style: React.CSSProperties = {
 };
 
 const Cart = () => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleAddtoCart = async (
-    product_id: string,
-    ProductAttribute_id: string
-  ) => {
+  //prop
+  const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
-      const respons = await requestApi("carts", "POST", {
-        product_id: product_id,
-        product_attribute_id: ProductAttribute_id,
-        quantity: 1,
+      const respone = await requestApi("carts/items", "POST", {
+        items: [
+          {
+            product_id: product_id,
+            product_attribute_id: attribute_id,
+            quantity: 1,
+          },
+        ],
       });
-      console.log(respons);
+      const respones = await requestApi("carts", "GET", {});
+      const list = respones.data.data;
+      dispatch(setcartnumber(list.carts.length));
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const respone = await requestApi("carts", "GET", {});
+        const list = respone.data.data;
+        dispatch(setcartnumber(list.carts.length));
+      } catch (error) {}
+    };
+    fetchCart();
+  }, []);
+
   const filterProduct = useSelector((state: RootState) => state.user.product);
   return (
     <Flex wrap="wrap" gap="35px">
@@ -55,12 +72,17 @@ const Cart = () => {
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
                 {product.attributes.map((attr) => attr.original_price)}$/KG
               </p>
-              <ButtonClick />
+              {product.attributes.map((attr) => (
+                <ButtonClick
+                  key={attr._id}
+                  onclick={() => buttonAdd(attr._id, product._id)}
+                />
+              ))}
             </div>
           </div>
         </div>
       ))}
-      <div className="flex justify-end mt-10">
+      <div className=" mt-10">
         <Pagination defaultCurrent={1} total={50} />
       </div>
     </Flex>

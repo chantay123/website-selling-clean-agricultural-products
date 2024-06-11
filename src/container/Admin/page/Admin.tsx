@@ -284,7 +284,6 @@ const Admin = () => {
                   openKeys={stateOpenKeys}
                   onOpenChange={onOpenChange}
                   style={{ width: 256 }}
-                  // items={items}
                 >
                   <Menu.Item key="1">
                     <Icon type="pie-chart" />
@@ -301,7 +300,7 @@ const Admin = () => {
             </div>
           </div>
         </Col>
-        <div></div>
+
         <Col span={18}>
           <div className="mt-9 ml-2">
             <Table columns={columns} dataSource={data} />
