@@ -6,9 +6,15 @@ import {
   StarFilled,
 } from "@ant-design/icons";
 import { useState } from "react";
-import Button from "../../../../components/Button";
 import "./style.scss";
 import Footer from "../../../../components/Footer";
+import { useNavigate, useParams } from "react-router-dom";
+import requestApi from "../../../../utils/interceptors";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../redux/config";
+import ButtonClick from "../../../../components/Button/ButtonClick";
+import { toast } from "react-toastify";
+import { setcartnumber } from "../../../../redux/userReducer/userReducer";
 
 const customIcons: Record<number, React.ReactNode> = {
   1: <StarFilled style={{ color: "#81c408" }} />,
@@ -19,6 +25,14 @@ const customIcons: Record<number, React.ReactNode> = {
 };
 
 const ProductDetail = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { productId } = useParams();
+  console.log(productId);
+  const product = useSelector((state: RootState) => state.user.product);
+
+  const detail = product.find((p) => p._id === productId);
+
   const [activeTab, setActiveTab] = useState("description");
   const [quantity, setQuantity] = useState(1);
 
@@ -32,6 +46,30 @@ const ProductDetail = () => {
     }
   };
   const [value, setValue] = useState(3);
+  if (detail === undefined) {
+    navigate("*");
+    return;
+  }
+  const buttonAdd = async (attribute_id: string, product_id: string) => {
+    try {
+      const respone = await requestApi("carts/items", "POST", {
+        items: [
+          {
+            product_id: product_id,
+            product_attribute_id: attribute_id,
+            quantity: 1,
+          },
+        ],
+      });
+      const respones = await requestApi("carts", "GET", {});
+      const list = respones.data.data;
+      dispatch(setcartnumber(list.carts.length));
+      const message = "add product successfully";
+      toast.success(message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <Layout>
@@ -42,16 +80,19 @@ const ProductDetail = () => {
           <Col span={8}>
             <div className="border rounded ">
               <a href="">
-                <img src="../../../../../public/image/single-item.jpg" alt="" />
+                <img src={detail?.thumbnail_url} alt="" />
               </a>
             </div>
           </Col>
           <Col span={12} className=" ml-5">
             <div>
               <h4 className=" text-cool-gray-600 text-4xl font-bold mb-4 ">
-                Brocoli
+                {detail.name}
               </h4>
-              <p className=" text-color text-xl mb-6"> Category: Vegetables</p>
+              <p className=" text-color text-xl mb-6">
+                {" "}
+                Category: {detail.category.name}
+              </p>
             </div>
             <div className="flex font-black my-3 mb-4 ">
               <Flex gap="middle" vertical>
@@ -66,14 +107,13 @@ const ProductDetail = () => {
             </div>
             <div>
               <p className=" text-color mb-4 text-xl  mt-3 ">
-                The generated Lorem Ipsum is therefore always free from
-                repetition injected humour, or non-characteristic words etc.
+                {detail?.description}
               </p>
-              <p className="text-color text-xl mb-6">
+              {/* <p className="text-color text-xl mb-6">
                 Susp endisse ultricies nisi vel quam suscipit. Sabertooth
                 peacock flounder chain pickerel hatchetfish, pencilfish
                 snailfish
-              </p>
+              </p> */}
             </div>
             <div>
               <div className="flex items-center w-24 mb-5 mt-5">
@@ -101,7 +141,12 @@ const ProductDetail = () => {
                 </button>
               </div>
               <div className="mt-6">
-                <Button />
+                {detail.attributes.map((attr) => (
+                  <ButtonClick
+                    key={attr._id}
+                    onclick={() => buttonAdd(attr._id, detail._id)}
+                  />
+                ))}
               </div>
             </div>
           </Col>

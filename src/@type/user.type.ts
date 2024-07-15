@@ -1,4 +1,9 @@
-import { cartTypes, productTypes, profileType } from "./global.type";
+import {
+  CategoryType,
+  cartTypes,
+  productTypes,
+  profileType,
+} from "./global.type";
 
 export type userType = {
   _id: string;
@@ -25,6 +30,7 @@ export type userState = {
   cart?: cartTypes | null;
   profile: profileType | null;
   cartnumber: number;
+  category: CategoryType[] | [];
 };
 
 export type userLoginType = {

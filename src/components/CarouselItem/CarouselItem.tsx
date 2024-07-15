@@ -1,7 +1,5 @@
 import { Carousel } from "antd";
 
-import "tailwindcss/tailwind.css";
-
 const contentStyle: React.CSSProperties = {
   color: "#fff",
   borderRadius: "20px",

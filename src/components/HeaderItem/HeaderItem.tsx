@@ -56,6 +56,19 @@ const HearderItem = () => {
         <a
           className="text-base"
           onClick={() => {
+            navigate("./myfavorite");
+          }}
+        >
+          My favorite product
+        </a>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <a
+          className="text-base"
+          onClick={() => {
             logout();
           }}
         >
@@ -118,7 +131,7 @@ const HearderItem = () => {
             </li>
             <li>
               <NavLink to="/product-detail" className="p-4">
-                Shop Detail
+                {/* Detail */}
               </NavLink>
             </li>
             <li>

@@ -21,7 +21,7 @@ const SearchProduct = () => {
               <h2 className=" text-primary  mb-10 text-6xl font-semibold">
                 Organic Veggies & Fruits Foods
               </h2>
-              <input
+              {/* <input
                 className=" btn-border border-2  w-3/4 py-3 px-4 rounded-full relative"
                 type="text"
                 placeholder="Search"
@@ -31,7 +31,7 @@ const SearchProduct = () => {
                 className="btn-search border-2 absolute  py-3 px-4 rounded-full text-white -ml-[110px] font-bold "
               >
                 Submit Now
-              </button>
+              </button> */}
             </div>
           </Col>
         </Row>

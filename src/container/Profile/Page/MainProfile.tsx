@@ -1,6 +1,7 @@
 import { CameraOutlined } from "@ant-design/icons";
 import {
   Alert,
+  Avatar,
   Button,
   Form,
   Input,
@@ -8,18 +9,18 @@ import {
   Radio,
   RadioChangeEvent,
 } from "antd";
-import TextArea from "antd/es/input/TextArea";
 import { Content } from "antd/es/layout/layout";
 import { BG } from "../../../constants/images";
 import "./style.scss";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/config";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import requestApi from "../../../utils/interceptors";
-import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { StatusCodes } from "http-status-codes";
 
 const MainProfile = () => {
@@ -27,31 +28,42 @@ const MainProfile = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
   );
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated]);
+
   const [userData, setUserData] = useState({
-    username: "",
-    fullName: "",
+    email: "",
+    full_name: "",
     phone: "",
-    date_of_birth: "",
     address: "",
-    bio: "",
     avatar: "",
     cover_photo: "",
+    gender: "Male",
   });
-  const [avatarURL, setAvatarURL] = useState("");
-  const [coverURL, setCoverURL] = useState("");
-  const [gender, setGender] = useState();
+
   const onChange = (e: RadioChangeEvent) => {
-    e.preventDefault();
-    setGender(e.target.value);
+    setUserData((prev) => ({
+      ...prev,
+      gender: e.target.value,
+    }));
   };
   const onFinish = async (value: any) => {
-    console.log(value);
-    const user = { ...value, gender };
     const loadingToast = toast.loading("Updating....");
+    const { address } = value;
+    const response = await requestApi("users/@me/profile", "PUT", {
+      full_name: userData.full_name,
+      phone: userData.phone,
+      gender: userData.gender,
+      avatar: userData.avatar,
+      thumbnail: userData.cover_photo,
+      address: address,
+    });
+    const { message } = response.data;
     try {
-      const response = await requestApi("users/@me/profile", "PUT", user);
-      const { message } = response.data;
-      console.log(message);
       toast.update(loadingToast, {
         render: message,
         type: "success",
@@ -74,6 +86,20 @@ const MainProfile = () => {
     }
   };
 
+  const profile = async () => {
+    try {
+      const response = await requestApi("users/@me/profile", "GET", {});
+      const data = response.data.data;
+      setUserData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    profile();
+  }, []);
+
   return (
     <Layout className="min-h-screen overflow-hidden">
       <Layout>
@@ -90,33 +116,26 @@ const MainProfile = () => {
           </div>
           <div>
             <Form
+              className="mt-6"
               name="basic"
-              initialValues={{ remember: true }}
+              initialValues={{ ...userData }}
               onFinish={onFinish}
               fields={[
                 {
-                  name: ["username"],
-                  value: userData.username,
+                  name: ["email"],
+                  value: userData.email,
                 },
                 {
-                  name: ["fullname"],
-                  value: userData.fullName,
+                  name: ["full_name"],
+                  value: userData.full_name,
                 },
                 {
                   name: ["phone"],
                   value: userData.phone,
                 },
                 {
-                  name: ["date_of_birth"],
-                  value: userData.date_of_birth.split("T")[0],
-                },
-                {
                   name: ["address"],
                   value: userData.address,
-                },
-                {
-                  name: ["bio"],
-                  value: userData.bio,
                 },
               ]}
             >
@@ -138,10 +157,10 @@ const MainProfile = () => {
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
-                        Username
+                        Email
                       </h3>
                       <Form.Item
-                        name="username"
+                        name="email"
                         rules={[
                           {
                             required: true,
@@ -168,7 +187,7 @@ const MainProfile = () => {
                         Full name
                       </h3>
                       <Form.Item
-                        name="fullname"
+                        name="full_name"
                         className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
                       >
                         <Input
@@ -178,7 +197,6 @@ const MainProfile = () => {
                       </Form.Item>
                     </div>
                   </div>
-
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
@@ -199,38 +217,10 @@ const MainProfile = () => {
                             ),
                           },
                         ]}
-                        className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
+                        className="border-2 rounded-lg border-white mb-8 flex flex-col w-[660px] "
                       >
                         <Input
-                          className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
-                        Date of birth
-                      </h3>
-                      <Form.Item
-                        name="date_of_birth"
-                        rules={[
-                          {
-                            required: true,
-                            message: (
-                              <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700"
-                                message="Please input your date of birth"
-                                banner
-                                type="error"
-                              />
-                            ),
-                          },
-                        ]}
-                        className="border-2 rounded-lg border-white w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          placeholder="YYYY-MM-DD"
+                          className="  h-12 bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
                           style={{ background: "none" }}
                         />
                       </Form.Item>
@@ -269,18 +259,21 @@ const MainProfile = () => {
                         Gender
                       </h3>
                       <Form.Item className="xs:ml-8 lg:ml-20">
-                        <Radio.Group onChange={onChange} value={gender}>
+                        <Radio.Group
+                          onChange={onChange}
+                          value={userData.gender}
+                        >
                           <Radio
                             value="Male"
                             className="text-white font-popins"
-                            checked={gender === "Male"}
+                            checked={userData.gender === "Male"}
                           >
                             Male
                           </Radio>
                           <Radio
                             value="Female"
                             className="3xl:ml-20 lg:ml-10 xs:mt-2 ss:mt-0 text-white font-popins"
-                            checked={gender === "Female"}
+                            checked={userData.gender === "Female"}
                           >
                             Female
                           </Radio>
@@ -289,35 +282,6 @@ const MainProfile = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md ">
-                        Bio
-                      </h3>
-                      <Form.Item
-                        name="bio"
-                        rules={[
-                          {
-                            required: true,
-                            message: (
-                              <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700 "
-                                message="Please input your bio"
-                                banner
-                                type="error"
-                              />
-                            ),
-                          },
-                        ]}
-                        className="border-2 rounded-lg border-white w-full mb-8 flex flex-col h-24"
-                      >
-                        <TextArea
-                          className=" bg-transparent border-none text-white text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none "
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
                   <div className="flex gap-4">
                     <Form.Item className="mt-2">
                       <Button

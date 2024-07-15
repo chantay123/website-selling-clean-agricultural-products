@@ -3,10 +3,10 @@ import { Flex, Pagination } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import requestApi from "../../utils/interceptors";
-import { useNavigate } from "react-router-dom";
 import ButtonClick from "../Button/ButtonClick";
 import { setcartnumber } from "../../redux/userReducer/userReducer";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
@@ -54,16 +54,16 @@ const Cart = () => {
         <div key={product._id} className="gutter-row  ">
           <div style={style} className="rounded-[10px] relative">
             <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
-              {product.category.name}
+              {product.category?.name}
             </div>
             <div className="">
-              <a href="">
+              <Link to={`/product/${product._id}`}>
                 <img
-                  className="w-[400px] h-[200px] rounded"
+                  className="w-[400px] h-[200px] rounded object-cover"
                   src={product.thumbnail_url}
                   alt=""
                 />
-              </a>
+              </Link>
             </div>
             <h2 className="flex justify-center text-2xl font-bold mt-8 ">
               {product.name}

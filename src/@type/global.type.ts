@@ -1,4 +1,3 @@
-import { Avatar } from "antd";
 export type routeTypes = {
   home: string;
   profile: string;
@@ -13,6 +12,7 @@ export type routeTypes = {
   admin: string;
   payment: string;
   changepassword: string;
+  myfavorite: string;
 };
 
 export type productTypes = {
@@ -47,6 +47,7 @@ export type CategoryType = {
   name: string;
   slug: string;
 };
+
 export type cartTypes = {
   _id: string;
   user_id: string;

@@ -3,7 +3,7 @@ import { routeTypes } from "../@type/global.type";
 const routes: routeTypes = {
   home: "/",
   profile: "/profile",
-  productDetail: "/product-detail",
+  productDetail: "/product/:productId",
   login: "/login",
   register: "/register",
   newpassword: "/new-password",
@@ -14,6 +14,7 @@ const routes: routeTypes = {
   admin: "/admin",
   payment: "/payment",
   changepassword: "/changepassword",
+  myfavorite: "/myfavorite",
 } as const;
 
 export default routes;

@@ -6,8 +6,6 @@ import {
   clearStore,
   getCookie,
   getStore,
-  setCookie,
-  setStore,
 } from "./setting";
 
 export default function requestApi(
@@ -26,7 +24,6 @@ export default function requestApi(
     ...defaultHeaders,
     ...header,
   };
-
   const instance = axios.create({ headers });
 
   // set up send request
@@ -52,24 +49,15 @@ export default function requestApi(
       return response;
     },
     async (err) => {
-      const originalResponse = err.config;
       const access = getStore(ACCESS_TOKEN);
       const refresh = getCookie(REFRESH_TOKEN);
       //access token expires => status code 401
       if (err.response && err.response.status === 401 && refresh && access) {
         try {
-          const result = await instance.post(
-            "https://agrimarket-z5f0.onrender.com/api/v1/users/token/refresh",
-            {
-              refresh_token: refresh,
-            }
-          );
-          const { access_token, refresh_token } = result.data.data;
+          clearStore(ACCESS_TOKEN);
+          clearCookie(REFRESH_TOKEN);
+          window.location.href = "/login";
           //save new AT & RT into storage
-          setStore(ACCESS_TOKEN, access_token);
-          setCookie(REFRESH_TOKEN, refresh_token, 7);
-          originalResponse.headers["Authorization"] = `Bearer ${access_token}`;
-          return instance(originalResponse);
         } catch (error: any) {
           if (error?.response?.status === 404) {
             clearStore(ACCESS_TOKEN);
@@ -85,7 +73,7 @@ export default function requestApi(
 
   return instance.request({
     method: method,
-    url: `https://agrimarket-z5f0.onrender.com/api/v1/${endpoint}`,
+    url: `http://localhost:8080/api/v1/${endpoint}`,
     data: body,
   });
 }

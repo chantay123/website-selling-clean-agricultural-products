@@ -1,6 +1,7 @@
 import { Col, Row } from "antd";
 import "./style.scss";
 import "tailwindcss/tailwind.css";
+import { useNavigate } from "react-router-dom";
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
   padding: "14px 14px",
@@ -8,6 +9,7 @@ const style: React.CSSProperties = {
 };
 
 const ProductPortfolio = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <div className=" mt-20 ml-20 mr-12 rounded-md">
@@ -23,7 +25,8 @@ const ProductPortfolio = () => {
                 <a className="bg-red-700" href="">
                   <div>
                     <img
-                      className="rounded mb-10 w-[300px] h-[180px]"
+                      onClick={() => navigate("/shop")}
+                      className="rounded mb-10 w-[300px] h-[180px] object-cover"
                       src="https://linhchihoanggia.com/data/images/nam-huong-dong-co.jpg"
                       alt=""
                     />
@@ -38,7 +41,8 @@ const ProductPortfolio = () => {
             <Col className="gutter-row" span={6}>
               <div style={style} className="rounded-[10px]">
                 <img
-                  className="w-[300px] h-[180px] rounded"
+                  onClick={() => navigate("/shop")}
+                  className="w-[300px] h-[180px] rounded object-cover"
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQREd4iqd30WNFeRkkIWpwLfbopr7J96VkAiQnuhVBDkw&s "
                   alt=""
                 />
@@ -50,7 +54,8 @@ const ProductPortfolio = () => {
             <Col className="gutter-row" span={6}>
               <div style={style} className="rounded-[10px]">
                 <img
-                  className="w-[300px] h-[180px] rounded"
+                  onClick={() => navigate("/shop")}
+                  className="w-[300px] h-[180px] rounded object-cover"
                   src="https://atvstp.namdinh.gov.vn/wp-content/uploads/2021/09/Cach-lua-chon-va-bao-quan-rau-cu-qua-ngay-Tet.jpg"
                   alt=""
                 />
@@ -62,7 +67,8 @@ const ProductPortfolio = () => {
             <Col className="gutter-row" span={6}>
               <div style={style} className="rounded-[10px]">
                 <img
-                  className="w-[300px] h-[180px] rounded"
+                  onClick={() => navigate("/shop")}
+                  className="w-[300px] h-[180px] rounded object-cover"
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6ChPzNZ5MCno36L0eyGl-kx-foUMGXIPKow&s"
                   alt=""
                 />

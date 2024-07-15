@@ -1,8 +1,10 @@
 import "tailwindcss/tailwind.css";
 import "./style.scss";
 import { Col, Row } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const ExoticFruits = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-full h-[700px] bg-yellow-300 ">
       <div>
@@ -18,7 +20,8 @@ const ExoticFruits = () => {
                 repetition injected humour, or non-characteristic words etc.
               </p>
               <a
-                href="#"
+                onClick={() => navigate("/shop")}
+                href=""
                 className="btn_buy border-2 rounded-[30px] text-xl px-12 py-3 p-4 "
               >
                 Buy

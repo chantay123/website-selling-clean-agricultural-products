@@ -29,7 +29,9 @@ const Payment = React.lazy(() => import("../container/Payment/Payment"));
 const Changepassword = React.lazy(
   () => import("../container/Auth/pages/ChangePassword")
 );
-
+const Myfavorite = React.lazy(
+  () => import("../components/Myfavorite/Myfavorite")
+);
 const publicRoute = [
   {
     path: config.routes.home,
@@ -82,6 +84,10 @@ const publicRoute = [
   {
     path: config.routes.changepassword,
     component: Changepassword,
+  },
+  {
+    path: config.routes.myfavorite,
+    component: Myfavorite,
   },
 ];
 

@@ -14,7 +14,10 @@ import {
 import requestApi from "../../../utils/interceptors";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setProduct } from "../../../redux/userReducer/userReducer";
+import {
+  setAdminStatus,
+  setProduct,
+} from "../../../redux/userReducer/userReducer";
 import { RootState } from "../../../redux/config";
 import {
   ProductAttribute,
@@ -29,11 +32,37 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import Icon from "@ant-design/icons/lib/components/Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Admin = () => {
-  const [open, setOpen] = useState(false);
+  const profile = async () => {
+    try {
+      const respone = await requestApi("users/@me/profile", "GET", {});
+      const a = respone.data.data;
+      dispatch(setAdminStatus(a?.role === "Admin"));
+    } catch (error) {
+      dispatch(setAdminStatus(false));
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    profile();
+  }, []);
 
+  const isadmin = useSelector((state: RootState) => state.user.isAdmin);
+  const deleteProduct = async (product_id: any) => {
+    try {
+      const respone = await requestApi(
+        `products?id=${product_id}`,
+        "DELETE",
+        {}
+      );
+      fetchPRODUCT();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);
   };
@@ -111,9 +140,12 @@ const Admin = () => {
     {
       title: "Action",
       key: "action",
-      render: (_) => (
+      render: (attributes: ProductAttribute[], productTypes) => (
         <Space size="middle">
-          <a className="rounded-md   border px-4 py-2 text-white bg-red-600">
+          <a
+            onClick={() => deleteProduct(productTypes._id)}
+            className="rounded-md   border px-4 py-2 text-white bg-red-600"
+          >
             Delete
           </a>
           <div>
@@ -144,6 +176,15 @@ const Admin = () => {
                   <Input />
                 </Form.Item>
 
+                <Form.Item label="A super long label text" name="">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="A super long label text" name="">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="A super long label text" name="">
+                  <Input />
+                </Form.Item>
                 <Form.Item label="A super long label text" name="">
                   <Input />
                 </Form.Item>
@@ -264,7 +305,11 @@ const Admin = () => {
       setStateOpenKeys(openKeys);
     }
   };
-
+  const navigate = useNavigate();
+  if (isadmin === false) {
+    navigate("*");
+    return;
+  }
   return (
     <div>
       <Row>

@@ -13,7 +13,6 @@ import { setCart, setcartnumber } from "../../redux/userReducer/userReducer";
 import { RootState } from "../../redux/config";
 import { cartTypes } from "../../@type/global.type";
 import { toast } from "react-toastify";
-import CartProducts from "../../components/CartProducts";
 
 const PayMent = () => {
   const [open, setOpen] = useState(false);
@@ -88,11 +87,14 @@ const PayMent = () => {
         product_attribute_ids: renderlist?.map((v) => v.productAttributeId),
         payment_method: value.payment,
         address: value.address,
+        phone: value.phone,
         note: value.note,
       });
       setOpen(false);
-      const message = "Thanh toan thanh cong";
-      toast.success(message);
+      const message = "Payment success";
+      toast.success(message, {
+        autoClose: 500,
+      });
       console.log(message);
       await fetchCart();
     } catch (error) {}
@@ -125,10 +127,11 @@ const PayMent = () => {
           <div className="container py-5">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white ">
+                `
                 <thead className="border-b ">
                   <tr>
                     <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Products
+                      Image
                     </th>
                     <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                       Name
@@ -142,9 +145,7 @@ const PayMent = () => {
                     <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Handle
-                    </th>
+                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -165,7 +166,7 @@ const PayMent = () => {
                           </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <p className="mb-0 mt-4">{cart.price}$</p>
+                          <p className="mb-0 mt-4">{cart.price}$/KG</p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mt-4">
@@ -288,14 +289,15 @@ const PayMent = () => {
                       <Form.Item label="Address" name="address">
                         <Input />
                       </Form.Item>
-
                       <Form.Item label="Payment" name="payment">
+                        <Input />
+                      </Form.Item>
+                      <Form.Item label="Phone" name="Phone">
                         <Input />
                       </Form.Item>
                       <Form.Item label="Note" name="note">
                         <Input />
                       </Form.Item>
-
                       <Form.Item label=" ">
                         <Button htmlType="submit" className="text_submit">
                           Submit
