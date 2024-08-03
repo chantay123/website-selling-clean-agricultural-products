@@ -25,7 +25,6 @@ import {
   productTypes,
 } from "../../../@type/global.type";
 
-import "./style.scss";
 import {
   AppstoreOutlined,
   MailOutlined,
@@ -37,8 +36,8 @@ import { Link, useNavigate } from "react-router-dom";
 const Admin = () => {
   const profile = async () => {
     try {
-      const respone = await requestApi("users/@me/profile", "GET", {});
-      const a = respone.data.data;
+      const response = await requestApi("users/@me/profile", "GET", {});
+      const a = response.data.data;
       dispatch(setAdminStatus(a?.role === "Admin"));
     } catch (error) {
       dispatch(setAdminStatus(false));
@@ -52,7 +51,7 @@ const Admin = () => {
   const isadmin = useSelector((state: RootState) => state.user.isAdmin);
   const deleteProduct = async (product_id: any) => {
     try {
-      const respone = await requestApi(
+      const response = await requestApi(
         `products?id=${product_id}`,
         "DELETE",
         {}
@@ -75,10 +74,10 @@ const Admin = () => {
   const dispatch = useDispatch();
   const fetchPRODUCT = async () => {
     try {
-      const respons = await requestApi("products", "GET", {});
-      const a = respons.data.data;
+      const response = await requestApi("products", "GET", {});
+      const a = response.data.data;
       dispatch(setProduct(a));
-      console.log(respons);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -144,7 +143,7 @@ const Admin = () => {
         <Space size="middle">
           <a
             onClick={() => deleteProduct(productTypes._id)}
-            className="rounded-md   border px-4 py-2 text-white bg-red-600"
+            className="rounded-md border px-4 py-2 text-white bg-red-600"
           >
             Delete
           </a>
@@ -311,11 +310,11 @@ const Admin = () => {
     return;
   }
   return (
-    <div>
+    <div className="p-4 bg-gray-100">
       <Row>
         <Col span={5}>
-          <div className="flex ">
-            <div className="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
+          <div className="flex">
+            <div className="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0 border-r">
               <div className="py-4 text-gray-500 dark:text-gray-400">
                 <a
                   className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
@@ -332,7 +331,7 @@ const Admin = () => {
                 >
                   <Menu.Item key="1">
                     <Icon type="pie-chart" />
-                    <span>Deshboard</span>
+                    <span>Dashboard</span>
                     <Link to="/" />
                   </Menu.Item>
                   <Menu.Item key="2">

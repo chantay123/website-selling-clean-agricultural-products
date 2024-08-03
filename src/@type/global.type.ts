@@ -48,6 +48,13 @@ export type CategoryType = {
   slug: string;
 };
 
+export type FavoriteType = {
+  _id: string;
+  name: string;
+  origin: string;
+  thumbnail_url: string;
+};
+
 export type cartTypes = {
   _id: string;
   user_id: string;

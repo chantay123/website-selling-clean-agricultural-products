@@ -127,7 +127,6 @@ const PayMent = () => {
           <div className="container py-5">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white ">
-                `
                 <thead className="border-b ">
                   <tr>
                     <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">

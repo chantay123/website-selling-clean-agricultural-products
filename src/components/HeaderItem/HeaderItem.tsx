@@ -20,7 +20,7 @@ import {
   setprofile,
 } from "../../redux/userReducer/userReducer";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const HearderItem = () => {
   const items: MenuProps["items"] = [

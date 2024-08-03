@@ -1,22 +1,25 @@
 import "./style.scss";
 import { Flex, Layout } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import requestApi from "../../utils/interceptors";
 import {
   setCategory,
   setProduct,
   setcartnumber,
+  setfavorite,
 } from "../../redux/userReducer/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import ButtonClick from "../Button/ButtonClick";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import ButtonLike from "../ButtonLike";
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
   height: "380px",
   width: "310px",
 };
+
 const CartProduct = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("category");
@@ -26,15 +29,16 @@ const CartProduct = () => {
     try {
       const respone = await requestApi("categories", "GET", {});
       const a = respone.data.data;
+      console.log(a);
       dispatch(setCategory(a));
       console.log(respone);
     } catch (error) {
       console.log(error);
     }
   };
-  const filterCategory = useSelector((state: RootState) => state.user.category);
-  //call api get all product
 
+  //call api get all product
+  const filterCategory = useSelector((state: RootState) => state.user.category);
   const fetchProduct = async () => {
     try {
       const respone = await requestApi(
@@ -48,18 +52,18 @@ const CartProduct = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchProduct();
   }, [query]);
+
   useEffect(() => {
     category();
   }, []);
 
   const product = useSelector((state: RootState) => state.user.product);
-
   const lengthProduct = product.length;
   const filterProduct = lengthProduct > 5 ? product.slice(0, 8) : product;
-  console.log(filterProduct);
 
   const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
@@ -82,6 +86,7 @@ const CartProduct = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -94,6 +99,57 @@ const CartProduct = () => {
     };
     fetchCart();
   }, []);
+
+  const favorite = async () => {
+    try {
+      const response = await requestApi("users/products/favorites", "GET", {});
+      console.log(response);
+      const a = response.data.data;
+      dispatch(setfavorite(a));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const buttonLike = async (product_id: string) => {
+    console.log(product_id);
+    try {
+      await requestApi(`products/${product_id}/like`, "POST", {
+        product_id: product_id,
+      });
+      favorite();
+    } catch (error: any) {
+      const { message } = error.response.data;
+      toast.error(message);
+    }
+  };
+
+  const buttonUnlike = async (product_id: string) => {
+    try {
+      const respone = await requestApi(
+        `products/${product_id}/unlike`,
+        "POST",
+        {
+          product_id: product_id,
+        }
+      );
+      favorite();
+      console.log(respone);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const listfavorite = useSelector((state: RootState) => state.user.favorite);
+  //check listfavorite
+  const checklike = (_id: string) => {
+    if (listfavorite.some((e) => e._id === _id)) {
+      return true;
+    }
+    return false;
+  };
+
+  // useEffect(() => {}, [checklike]);
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
       <div className="mt-20 items-center flex ">
@@ -130,7 +186,24 @@ const CartProduct = () => {
                 <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
                   {product.category?.name}
                 </div>
-                <div className=" ">
+                <div className="absolute ml-64 mt-2">
+                  {product.attributes.map((attr) => (
+                    <ButtonLike
+                      className={
+                        checklike(product._id) ? "bg-red-600" : "bg-gray-400"
+                      }
+                      key={attr._id}
+                      onclick={() => {
+                        if (checklike(product._id)) {
+                          buttonUnlike(product._id);
+                        } else {
+                          buttonLike(product._id);
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+                <div>
                   <Link to={`product/${product._id}`}>
                     <img
                       className="w-[400px] h-[200px] rounded object-cover"

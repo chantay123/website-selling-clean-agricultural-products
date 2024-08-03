@@ -2,11 +2,13 @@ import "./style.scss";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
+import { SearchOutlined } from "@ant-design/icons";
 
 const Categories = () => {
   const product = useSelector((state: RootState) => state.user.product);
 
   const group: Record<string, any[]> = {};
+
   const category = product.reduce((prev, curr) => {
     if (!prev[curr.category.slug]) {
       prev[curr.category.slug] = [curr];
@@ -30,14 +32,14 @@ const Categories = () => {
             <div className="container mx-auto p-5">
               <div className="">
                 <div className="flex w-5">
-                  {/* <input
+                  <input
                     type="search"
                     className="flex-1 border border-gray-300 rounded-l py-3 px-10 focus:outline-none"
                     placeholder="keywords"
                   />
                   <button className="bg-gray-200 px-4 py-3 rounded-r">
                     <SearchOutlined />
-                  </button> */}
+                  </button>
                 </div>
               </div>
               <div className="mb-5 mt-6">

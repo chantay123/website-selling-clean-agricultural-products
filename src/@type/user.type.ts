@@ -1,5 +1,6 @@
 import {
   CategoryType,
+  FavoriteType,
   cartTypes,
   productTypes,
   profileType,
@@ -31,6 +32,7 @@ export type userState = {
   profile: profileType | null;
   cartnumber: number;
   category: CategoryType[] | [];
+  favorite: FavoriteType[] | [];
 };
 
 export type userLoginType = {
