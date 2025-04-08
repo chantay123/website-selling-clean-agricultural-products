@@ -1,4 +1,4 @@
-import { Flex, Pagination } from "antd";
+import { Flex } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
@@ -17,10 +17,10 @@ const style: React.CSSProperties = {
 const Cart = () => {
   const dispatch = useDispatch();
 
-  //prop
+  //props
   const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
-      const respone = await requestApi("carts/items", "POST", {
+      await requestApi("carts/items", "POST", {
         items: [
           {
             product_id: product_id,
@@ -70,21 +70,22 @@ const Cart = () => {
             </h2>
             <div className="flex  mt-30 items-center justify-evenly mt-5">
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
-                {product.attributes.map((attr) => attr.original_price)}$/KG
+                {product.attributes?.map((attr) => attr.original_price)}$/KG
               </p>
-              {product.attributes.map((attr) => (
+              {product.attributes?.map((attr) => (
                 <ButtonClick
+                  label=""
                   key={attr._id}
-                  onclick={() => buttonAdd(attr._id, product._id)}
+                  onClick={() => buttonAdd(attr._id, product._id)}
                 />
               ))}
             </div>
           </div>
         </div>
       ))}
-      <div className=" mt-10">
+      {/* <div className=" mt-10">
         <Pagination defaultCurrent={1} total={50} />
-      </div>
+      </div> */}
     </Flex>
   );
 };

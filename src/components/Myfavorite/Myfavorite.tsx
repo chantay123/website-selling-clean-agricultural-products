@@ -27,11 +27,11 @@ const Myfavorite = () => {
 
   return (
     <div>
-      <div>
+      <section>
         <Layout>
           <HearderItem />
         </Layout>
-      </div>
+      </section>
       <div className="ml-20 mr-20 mt-20">
         <div className="container-fluid py-5">
           <h2 className="text-3xl">My favorite product</h2>

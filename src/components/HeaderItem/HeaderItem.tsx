@@ -120,7 +120,7 @@ const HearderItem = () => {
         <div>
           <ul className="flex text-base">
             <li>
-              <NavLink to="/" className=" p-4 ">
+              <NavLink to="/" className=" p-4   ">
                 Home
               </NavLink>
             </li>

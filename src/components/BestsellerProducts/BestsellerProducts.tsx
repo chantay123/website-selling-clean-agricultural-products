@@ -57,7 +57,7 @@ const BestsellerProducts = () => {
                   <h4 className=" mb-5 text-2xl font-bold text_store ">
                     3.12 $
                   </h4>
-                  <Button />
+                  <Button label="Add to card" />
                 </div>
               </Col>
             </Row>
@@ -93,7 +93,7 @@ const BestsellerProducts = () => {
                   <h4 className=" mb-5 text-2xl font-bold text_store ">
                     3.12 $
                   </h4>
-                  <Button />
+                  <Button label="Add to cart" />
                 </div>
               </Col>
             </Row>
@@ -129,7 +129,7 @@ const BestsellerProducts = () => {
                   <h4 className=" mb-5 text-2xl font-bold text_store ">
                     3.12 $
                   </h4>
-                  <Button />
+                  <Button label="Add to cart" />
                 </div>
               </Col>
             </Row>
@@ -169,7 +169,7 @@ const BestsellerProducts = () => {
                   <h4 className=" mb-5 text-2xl font-bold text_store  ">
                     3.12 $
                   </h4>
-                  <Button />
+                  <Button label="Add to cart" />
                 </div>
               </Col>
             </Row>
@@ -205,7 +205,7 @@ const BestsellerProducts = () => {
                   <h4 className=" mb-5 text-2xl font-bold text_store  ">
                     3.12 $
                   </h4>
-                  <Button />
+                  <Button label="Add to cart" />
                 </div>
               </Col>
             </Row>
@@ -241,7 +241,7 @@ const BestsellerProducts = () => {
                   <h4 className=" mb-5 text-2xl font-bold text_store  ">
                     3.12 $
                   </h4>
-                  <Button />
+                  <Button label="Add to cart" />
                 </div>
               </Col>
             </Row>
@@ -278,7 +278,7 @@ const BestsellerProducts = () => {
                 3.12 $
               </h4>
               <div className="flex justify-center ">
-                <Button />
+                <Button label="Add to cart" />
               </div>
             </div>
           </div>
@@ -312,7 +312,7 @@ const BestsellerProducts = () => {
                 3.12 $
               </h4>
               <div className="flex justify-center ">
-                <Button />
+                <Button label="Add to cart" />
               </div>
             </div>
           </div>
@@ -346,7 +346,7 @@ const BestsellerProducts = () => {
                 3.12 $
               </h4>
               <div className="flex justify-center ">
-                <Button />
+                <Button label="Add to cart" />
               </div>
             </div>
           </div>
@@ -380,7 +380,7 @@ const BestsellerProducts = () => {
                 3.12 $
               </h4>
               <div className="flex justify-center ">
-                <Button />
+                <Button label="Add to cart" />
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import config from "../config";
-import React, { Component } from "react";
+import React from "react";
 
 const MainHome = React.lazy(() => import("../container/Home/page/MainHome"));
 const ProductDetail = React.lazy(
@@ -24,13 +24,23 @@ const Profile = React.lazy(
   () => import("../container/Profile/Page/MainProfile")
 );
 const Shop = React.lazy(() => import("../container/Shop/Page/Shop"));
-const Admin = React.lazy(() => import("../container/Admin/page/Admin"));
+const Admin = React.lazy(
+  () => import("../container/Admin/page/HomeAdmin/Admin")
+);
 const Payment = React.lazy(() => import("../container/Payment/Payment"));
 const Changepassword = React.lazy(
   () => import("../container/Auth/pages/ChangePassword")
 );
 const Myfavorite = React.lazy(
   () => import("../components/Myfavorite/Myfavorite")
+);
+const Stock = React.lazy(() => import("../container/Admin/page/Stock"));
+
+const ProductAdmin = React.lazy(
+  () => import("../container/Admin/page/ProductAdmin/ProductAdmin")
+);
+const EditAdmin = React.lazy(
+  () => import("../container/Admin/page/EditAdmin/EditAdmin")
 );
 const publicRoute = [
   {
@@ -88,6 +98,18 @@ const publicRoute = [
   {
     path: config.routes.myfavorite,
     component: Myfavorite,
+  },
+  {
+    path: config.routes.stock,
+    component: Stock,
+  },
+  {
+    path: config.routes.productadmin,
+    component: ProductAdmin,
+  },
+  {
+    path: config.routes.editadmin,
+    component: EditAdmin,
   },
 ];
 

@@ -13,6 +13,9 @@ export type routeTypes = {
   payment: string;
   changepassword: string;
   myfavorite: string;
+  stock: string;
+  productadmin: string;
+  editadmin: string;
 };
 
 export type productTypes = {
@@ -83,4 +86,17 @@ export type profileType = {
   address: string;
   avatar: string;
   gender: boolean;
+};
+
+export type SupplierType = {
+  _id: string;
+  company_name: string;
+  contact_name: string;
+  contact_title: string;
+  phone: string;
+  email: string;
+  address: string;
+  website: string;
+  certification_details: string;
+  description: string;
 };

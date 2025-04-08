@@ -42,7 +42,7 @@ const CartProduct = () => {
   const fetchProduct = async () => {
     try {
       const respone = await requestApi(
-        !query ? "products" : `products?category=${query}`,
+        !query ? "products" : `products/categories/${query}`,
         "GET",
         {}
       );
@@ -66,6 +66,8 @@ const CartProduct = () => {
   const filterProduct = lengthProduct > 5 ? product.slice(0, 8) : product;
 
   const buttonAdd = async (attribute_id: string, product_id: string) => {
+    console.log(attribute_id);
+    console.log(product_id);
     try {
       const respone = await requestApi("carts/items", "POST", {
         items: [
@@ -166,9 +168,9 @@ const CartProduct = () => {
               </Link>
             </li>
             {filterCategory.map((item) => (
-              <li key={item.slug}>
+              <li key={item._id}>
                 <Link
-                  to={`?category=${item.slug}`}
+                  to={`?category=${item._id}`}
                   className="p-3 border-2 rounded-[30px] ml-4 capitalize"
                 >
                   {item.slug}
@@ -187,7 +189,7 @@ const CartProduct = () => {
                   {product.category?.name}
                 </div>
                 <div className="absolute ml-64 mt-2">
-                  {product.attributes.map((attr) => (
+                  {product.attributes?.map((attr) => (
                     <ButtonLike
                       className={
                         checklike(product._id) ? "bg-red-600" : "bg-gray-400"
@@ -217,12 +219,13 @@ const CartProduct = () => {
                 </h2>
                 <div className="flex  mt-30 items-center justify-evenly mt-5">
                   <p className=" text_money p-4 text-xl  font-popins font-semibold">
-                    {product.attributes.map((attr) => attr.original_price)}$/KG
+                    {product.attributes?.map((attr) => attr.original_price)}$/KG
                   </p>
-                  {product.attributes.map((attr) => (
+                  {product.attributes?.map((attr) => (
                     <ButtonClick
+                      label="Add to card"
                       key={attr._id}
-                      onclick={() => buttonAdd(attr._id, product._id)}
+                      onClick={() => buttonAdd(attr._id, product._id)}
                     />
                   ))}
                 </div>

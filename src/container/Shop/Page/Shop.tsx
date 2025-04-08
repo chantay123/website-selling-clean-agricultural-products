@@ -10,9 +10,7 @@ const Shop = () => {
   return (
     <div>
       <Layout>
-        <div>
-          <HeaderItem />
-        </div>
+        <HeaderItem />
       </Layout>
       <div>
         <h1 className="text text-4xl mb-4 mt-32 ml-20 mr-20 ">

@@ -15,6 +15,9 @@ const routes: routeTypes = {
   payment: "/payment",
   changepassword: "/changepassword",
   myfavorite: "/myfavorite",
+  stock: "/stock",
+  productadmin: "/productadmin",
+  editadmin: "/editadmin/:editId",
 } as const;
 
 export default routes;

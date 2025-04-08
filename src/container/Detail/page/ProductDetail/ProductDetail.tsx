@@ -28,7 +28,6 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { productId } = useParams();
-  console.log(productId);
   const product = useSelector((state: RootState) => state.user.product);
 
   const detail = product.find((p) => p._id === productId);
@@ -52,7 +51,7 @@ const ProductDetail = () => {
   }
   const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
-      const respone = await requestApi("carts/items", "POST", {
+      await requestApi("carts/items", "POST", {
         items: [
           {
             product_id: product_id,

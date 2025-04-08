@@ -22,7 +22,6 @@ const PayMent = () => {
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
     setOpen(false);
   };
   const listcard: cartTypes | null | undefined = useSelector(
