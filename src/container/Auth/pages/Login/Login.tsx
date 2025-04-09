@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ACCESS_TOKEN, setStore } from "../../../../utils/setting";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,8 +25,7 @@ const Login = () => {
       console.log(response);
       const { access_token } = response.data.data;
       toast.success("Đăng nhập thành công!");
-      localStorage.setItem("access_token", access_token);
-
+      setStore(ACCESS_TOKEN, access_token);
       dispatch(setAuthenticationStatus(true));
       navigate("/");
     } catch (error: any) {

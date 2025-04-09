@@ -1,7 +1,37 @@
 import { useNavigate } from "react-router-dom";
+import requestApi from "../../../../utils/interceptors";
+import { ACCESS_TOKEN, clearCookie, clearStore, REFRESH_TOKEN } from "../../../../utils/setting";
+import { toast } from "react-toastify";
+import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const logout = async () => {
+    try {
+      const access_token = localStorage.getItem("access_token");
+
+      const response = await requestApi(
+        "auth/logout",
+        "POST",
+        {},
+        {
+          Authorization: `Bearer ${access_token}`,
+        }
+      );
+      const { message } = response.data;
+      toast.success(message || "Đăng xuất thành công");
+      clearStore(ACCESS_TOKEN);
+      clearCookie(REFRESH_TOKEN);
+
+      dispatch(setAuthenticationStatus(false));
+      navigate("/login");
+    } catch (error: any) {
+      console.error("Logout failed:", error);
+      toast.error("Lỗi đăng xuất");
+    }
+  };
   return (
     <div className="bg-white w-64 h-screen p-6">
       <div className="space-y-4">
@@ -56,8 +86,11 @@ const Sidebar = () => {
             </svg>
           </i>
 
-          <span className="ml-4 text-gray-500 text-base font-bold  ">
-            Orders
+          <span onClick={() => {
+              navigate("/categoryadmin");
+            }}
+            className="ml-4 text-gray-500 text-base font-bold  ">
+            Categories
           </span>
         </a>
         <a
@@ -195,7 +228,7 @@ const Sidebar = () => {
           </span>
         </a>
       </div>
-      <button className="bg-red-500 mt-48 text-white ml-8 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+      <button onClick={() => logout()} className="bg-red-500 mt-48 text-white ml-8 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
         Đăng xuất
       </button>
     </div>

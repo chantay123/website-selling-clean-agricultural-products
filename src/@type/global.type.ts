@@ -16,6 +16,7 @@ export type routeTypes = {
   stock: string;
   productadmin: string;
   editadmin: string;
+  categoryadmin: string;
 };
 
 export type productTypes = {

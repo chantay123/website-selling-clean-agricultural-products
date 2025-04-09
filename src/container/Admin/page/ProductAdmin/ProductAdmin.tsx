@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Space, Table, TableProps } from "antd";
 import requestApi from "../../../../utils/interceptors";
 import { useEffect } from "react";
@@ -18,11 +19,16 @@ import { Link, useNavigate } from "react-router-dom";
 import HeaderAdmin from "../../components/HeaderAdmin";
 import Sidebar from "../../components/Sidebar";
 const ProductAdmin = () => {
+  const access_token = localStorage.getItem("access_token");
   const profile = async () => {
     try {
-      const response = await requestApi("users/@me/profile", "GET", {});
+      const response = await requestApi("auth/me", "GET", {}, 
+        {
+          Authorization: `Bearer ${access_token}`,
+        }
+      );
       const a = response.data.data;
-      dispatch(setAdminStatus(a?.role === "Admin"));
+      dispatch(setAdminStatus(a?.role.name === "admin"));
     } catch (error) {
       dispatch(setAdminStatus(false));
       console.log(error);
@@ -36,7 +42,11 @@ const ProductAdmin = () => {
   const deleteProduct = async (product_id: any) => {
     console.log(product_id);
     try {
-      await requestApi(`products?id=${product_id}`, "DELETE", {});
+      await requestApi(`products/${product_id}`, "DELETE", {},
+        {
+          Authorization: `Bearer ${access_token}`,
+        }
+      );
       fetchPRODUCT();
     } catch (error) {
       console.log(error);
@@ -55,7 +65,11 @@ const ProductAdmin = () => {
   const dispatch = useDispatch();
   const fetchPRODUCT = async () => {
     try {
-      const response = await requestApi("products", "GET", {});
+      const response = await requestApi("products", "GET", {},
+        {
+          Authorization: `Bearer ${access_token}`,
+        }
+      );
       const a = response.data.data;
       dispatch(setProduct(a));
       console.log(response);
@@ -161,7 +175,11 @@ const ProductAdmin = () => {
 
   const supplier = async () => {
     try {
-      const respone = await requestApi("suppliers", "GET", {});
+      const respone = await requestApi("supplier", "GET", {},
+        {
+          Authorization: `Bearer ${access_token}`,
+        }
+      );
       const a = respone.data.data;
       console.log(a);
       dispatch(setsupplier(a));
