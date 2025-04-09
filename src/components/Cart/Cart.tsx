@@ -20,7 +20,7 @@ const Cart = () => {
   //props
   const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
-      await requestApi("carts/items", "POST", {
+      await requestApi("carts", "POST", {
         items: [
           {
             product_id: product_id,

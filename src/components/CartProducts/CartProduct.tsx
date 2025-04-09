@@ -39,24 +39,29 @@ const CartProduct = () => {
 
   //call api get all product
   const filterCategory = useSelector((state: RootState) => state.user.category);
+
   const fetchProduct = async () => {
     try {
-      const respone = await requestApi(
-        !query ? "products" : `products/categories/${query}`,
-        "GET",
-        {}
-      );
-      const arr = respone.data.data;
-      dispatch(setProduct(arr));
+      const endpoint = query ? `products/categories/${query}` : "products";
+      const response = await requestApi(endpoint, "GET", {});
+
+      if (response?.data?.data) {
+        dispatch(setProduct(response.data.data));
+      } else {
+        console.warn("Không có dữ liệu sản phẩm trả về");
+        dispatch(setProduct([]));
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Lỗi khi fetch sản phẩm:", error);
     }
   };
 
+  // Gọi fetchProduct mỗi khi query thay đổi (danh mục thay đổi)
   useEffect(() => {
     fetchProduct();
   }, [query]);
 
+  // Gọi hàm category() 1 lần khi component mounted
   useEffect(() => {
     category();
   }, []);
@@ -81,6 +86,7 @@ const CartProduct = () => {
       console.log(respone);
       const respones = await requestApi("carts", "GET", {});
       const list = respones.data.data;
+      console.log(respone);
       dispatch(setcartnumber(list.carts.length));
       const message = "add product successfully";
       toast.success(message);
@@ -92,7 +98,7 @@ const CartProduct = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const respone = await requestApi("carts", "GET", {});
+        const respone = await requestApi("carts/me/cart", "GET", {});
         const list = respone.data.data;
         dispatch(setcartnumber(list.carts.length));
       } catch (error) {
@@ -151,7 +157,6 @@ const CartProduct = () => {
     return false;
   };
 
-  // useEffect(() => {}, [checklike]);
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
       <div className="mt-20 items-center flex ">

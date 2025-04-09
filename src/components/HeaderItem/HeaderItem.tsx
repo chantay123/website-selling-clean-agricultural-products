@@ -13,7 +13,6 @@ import {
   REFRESH_TOKEN,
   clearCookie,
   clearStore,
-  getCookie,
 } from "../../utils/setting";
 import {
   setAuthenticationStatus,
@@ -82,35 +81,50 @@ const HearderItem = () => {
 
   const logout = async () => {
     try {
-      const refresh_token = getCookie(REFRESH_TOKEN);
-      const response = await requestApi("users/logout", "POST", {
-        refresh_token,
-      });
+      const access_token = localStorage.getItem("access_token");
+
+      const response = await requestApi(
+        "auth/logout",
+        "POST",
+        {},
+        {
+          Authorization: `Bearer ${access_token}`,
+        }
+      );
       const { message } = response.data;
-      toast.success(message);
-      dispatch(setAuthenticationStatus(false));
+      toast.success(message || "Đăng xuất thành công");
       clearStore(ACCESS_TOKEN);
       clearCookie(REFRESH_TOKEN);
-    } catch (error) {
-      console.log(error);
+
+      dispatch(setAuthenticationStatus(false));
+    } catch (error: any) {
+      console.error("Logout failed:", error);
+      toast.error("Lỗi đăng xuất");
     }
   };
+
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
   );
   const cartnumber = useSelector((state: RootState) => state.user.cartnumber);
   const fetchAvatar = async () => {
     try {
-      const response = await requestApi("users/@me/profile", "GET", {});
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        return;
+      }
+      const response = await requestApi(`profile/${userId}`, "GET", {});
       const avatar = response.data.data;
       dispatch(setprofile(avatar));
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching avatar:", error);
     }
   };
+
   useEffect(() => {
     fetchAvatar();
   }, []);
+
   const isprofile = useSelector((state: RootState) => state.user.profile);
   return (
     <Layout className="bg-white background p-3 drop-shadow-xl fixed z-10 w-full">
@@ -131,18 +145,18 @@ const HearderItem = () => {
             </li>
             <li>
               <NavLink to="/product-detail" className="p-4">
-                {/* Detail */}
+                Detail
               </NavLink>
             </li>
             <li>
-              {/* <a className="item p-4" href="#">
+              <a className="item p-4" href="#">
                 Contact
-              </a> */}
+              </a>
             </li>
             <li>
-              {/* <a className="item p-4" href="#">
+              <a className="item p-4" href="#">
                 Knowledge
-              </a> */}
+              </a>
             </li>
           </ul>
         </div>
