@@ -20,7 +20,7 @@ const Cart = () => {
   //props
   const buttonAdd = async (attribute_id: string, product_id: string) => {
     try {
-      await requestApi("carts", "POST", {
+      await requestApi("carts/items", "POST", {
         items: [
           {
             product_id: product_id,
@@ -29,7 +29,7 @@ const Cart = () => {
           },
         ],
       });
-      const respones = await requestApi("carts", "GET", {});
+      const respones = await requestApi("carts/me/cart", "GET", {});
       const list = respones.data.data;
       dispatch(setcartnumber(list.carts.length));
     } catch (error) {
@@ -70,11 +70,11 @@ const Cart = () => {
             </h2>
             <div className="flex  mt-30 items-center justify-evenly mt-5">
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
-                {product.attributes?.map((attr) => attr.original_price)}$/KG
+                {product.sold}$/KG
               </p>
               {product.attributes?.map((attr) => (
                 <ButtonClick
-                  label=""
+                  label="Add to "
                   key={attr._id}
                   onClick={() => buttonAdd(attr._id, product._id)}
                 />

@@ -81,21 +81,8 @@ const HearderItem = () => {
 
   const logout = async () => {
     try {
-      const access_token = localStorage.getItem("access_token");
-
-      const response = await requestApi(
-        "auth/logout",
-        "POST",
-        {},
-        {
-          Authorization: `Bearer ${access_token}`,
-        }
-      );
-      const { message } = response.data;
-      toast.success(message || "Đăng xuất thành công");
       clearStore(ACCESS_TOKEN);
-      clearCookie(REFRESH_TOKEN);
-
+      toast.success("Đăng xuất thành công");
       dispatch(setAuthenticationStatus(false));
     } catch (error: any) {
       console.error("Logout failed:", error);

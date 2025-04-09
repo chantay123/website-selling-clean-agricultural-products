@@ -1,6 +1,6 @@
 import "./style.scss";
 import { Flex, Layout } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import requestApi from "../../utils/interceptors";
 import {
   setCategory,
@@ -39,29 +39,25 @@ const CartProduct = () => {
 
   //call api get all product
   const filterCategory = useSelector((state: RootState) => state.user.category);
-
   const fetchProduct = async () => {
     try {
-      const endpoint = query ? `products/categories/${query}` : "products";
-      const response = await requestApi(endpoint, "GET", {});
-
-      if (response?.data?.data) {
-        dispatch(setProduct(response.data.data));
-      } else {
-        console.warn("Không có dữ liệu sản phẩm trả về");
-        dispatch(setProduct([]));
-      }
+      const respone = await requestApi(
+        !query ? "products" : `products/categories/${query}`,
+        "GET",
+        {}
+      );
+      console.log(respone);
+      const arr = respone.data.data;
+      dispatch(setProduct(arr));
     } catch (error) {
-      console.error("Lỗi khi fetch sản phẩm:", error);
+      console.log(error);
     }
   };
 
-  // Gọi fetchProduct mỗi khi query thay đổi (danh mục thay đổi)
   useEffect(() => {
     fetchProduct();
   }, [query]);
 
-  // Gọi hàm category() 1 lần khi component mounted
   useEffect(() => {
     category();
   }, []);
@@ -74,7 +70,7 @@ const CartProduct = () => {
     console.log(attribute_id);
     console.log(product_id);
     try {
-      const respone = await requestApi("carts/items", "POST", {
+      const respone = await requestApi("carts", "POST", {
         items: [
           {
             product_id: product_id,
@@ -167,12 +163,12 @@ const CartProduct = () => {
         </div>
         <div className="mt-10 ml-72">
           <ul className="flex text-xl">
-            <li>
+            {/* <li>
               <Link to="?" className="p-3 border-2 rounded-[30px] ">
                 All Products
               </Link>
-            </li>
-            {filterCategory.map((item) => (
+            </li> */}
+            {/* {filterCategory.map((item) => (
               <li key={item._id}>
                 <Link
                   to={`?category=${item._id}`}
@@ -181,7 +177,7 @@ const CartProduct = () => {
                   {item.slug}
                 </Link>
               </li>
-            ))}
+            ))} */}
           </ul>
         </div>
       </div>
@@ -224,7 +220,7 @@ const CartProduct = () => {
                 </h2>
                 <div className="flex  mt-30 items-center justify-evenly mt-5">
                   <p className=" text_money p-4 text-xl  font-popins font-semibold">
-                    {product.attributes?.map((attr) => attr.original_price)}$/KG
+                    {product.sold}$/KG
                   </p>
                   {product.attributes?.map((attr) => (
                     <ButtonClick
