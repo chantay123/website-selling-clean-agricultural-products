@@ -10,15 +10,10 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const logout = async () => {
     try {
-      const access_token = localStorage.getItem("access_token");
-
       const response = await requestApi(
         "auth/logout",
         "POST",
         {},
-        {
-          Authorization: `Bearer ${access_token}`,
-        }
       );
       const { message } = response.data;
       toast.success(message || "Đăng xuất thành công");
@@ -167,8 +162,8 @@ const Sidebar = () => {
               />
             </svg>
           </i>
-          <span className="ml-4 text-gray-500 text-base font-bold    ">
-            Messages
+          <span onClick={() => navigate("/supplier")} className="ml-4 text-gray-500 text-base font-bold    ">
+            Supllier
           </span>
         </a>
       </div>
