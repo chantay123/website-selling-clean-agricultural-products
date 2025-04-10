@@ -10,6 +10,7 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const logout = async () => {
     try {
+
       const response = await requestApi(
         "auth/logout",
         "POST",
@@ -17,9 +18,9 @@ const Sidebar = () => {
       );
       const { message } = response.data;
       toast.success(message || "Đăng xuất thành công");
-      clearStore(ACCESS_TOKEN);
-      clearCookie(REFRESH_TOKEN);
 
+      clearStore(ACCESS_TOKEN);
+      toast.success("Đăng xuất thành công");
       dispatch(setAuthenticationStatus(false));
       navigate("/login");
     } catch (error: any) {
