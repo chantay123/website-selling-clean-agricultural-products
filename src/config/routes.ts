@@ -19,7 +19,7 @@ const routes: routeTypes = {
   productadmin: "/productadmin",
   editadmin: "/editadmin/:editId",
   categoryadmin: "/categoryadmin",
-
+  orderadmin: "/orderadmin",
   supplier: "/supplier",
   supplieredit: "/supplier/edit/:id",
   suppliercreate: "/supplier/create",
