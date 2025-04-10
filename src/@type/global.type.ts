@@ -38,7 +38,7 @@ export type productTypes = {
   rating?: number;
   numberOfReview?: number;
   hot?: boolean;
-  attributes: ProductAttribute[];
+  productAttributes: ProductAttribute[];
   category: CategoryType;
   total_price: number;
 };
@@ -53,30 +53,27 @@ export type ProductAttribute = {
   discount_price?: number;
   quantity: number;
 };
+
+export type cartTypes = {
+  _id: string;
+  user: string;
+  total_price: number;
+  items: cartItemType[];
+};
 export type CategoryType = {
   _id: string;
   name: string;
   slug: string;
 };
-
-export type FavoriteType = {
-  _id: string;
-  name: string;
-  origin: string;
-  thumbnail_url: string;
-};
-
-export type cartTypes = {
-  _id: string;
-  user_id: string;
-  total_price: number;
-  carts: cartItemType[];
-};
+// export type FavoriteType = {
+//   _id: string;
+//   name: string;
+//   origin: string;
+//   thumbnail_url: string;
+// };
 
 export type cartItemType = {
-  price: number;
-  productAttributeId: string;
-  productDetails: productDetailTypes;
+  product_id: productTypes;
   quantity: number;
 };
 export type productDetailTypes = {
@@ -89,10 +86,12 @@ export type productDetailTypes = {
 
 export type profileType = {
   _id: string;
-  full_name: string;
+  username: string;
+  email: string;
+  fullName: string;
   thumbnail: string;
   address: string;
-  avatar: string;
+  avatarUrl: string;
   gender: boolean;
 };
 

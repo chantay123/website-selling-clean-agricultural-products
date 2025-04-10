@@ -11,7 +11,7 @@ const ChangePassword = () => {
   const changepassWordSubmit = async (value: any) => {
     const { old_password, password, confirm_password } = value;
     try {
-      const response = await requestApi("users/password/change", "POST", {
+      const response = await requestApi("auth/changepassword", "POST", {
         old_password,
         password,
         confirm_password,
