@@ -20,9 +20,10 @@ export type routeTypes = {
   supplier: string;
   supplieredit: string;
   suppliercreate: string;
-
+  orderadmin: string;
   editcategoryadmin: string;
   addcategoryadmin: string;
+  addproductadmin: string;
 
 };
 
@@ -106,4 +107,18 @@ export type SupplierType = {
   website: string;
   certification_details: string;
   description: string;
+};
+
+export type OrderType = {
+  _id: string;
+  user: string;
+  payment_method: string;
+  status: "pending" | "completed" | "cancelled";//enum
+  address: string;
+  note?: string;
+  total_price: number;
+  order_date: Date;
+  isDeleted?: boolean;
+  createdAt: string;
+  updatedAt: string;
 };

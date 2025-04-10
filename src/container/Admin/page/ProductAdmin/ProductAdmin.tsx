@@ -23,7 +23,7 @@ const ProductAdmin = () => {
   const access_token = localStorage.getItem("access_token");
   const profile = async () => {
     try {
-      const response = await requestApi("auth/me", "GET", {}, 
+      const response = await requestApi("auth/me", "GET", {},
         {
           Authorization: `Bearer ${access_token}`,
         }
@@ -60,17 +60,7 @@ const ProductAdmin = () => {
         }
       },
     });
-  };  
-  // const [open, setOpen] = useState(false);
-  // const showModal = () => {
-  //   setOpen(true);
-  // };
-
-  // const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-  //   console.log(e);
-  //   setOpen(false);
-  // };
-
+  };
   const dispatch = useDispatch();
   const fetchPRODUCT = async () => {
     try {
@@ -156,7 +146,7 @@ const ProductAdmin = () => {
         </Space>
       ),
     },
-  ];  
+  ];
 
   const data: extendedProductType[] = extendedList;
 
@@ -183,11 +173,32 @@ const ProductAdmin = () => {
     return;
   }
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       <HeaderAdmin />
       <div className="flex">
         <Sidebar />
-        <Table pagination={{ pageSize: 6 }} className="mt-10 w-full " columns={columns} dataSource={data} />
+        <div className="p-6 w-full">
+          <Card
+            title="Product Management"
+            extra={
+              <Button
+                type="primary"
+                className="bg-blue-500 hover:bg-blue-600"
+                onClick={() => navigate("/addproductadmin")}
+              >
+                ➕ Add Product
+              </Button>
+            }
+            className="shadow-lg rounded-xl"
+          >
+            <Table
+              pagination={{ pageSize: 6 }}
+              className="rounded-lg overflow-hidden"
+              columns={columns}
+              dataSource={data}
+            />
+          </Card>
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import {
   cartTypes,
   productTypes,
   profileType,
+  OrderType,
 } from "./global.type";
 
 export type userType = {
@@ -34,6 +35,7 @@ export type userState = {
   category: CategoryType[] | [];
 
   supplier: SupplierType[] | [];
+  order: OrderType[] | [];
 };
 
 export type userLoginType = {
