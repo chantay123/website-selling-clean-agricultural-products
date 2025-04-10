@@ -45,8 +45,9 @@ const EditAdmin = React.lazy(
 const CategoryAdmin = React.lazy(
   () => import("../container/Admin/page/CategoryAdmin/CategoryAdmin")
 );
-
-
+const OrderAdmin = React.lazy(
+  () => import("../container/Admin/page/OrderAdmin/OrderAdmin")
+);
 const Supplier = React.lazy(
   () => import("../container/Admin/page/SupplierManagement/Main/Supplier")
 );
@@ -143,7 +144,10 @@ const publicRoute = [
     component: CategoryAdmin,
   },
   {
-
+    path: config.routes.orderadmin,
+    component: OrderAdmin,
+  },
+  {
     path: config.routes.supplier,
     component: Supplier,
   },

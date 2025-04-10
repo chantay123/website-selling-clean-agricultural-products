@@ -20,7 +20,7 @@ export type routeTypes = {
   supplier: string;
   supplieredit: string;
   suppliercreate: string;
-
+  orderadmin: string;
   editcategoryadmin: string;
   addcategoryadmin: string;
   addproductadmin: string;
