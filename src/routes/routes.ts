@@ -45,12 +45,28 @@ const EditAdmin = React.lazy(
 const CategoryAdmin = React.lazy(
   () => import("../container/Admin/page/CategoryAdmin/CategoryAdmin")
 );
+
+
+const Supplier = React.lazy(
+  () => import("../container/Admin/page/SupplierManagement/Main/Supplier")
+);
+
+const SupplierEdit = React.lazy(
+  () => import("../container/Admin/page/SupplierManagement/Edit/SupplierEdit")
+);
+
+const SupplierCreate = React.lazy(
+  () => import("../container/Admin/page/SupplierManagement/Create/SupplierCreate")
+);
+
+
 const EditCategoryAdmin = React.lazy(
   () => import("../container/Admin/page/EditCategoryAdmin/EditCategoryAdmin")
 );
 const AddCategoryAdmin = React.lazy(
   () => import("../container/Admin/page/AddCategoryAdmin/AddCategoryAdmin")
 );
+
 const publicRoute = [
   {
     path: config.routes.home,
@@ -125,6 +141,19 @@ const publicRoute = [
     component: CategoryAdmin,
   },
   {
+
+    path: config.routes.supplier,
+    component: Supplier,
+  },
+  {
+    path: config.routes.supplieredit,
+    component: SupplierEdit,
+  },
+  {
+    path: config.routes.suppliercreate,
+    component: SupplierCreate,
+  },
+=======
     path: config.routes.editcategoryadmin,
     component: EditCategoryAdmin,
   },
@@ -132,6 +161,7 @@ const publicRoute = [
     path: config.routes.addcategoryadmin,
     component: AddCategoryAdmin,
   }
+
 ];
 
 export { publicRoute };
