@@ -18,20 +18,19 @@ const Cart = () => {
   const dispatch = useDispatch();
 
   //props
-  const buttonAdd = async (attribute_id: string, product_id: string) => {
+  const buttonAdd = async (product_id: string) => {
     try {
-      await requestApi("carts/items", "POST", {
+      await requestApi("carts", "POST", {
         items: [
           {
-            product_id: product_id,
-            product_attribute_id: attribute_id,
+            product: product_id,
             quantity: 1,
           },
         ],
       });
-      const respones = await requestApi("carts/me/cart", "GET", {});
+      const respones = await requestApi("carts", "GET", {});
       const list = respones.data.data;
-      dispatch(setcartnumber(list.carts.length));
+      dispatch(setcartnumber(list.items.length));
     } catch (error) {
       console.log(error);
     }
@@ -41,13 +40,15 @@ const Cart = () => {
       try {
         const respone = await requestApi("carts", "GET", {});
         const list = respone.data.data;
-        dispatch(setcartnumber(list.carts.length));
+        console.log(respone);
+        dispatch(setcartnumber(list.items.length));
       } catch (error) {}
     };
     fetchCart();
   }, []);
 
   const filterProduct = useSelector((state: RootState) => state.user.product);
+  console.log(filterProduct);
   return (
     <Flex wrap="wrap" gap="35px">
       {filterProduct.map((product) => (
@@ -72,20 +73,17 @@ const Cart = () => {
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
                 {product.sold}$/KG
               </p>
-              {product.attributes?.map((attr) => (
+              {product.productAttributes.map((attr, index) => (
                 <ButtonClick
-                  label="Add to "
-                  key={attr._id}
-                  onClick={() => buttonAdd(attr._id, product._id)}
+                  label="Add to cart"
+                  key={`${product._id}-${index}`}
+                  onClick={() => buttonAdd(product._id)}
                 />
               ))}
             </div>
           </div>
         </div>
       ))}
-      {/* <div className=" mt-10">
-        <Pagination defaultCurrent={1} total={50} />
-      </div> */}
     </Flex>
   );
 };

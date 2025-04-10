@@ -37,7 +37,7 @@ const MainProfile = () => {
 
   const [userData, setUserData] = useState({
     email: "",
-    full_name: "",
+    fullName: "",
     phone: "",
     address: "",
     avatar: "",
@@ -55,7 +55,7 @@ const MainProfile = () => {
     const loadingToast = toast.loading("Updating....");
     const { address } = value;
     const response = await requestApi("users/@me/profile", "PUT", {
-      full_name: userData.full_name,
+      fullName: userData.fullName,
       phone: userData.phone,
       gender: userData.gender,
       avatar: userData.avatar,
@@ -88,14 +88,14 @@ const MainProfile = () => {
 
   const profile = async () => {
     try {
-      const response = await requestApi("users/@me/profile", "GET", {});
+      const response = await requestApi("auth/me", "GET", {});
       const data = response.data.data;
       setUserData(data);
     } catch (error) {
       console.log(error);
     }
   };
-
+  const isprofile = useSelector((state: RootState) => state.user.profile);
   useEffect(() => {
     profile();
   }, []);
@@ -127,7 +127,7 @@ const MainProfile = () => {
                 },
                 {
                   name: ["full_name"],
-                  value: userData.full_name,
+                  value: userData.fullName,
                 },
                 {
                   name: ["phone"],
@@ -142,11 +142,11 @@ const MainProfile = () => {
               <div className="relative ">
                 <img
                   className="absolute xs:-top-32 lg:-top-40 xs:left-3 lg:left-32 3xl:-top-[16rem] z-10 rounded-full lg:w-[150px] lg:h-[150px]  xs:w-[80px] xs:h-[80px] "
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"
+                  src={isprofile?.avatarUrl}
                   alt=""
                 />
                 <span className="absolute mt-[30px] ml-[30px] xs:-top-[85px] lg:-top-[115px] 3xl:-top-[180px] xl:-top-[110px] xs:left-28 lg:left-64 xl:left-64 3xl:left-72 z-10 text-xl font-popins text-white">
-                  Tay Phan
+                  {isprofile?.username}
                 </span>
                 <input name="image" style={{ display: "none" }} />
                 <Button
@@ -254,7 +254,7 @@ const MainProfile = () => {
                         />
                       </Form.Item>
                     </div>
-                    <div className="w-full relative flex mt-3">
+                    {/* <div className="w-full relative flex mt-3">
                       <h3 className="text-white xs:text-sm ss:text-base">
                         Gender
                       </h3>
@@ -279,7 +279,7 @@ const MainProfile = () => {
                           </Radio>
                         </Radio.Group>
                       </Form.Item>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="flex gap-4">

@@ -28,7 +28,8 @@ const PayMent = () => {
     (state: RootState) => state.user.cart
   );
 
-  const renderlist = listcard?.carts;
+  const renderlist = listcard?.items;
+  console.log(renderlist);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const handleIncrement = (productId: string) => {
@@ -40,7 +41,7 @@ const PayMent = () => {
   useEffect(() => {
     if (renderlist) {
       const initialQuantities = renderlist.reduce((acc, item) => {
-        acc[item.productDetails._id] = item.quantity;
+        acc[item.product_id._id] = item.quantity;
         return acc;
       }, {} as { [key: string]: number });
       setQuantities(initialQuantities);
@@ -55,12 +56,23 @@ const PayMent = () => {
   };
   const dispatch = useDispatch();
   const fetchCart = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const respone = await requestApi("carts", "GET", {});
+      const respone = await requestApi(
+        "carts",
+        "GET",
+        {},
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
       const list = respone.data.data;
+      console.log(respone);
       dispatch(setCart(list));
-      dispatch(setcartnumber(list.carts.length));
-    } catch (error) {}
+      dispatch(setcartnumber(list.items));
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     fetchCart();
@@ -80,39 +92,39 @@ const PayMent = () => {
     } catch (error) {}
   };
 
-  const order = async (value: any) => {
-    try {
-      const respone = await requestApi("orders", "POST", {
-        product_attribute_ids: renderlist?.map((v) => v.productAttributeId),
-        payment_method: value.payment,
-        address: value.address,
-        phone: value.phone,
-        note: value.note,
-      });
-      setOpen(false);
-      const message = "Payment success";
-      toast.success(message, {
-        autoClose: 500,
-      });
-      console.log(message);
-      await fetchCart();
-    } catch (error) {}
-  };
+  // const order = async (value: any) => {
+  //   try {
+  //     const respone = await requestApi("orders", "POST", {
+  //       product_attribute_ids: renderlist?.map((v) => v.productAttributeId),
+  //       payment_method: value.payment,
+  //       address: value.address,
+  //       phone: value.phone,
+  //       note: value.note,
+  //     });
+  //     setOpen(false);
+  //     const message = "Payment success";
+  //     toast.success(message, {
+  //       autoClose: 500,
+  //     });
+  //     console.log(message);
+  //     await fetchCart();
+  //   } catch (error) {}
+  // };
 
-  const updateCart = async () => {
-    try {
-      const respone = await requestApi(`carts/items/${listcard?._id}`, "PUT", {
-        items: listcard?.carts.map((c) => {
-          return {
-            product_id: c.productDetails._id,
-            product_attribute_id: c.productAttributeId,
-            quantity: quantities[c.productDetails._id] || 1,
-          };
-        }),
-      });
-      fetchCart();
-    } catch (error) {}
-  };
+  // const updateCart = async () => {
+  //   try {
+  //     const respone = await requestApi(`carts/items/${listcard?._id}`, "PUT", {
+  //       items: listcard?.carts.map((c) => {
+  //         return {
+  //           product_id: c.productDetails._id,
+  //           product_attribute_id: c.productAttributeId,
+  //           quantity: quantities[c.productDetails._id] || 1,
+  //         };
+  //       }),
+  //     });
+  //     fetchCart();
+  //   } catch (error) {}
+  // };
 
   return (
     <div>
@@ -154,24 +166,24 @@ const PayMent = () => {
                           <div className="flex items-center ">
                             <img
                               className="w-24 h-24 rounded-full"
-                              src={cart.productDetails.thumbnail_url}
+                              src={cart.product_id.thumbnail_url}
                             />
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <p className="mb-0 mt-4">
-                            {cart.productDetails.name}
-                          </p>
+                          <p className="mb-0 mt-4">{cart.product_id.name}</p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <p className="mb-0 mt-4">{cart.price}$/KG</p>
+                          <p className="mb-0 mt-4">
+                            {cart.product_id.sold}$/KG
+                          </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mt-4">
                             <button
                               className="btn-minus  "
                               onClick={() =>
-                                handleDecrement(cart.productDetails._id)
+                                handleDecrement(cart.product_id._id)
                               }
                             >
                               <i>
@@ -180,12 +192,12 @@ const PayMent = () => {
                             </button>
 
                             <div className="mx-2 w-12 text-center border-0">
-                              {quantities[cart.productDetails._id]}
+                              {quantities[cart.product_id._id]}
                             </div>
                             <button className="btn-plus ">
                               <i
                                 onClick={() => {
-                                  handleIncrement(cart.productDetails._id);
+                                  handleIncrement(cart.product_id._id);
                                 }}
                               >
                                 <PlusCircleOutlined />
@@ -195,7 +207,9 @@ const PayMent = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
-                            {quantities[cart.productDetails._id] * cart.price}$
+                            {/* {quantities[cart.product_id._id] *
+                              cart.product_id.sold} */}
+                            $
                           </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -203,10 +217,7 @@ const PayMent = () => {
                             <i className="fa fa-times text-red-500">
                               <CloseCircleOutlined
                                 onClick={() =>
-                                  deletecart(
-                                    listcard._id,
-                                    cart.productDetails._id
-                                  )
+                                  deletecart(listcard._id, cart.product_id._id)
                                 }
                               />
                             </i>
@@ -228,9 +239,9 @@ const PayMent = () => {
             placeholder="Coupon Code"
           /> */}
           <button
-            onClick={() => updateCart()}
-            className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
-            type="button"
+          // onClick={() => updateCart()}
+          // className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
+          // type="button"
           >
             Save
           </button>
@@ -275,7 +286,7 @@ const PayMent = () => {
                     footer={null}
                   >
                     <Form
-                      onFinish={(value) => order(value)}
+                      // onFinish={(value) => order(value)}
                       name="wrap"
                       labelCol={{ flex: "110px" }}
                       labelAlign="left"

@@ -8,12 +8,7 @@ import { Avatar, Badge, Dropdown, MenuProps } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import requestApi from "../../utils/interceptors";
-import {
-  ACCESS_TOKEN,
-  REFRESH_TOKEN,
-  clearCookie,
-  clearStore,
-} from "../../utils/setting";
+import { ACCESS_TOKEN, clearStore } from "../../utils/setting";
 import {
   setAuthenticationStatus,
   setprofile,
@@ -49,19 +44,19 @@ const HearderItem = () => {
         </a>
       ),
     },
-    {
-      key: "3",
-      label: (
-        <a
-          className="text-base"
-          onClick={() => {
-            navigate("./myfavorite");
-          }}
-        >
-          My favorite product
-        </a>
-      ),
-    },
+    // {
+    //   key: "3",
+    //   label: (
+    //     <a
+    //       className="text-base"
+    //       onClick={() => {
+    //         navigate("./myfavorite");
+    //       }}
+    //     >
+    //       My favorite product
+    //     </a>
+    //   ),
+    // },
     {
       key: "4",
       label: (
@@ -96,12 +91,9 @@ const HearderItem = () => {
   const cartnumber = useSelector((state: RootState) => state.user.cartnumber);
   const fetchAvatar = async () => {
     try {
-      const userId = localStorage.getItem("userId");
-      if (!userId) {
-        return;
-      }
-      const response = await requestApi(`profile/${userId}`, "GET", {});
+      const response = await requestApi("auth/me", "GET", {});
       const avatar = response.data.data;
+      console.log(response);
       dispatch(setprofile(avatar));
     } catch (error) {
       console.log("Error fetching avatar:", error);
@@ -165,12 +157,12 @@ const HearderItem = () => {
                 <Dropdown menu={{ items }}>
                   <Avatar
                     className="border"
-                    src={isprofile?.avatar}
+                    src={isprofile?.avatarUrl}
                     size="large"
                     icon={<UserOutlined />}
                   />
                 </Dropdown>
-                <p className=" ml-2 text-base">{isprofile?.full_name} </p>
+                <p className=" ml-2 text-base">{isprofile?.username} </p>
               </div>
             </div>
           ) : (

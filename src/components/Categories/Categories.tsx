@@ -24,7 +24,6 @@ const Categories = () => {
     return prev;
   }, group);
 
- 
   const [amount, setAmount] = useState(0);
   const handleInputChange = async (event: any) => {
     console.log(event.target.value);
@@ -129,7 +128,6 @@ const Categories = () => {
                   value="Beverages"
                 />
                 <label className="text-base text-catg" htmlFor="Categories-1">
-                  {" "}
                   Organic
                 </label>
               </div>
@@ -142,7 +140,6 @@ const Categories = () => {
                   value="Beverages"
                 />
                 <label className="text-base text-catg" htmlFor="Categories-2">
-                  {" "}
                   Fresh
                 </label>
               </div>
@@ -155,7 +152,6 @@ const Categories = () => {
                   value="Beverages"
                 />
                 <label className="text-base text-catg" htmlFor="Categories-3">
-                  {" "}
                   Sales
                 </label>
               </div>

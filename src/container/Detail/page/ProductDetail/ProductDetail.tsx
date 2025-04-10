@@ -49,13 +49,12 @@ const ProductDetail = () => {
     navigate("*");
     return;
   }
-  const buttonAdd = async (attribute_id: string, product_id: string) => {
+  const buttonAdd = async (product_id: string) => {
     try {
       await requestApi("carts/items", "POST", {
         items: [
           {
             product_id: product_id,
-            product_attribute_id: attribute_id,
             quantity: 1,
           },
         ],
@@ -108,11 +107,11 @@ const ProductDetail = () => {
               <p className=" text-color mb-4 text-xl  mt-3 ">
                 {detail?.description}
               </p>
-              {/* <p className="text-color text-xl mb-6">
+              <p className="text-color text-xl mb-6">
                 Susp endisse ultricies nisi vel quam suscipit. Sabertooth
                 peacock flounder chain pickerel hatchetfish, pencilfish
                 snailfish
-              </p> */}
+              </p>
             </div>
             <div>
               <div className="flex items-center w-24 mb-5 mt-5">
@@ -140,10 +139,11 @@ const ProductDetail = () => {
                 </button>
               </div>
               <div className="mt-6">
-                {detail.attributes.map((attr) => (
+                {detail.productAttributes.map((attr) => (
                   <ButtonClick
+                    label="Add to cart"
                     key={attr._id}
-                    onclick={() => buttonAdd(attr._id, detail._id)}
+                    onClick={() => buttonAdd(detail._id)}
                   />
                 ))}
               </div>
