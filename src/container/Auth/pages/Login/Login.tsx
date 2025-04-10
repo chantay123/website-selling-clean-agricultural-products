@@ -4,18 +4,12 @@ import { BG } from "../../../../constants/images";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import requestApi from "../../../../utils/interceptors";
 
-import {
-  ACCESS_TOKEN,
-  REFRESH_TOKEN,
-  setCookie,
-  setStore,
-} from "../../../../utils/setting";
 import { toast } from "react-toastify";
 
 import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-``;
+import { ACCESS_TOKEN, setStore } from "../../../../utils/setting";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,32 +18,23 @@ const Login = () => {
   const loginSubmit = async (values: any) => {
     const { username, password } = values;
     try {
-      const response = await requestApi("users/login", "POST", {
-        email: username,
-        password: password,
+      const response = await requestApi("auth/login", "POST", {
+        username,
+        password,
       });
-
-      const { access_token, refresh_token } = response.data.data;
+      console.log(response);
+      const { access_token } = response.data.data;
+      toast.success("Đăng nhập thành công!");
       setStore(ACCESS_TOKEN, access_token);
-      setCookie(REFRESH_TOKEN, refresh_token, 7);
-
-      const { message } = response.data;
-      toast.success(message);
       dispatch(setAuthenticationStatus(true));
       navigate("/");
     } catch (error: any) {
-      const { message } = error.response.data;
-      let receivedmessage = message;
-      const { status } = error.response;
-      if (status == 422) {
-        const { msg } = error.response.data.errors.password;
-        receivedmessage = msg;
-      }
-      toast.error(receivedmessage);
+      const { message } = error.response?.data || {};
+      toast.error(message || "Lỗi đăng nhập");
     }
   };
   return (
-    <div className=" login w-screen h-screen relative ">
+    <div className="login w-screen h-screen relative ">
       <img
         className="w-full h-full object-cover"
         src={BG.MAIN_BG}
@@ -58,7 +43,7 @@ const Login = () => {
       <Form
         onFinish={loginSubmit}
         name="normal_login"
-        className=" login-form  absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl  bg-white  xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%]  md:w-[50%]  md:px-8 lg:w-[40%]  lg:p-12 xl:w-[25%] "
+        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl  bg-white  xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%]  md:w-[50%]  md:px-8 lg:w-[40%]  lg:p-12 xl:w-[25%] "
       >
         <h2 className="  text-center text-4xl xs:mb-6 font-bold xs:text-3xl xs:mt-5 lg:mt-3 text-black  text-8xl  ">
           Login

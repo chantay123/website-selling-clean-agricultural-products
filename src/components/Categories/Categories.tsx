@@ -24,7 +24,7 @@ const Categories = () => {
     return prev;
   }, group);
 
-  // console.log(category);
+ 
   const [amount, setAmount] = useState(0);
   const handleInputChange = async (event: any) => {
     console.log(event.target.value);
@@ -47,6 +47,7 @@ const Categories = () => {
         "POST",
         {}
       );
+      console.log(respone);
       const arr = respone.data.data;
       dispatch(setProduct(arr));
     } catch (error) {

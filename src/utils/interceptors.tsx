@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import {
   ACCESS_TOKEN,
@@ -73,7 +74,7 @@ export default function requestApi(
 
   return instance.request({
     method: method,
-    url: `http://localhost:8080/api/v1/${endpoint}`,
+    url: `http://localhost:3000/${endpoint}`,
     data: body,
   });
 }

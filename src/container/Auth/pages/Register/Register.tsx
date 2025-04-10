@@ -11,27 +11,22 @@ import {
 import requestApi from "../../../../utils/interceptors";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setEmailResendOTP } from "../../../../redux/userReducer/userReducer";
+
 const Register = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerSubmit = async (values: any) => {
-    const { full_name, email, password, confirm_password, phone } = values;
-
+    const { username, password, email, phone } = values;
     try {
-      const response = await requestApi("users/register", "POST", {
-        full_name,
-        email,
+      const response = await requestApi("auth/signup", "POST", {
+        username,
         password,
-        confirm_password,
+        email,
         phone,
       });
 
       const { message } = response.data;
       toast.success(message);
-      dispatch(setEmailResendOTP(email));
-      navigate("/verification");
+      navigate("/login");
     } catch (error: any) {
       const { message } = error.response.data;
       let receivedmessage = message;
@@ -40,8 +35,7 @@ const Register = () => {
       if (status == 422) {
         const { msg } =
           error.response.data.errors.full_name ||
-          error.response.data.errors.email ||
-          error.response.data.errors.confirm_password;
+          error.response.data.errors.email;
         receivedmessage = msg;
       }
       toast.error(receivedmessage);
@@ -63,7 +57,7 @@ const Register = () => {
         <h1 className="text-center text-4xl mb-8 font-bold">Sign up</h1>
         <Form.Item
           className="text-xs "
-          name="full_name"
+          name="username"
           rules={[{ required: true, message: "Please input your Username!" }]}
         >
           <Input
@@ -72,17 +66,6 @@ const Register = () => {
               <UserOutlined className="site-form-item-icon w-full mr-2" />
             }
             placeholder="Username"
-          />
-        </Form.Item>
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
-        >
-          <Input
-            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
-            type="Email"
-            placeholder="Email"
-            prefix={<MailOutlined className=" mr-2" />}
           />
         </Form.Item>
         <Form.Item
@@ -97,29 +80,14 @@ const Register = () => {
           />
         </Form.Item>
         <Form.Item
-          name="confirm_password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your Confirm Password!",
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error("The new password that you entered do not match!")
-                );
-              },
-            }),
-          ]}
+          name="email"
+          rules={[{ required: true, message: "Please input your Email!" }]}
         >
-          <Input.Password
+          <Input
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
-            type="password"
-            placeholder="Confirm password"
-            prefix={<LockOutlined className="site-form-item-icon mr-2" />}
+            type="Email"
+            placeholder="Email"
+            prefix={<MailOutlined className=" mr-2" />}
           />
         </Form.Item>
         <Form.Item

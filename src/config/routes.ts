@@ -18,6 +18,9 @@ const routes: routeTypes = {
   stock: "/stock",
   productadmin: "/productadmin",
   editadmin: "/editadmin/:editId",
+  categoryadmin: "/categoryadmin",
+  editcategoryadmin: "/editcategoryadmin/:editId",
+  addcategoryadmin: "/addcategoryadmin",
 } as const;
 
 export default routes;
