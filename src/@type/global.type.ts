@@ -23,6 +23,7 @@ export type routeTypes = {
 
   editcategoryadmin: string;
   addcategoryadmin: string;
+  addproductadmin: string;
 
 };
 

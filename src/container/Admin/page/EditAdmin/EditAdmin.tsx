@@ -106,34 +106,6 @@ const EditAdmin = () => {
       console.log("❌ Error fetching product:", error);
     }
   };
-
-  // const editProduct = async (values: EditProductFormType) => {
-  //   const loadingToast = toast.loading("Updating...");
-  //   try {
-  //     const { attribute, ...productData } = values;
-
-  //     const attributeData = {
-  //       ...attribute,
-  //     };
-
-  //     await requestApi(`products/${editId}`, "PUT", productData);
-  //     await requestApi(`productAttribute/${editId}`, "PUT", attributeData);
-
-  //     toast.update(loadingToast, {
-  //       render: "Product updated successfully",
-  //       type: "success",
-  //       isLoading: false,
-  //       autoClose: 3000,
-  //     });
-  //   } catch (error) {
-  //     toast.update(loadingToast, {
-  //       render: "Update failed",
-  //       type: "error",
-  //       isLoading: false,
-  //       autoClose: 3000,
-  //     });
-  //   }
-  // };
   const editProduct = async (values: EditProductFormType) => {
     const loadingToast = toast.loading("Updating...");
     try {

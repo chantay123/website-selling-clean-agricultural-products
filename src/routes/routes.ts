@@ -66,7 +66,9 @@ const EditCategoryAdmin = React.lazy(
 const AddCategoryAdmin = React.lazy(
   () => import("../container/Admin/page/AddCategoryAdmin/AddCategoryAdmin")
 );
-
+const AddProductAdmin = React.lazy(
+  () => import("../container/Admin/page/AddProductAdmin/AddProductAdmin")
+);
 const publicRoute = [
   {
     path: config.routes.home,
@@ -160,6 +162,10 @@ const publicRoute = [
   {
     path: config.routes.addcategoryadmin,
     component: AddCategoryAdmin,
+  },
+  {
+    path: config.routes.addproductadmin,
+    component: AddProductAdmin,
   }
 
 ];

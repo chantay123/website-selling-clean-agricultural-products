@@ -26,6 +26,7 @@ const routes: routeTypes = {
 
   editcategoryadmin: "/editcategoryadmin/:editId",
   addcategoryadmin: "/addcategoryadmin",
+  addproductadmin: "/addproductadmin",
 
 } as const;
 
