@@ -1,42 +1,20 @@
 import { Alert, Button, Form, Input, Layout, Card } from "antd";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 import { toast } from "react-toastify";
 import Sidebar from "../../components/Sidebar";
 import requestApi from "../../../../utils/interceptors";
 
-const EditCategoryAdmin = () => {
-    const { editId } = useParams();
+const AddCategoryAdmin = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
-    const [userData, setUserData] = useState({
-        name: "",
-        description: "",
-    });
-
-    const fetchCategory = async () => {
+    const addCategory = async (values: any) => {
+        const loadingToast = toast.loading("Creating...");
         try {
-            const resp = await requestApi(`categories/${editId}`, "GET", {});
-            const data = resp.data.data;
-            setUserData(data);
-            form.setFieldsValue(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    useEffect(() => {
-        fetchCategory();
-    }, [editId]);
-
-    const editCategory = async (values: any) => {
-        const loadingToast = toast.loading("Updating...");
-        try {
-            const res = await requestApi(`categories/${editId}`, "PUT", values);
+            const res = await requestApi("categories", "POST", values);
             toast.update(loadingToast, {
-                render: res.data.message,
+                render: res.data.message || "Category created successfully!",
                 type: "success",
                 isLoading: false,
                 autoClose: 3000,
@@ -45,7 +23,7 @@ const EditCategoryAdmin = () => {
         } catch (error) {
             console.error(error);
             toast.update(loadingToast, {
-                render: "Update failed",
+                render: "Failed to create category",
                 type: "error",
                 isLoading: false,
                 autoClose: 3000,
@@ -59,14 +37,14 @@ const EditCategoryAdmin = () => {
             <Layout className="w-full">
                 <Content className="p-8">
                     <Card
-                        title="Edit Category"
+                        title="Add New Category"
                         bordered={false}
                         className="max-w-3xl mx-auto shadow-xl rounded-xl"
                     >
                         <Form
                             form={form}
                             layout="vertical"
-                            onFinish={editCategory}
+                            onFinish={addCategory}
                             className="space-y-4"
                         >
                             <Form.Item
@@ -98,7 +76,7 @@ const EditCategoryAdmin = () => {
                                     size="large"
                                     onClick={() => navigate("/categoryadmin")}
                                 >
-                                    Back
+                                    Cancel
                                 </Button>
                                 <Button
                                     type="primary"
@@ -106,7 +84,7 @@ const EditCategoryAdmin = () => {
                                     htmlType="submit"
                                     className="bg-green-600 hover:bg-green-700"
                                 >
-                                    Update
+                                    Create
                                 </Button>
                             </div>
                         </Form>
@@ -117,4 +95,4 @@ const EditCategoryAdmin = () => {
     );
 };
 
-export default EditCategoryAdmin;
+export default AddCategoryAdmin;
