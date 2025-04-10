@@ -16,6 +16,14 @@ export type routeTypes = {
   stock: string;
   productadmin: string;
   editadmin: string;
+  categoryadmin: string;
+  supplier: string;
+  supplieredit: string;
+  suppliercreate: string;
+
+  editcategoryadmin: string;
+  addcategoryadmin: string;
+
 };
 
 export type productTypes = {

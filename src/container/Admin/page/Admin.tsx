@@ -36,9 +36,9 @@ import { Link, useNavigate } from "react-router-dom";
 const Admin = () => {
   const profile = async () => {
     try {
-      const response = await requestApi("users/@me/profile", "GET", {});
+      const response = await requestApi("auth/me", "GET", {});
       const a = response.data.data;
-      dispatch(setAdminStatus(a?.role === "Admin"));
+      dispatch(setAdminStatus(a?.role.name === "admin"));
     } catch (error) {
       dispatch(setAdminStatus(false));
       console.log(error);
@@ -52,7 +52,7 @@ const Admin = () => {
   const deleteProduct = async (product_id: any) => {
     try {
       const response = await requestApi(
-        `products?id=${product_id}`,
+        `products/${product_id}`,
         "DELETE",
         {}
       );

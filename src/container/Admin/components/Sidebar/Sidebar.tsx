@@ -1,7 +1,33 @@
 import { useNavigate } from "react-router-dom";
+import requestApi from "../../../../utils/interceptors";
+import { ACCESS_TOKEN, clearCookie, clearStore, REFRESH_TOKEN } from "../../../../utils/setting";
+import { toast } from "react-toastify";
+import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const logout = async () => {
+    try {
+
+      const response = await requestApi(
+        "auth/logout",
+        "POST",
+        {},
+      );
+      const { message } = response.data;
+      toast.success(message || "Đăng xuất thành công");
+
+      clearStore(ACCESS_TOKEN);
+      toast.success("Đăng xuất thành công");
+      dispatch(setAuthenticationStatus(false));
+      navigate("/login");
+    } catch (error: any) {
+      console.error("Logout failed:", error);
+      toast.error("Lỗi đăng xuất");
+    }
+  };
   return (
     <div className="bg-white w-64 h-screen p-6">
       <div className="space-y-4">
@@ -56,8 +82,11 @@ const Sidebar = () => {
             </svg>
           </i>
 
-          <span className="ml-4 text-gray-500 text-base font-bold  ">
-            Orders
+          <span onClick={() => {
+            navigate("/categoryadmin");
+          }}
+            className="ml-4 text-gray-500 text-base font-bold  ">
+            Categories
           </span>
         </a>
         <a
@@ -115,7 +144,7 @@ const Sidebar = () => {
           </span>
         </a>
         <a
-          href="#"
+          href="/supplier"
           className="flex items-center p-2 text-gray-700 rounded-lg hover:bg-green-50"
         >
           <i>
@@ -130,12 +159,11 @@ const Sidebar = () => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
-              />
+                d="M15 .5a.5.5 0 0 0-.724-.447l-8 4A.5.5 0 0 0 6 4.5v3.14L.342 9.526A.5.5 0 0 0 0 10v5.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V14h1v1.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5zM2 11h1v1H2zm2 0h1v1H4zm-1 2v1H2v-1zm1 0h1v1H4zm9-10v1h-1V3zM8 5h1v1H8zm1 2v1H8V7zM8 9h1v1H8zm2 0h1v1h-1zm-1 2v1H8v-1zm1 0h1v1h-1zm3-2v1h-1V9zm-1 2h1v1h-1zm-2-4h1v1h-1zm3 0v1h-1V7zm-2-2v1h-1V5zm1 0h1v1h-1z" />
             </svg>
           </i>
           <span className="ml-4 text-gray-500 text-base font-bold    ">
-            Messages
+            Supllier
           </span>
         </a>
       </div>
@@ -195,7 +223,7 @@ const Sidebar = () => {
           </span>
         </a>
       </div>
-      <button className="bg-red-500 mt-48 text-white ml-8 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+      <button onClick={() => logout()} className="bg-red-500 mt-48 text-white ml-8 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
         Đăng xuất
       </button>
     </div>

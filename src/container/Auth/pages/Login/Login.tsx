@@ -26,7 +26,7 @@ const Login = () => {
       const { access_token } = response.data.data;
       setStore(ACCESS_TOKEN, access_token);
       toast.success("Đăng nhập thành công!");
-
+      setStore(ACCESS_TOKEN, access_token);
       dispatch(setAuthenticationStatus(true));
       navigate("/");
     } catch (error: any) {
