@@ -139,8 +139,12 @@ const Sidebar = () => {
               />
             </svg>
           </i>
-          <span className="ml-4 text-gray-500 text-base font-bold ">
-            Analytics
+          <span
+            onClick={() => {
+              navigate("/orderadmin");
+            }}
+            className="ml-4 text-gray-500 text-base font-bold ">
+            Orders
           </span>
         </a>
         <a

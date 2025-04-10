@@ -7,6 +7,7 @@ import {
   productTypes,
   profileType,
   SupplierType,
+  OrderType,
 } from "../../@type/global.type";
 
 const initialState: userState = {
@@ -26,6 +27,7 @@ const initialState: userState = {
   category: [],
   favorite: [],
   supplier: [],
+  order: [],
 };
 
 const userReducer = createSlice({
@@ -103,6 +105,9 @@ const userReducer = createSlice({
     setsupplier: (state: userState, action: PayloadAction<SupplierType[]>) => {
       state.supplier = action.payload;
     },
+    setOrder: (state: userState, action: PayloadAction<OrderType[]>) => {
+      state.order = action.payload;
+    },
   },
 });
 
@@ -123,6 +128,7 @@ export const {
   setCategory,
   setfavorite,
   setsupplier,
+  setOrder,
 } = userReducer.actions;
 
 export default userReducer.reducer;
