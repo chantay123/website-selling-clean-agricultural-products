@@ -73,7 +73,7 @@ const Cart = () => {
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
                 {product.sold}$/KG
               </p>
-              {product.productAttributes.map((attr, index) => (
+              {product.productAttributes.map((_attr, index) => (
                 <ButtonClick
                   label="Add to cart"
                   key={`${product._id}-${index}`}

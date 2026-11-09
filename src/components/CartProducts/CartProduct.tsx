@@ -6,14 +6,12 @@ import {
   setCategory,
   setProduct,
   setcartnumber,
-  setfavorite,
 } from "../../redux/userReducer/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import ButtonClick from "../Button/ButtonClick";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import ButtonLike from "../ButtonLike";
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
   height: "380px",

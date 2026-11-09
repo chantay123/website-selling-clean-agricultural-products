@@ -106,7 +106,7 @@ const ProductAdmin = () => {
       title: "Action",
       key: "action",
       className: " text-base text-gray-500",
-      render: (attributes: ProductAttribute[], productTypes) => (
+      render: (_attributes: ProductAttribute[], productTypes) => (
         <Space size="middle">
           <button
             onClick={() => deleteProduct(productTypes._id)}

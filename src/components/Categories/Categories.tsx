@@ -10,8 +10,7 @@ import { setProduct } from "../../redux/userReducer/userReducer";
 const Categories = () => {
   const product = useSelector((state: RootState) => state.user.product);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get("keyword");
+  const [, setSearchParams] = useSearchParams();
   const group: Record<string, any[]> = {};
   const dispatch = useDispatch();
 

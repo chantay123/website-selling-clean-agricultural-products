@@ -1,13 +1,10 @@
 import { CameraOutlined } from "@ant-design/icons";
 import {
   Alert,
-  Avatar,
   Button,
   Form,
   Input,
   Layout,
-  Radio,
-  RadioChangeEvent,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { BG } from "../../../constants/images";
@@ -45,12 +42,6 @@ const MainProfile = () => {
     gender: "Male",
   });
 
-  const onChange = (e: RadioChangeEvent) => {
-    setUserData((prev) => ({
-      ...prev,
-      gender: e.target.value,
-    }));
-  };
   const onFinish = async (value: any) => {
     const loadingToast = toast.loading("Updating....");
     const { address } = value;

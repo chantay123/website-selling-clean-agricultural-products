@@ -51,11 +51,7 @@ const Admin = () => {
   const isadmin = useSelector((state: RootState) => state.user.isAdmin);
   const deleteProduct = async (product_id: any) => {
     try {
-      const response = await requestApi(
-        `products?id=${product_id}`,
-        "DELETE",
-        {}
-      );
+      await requestApi(`products?id=${product_id}`, "DELETE", {});
       fetchPRODUCT();
     } catch (error) {
       console.log(error);
@@ -139,7 +135,7 @@ const Admin = () => {
     {
       title: "Action",
       key: "action",
-      render: (attributes: ProductAttribute[], productTypes) => (
+      render: (_attributes: ProductAttribute[], productTypes) => (
         <Space size="middle">
           <a
             onClick={() => deleteProduct(productTypes._id)}

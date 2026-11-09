@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCart, setcartnumber } from "../../redux/userReducer/userReducer";
 import { RootState } from "../../redux/config";
 import { cartTypes } from "../../@type/global.type";
-import { toast } from "react-toastify";
 
 const PayMent = () => {
   const [open, setOpen] = useState(false);
@@ -21,7 +20,7 @@ const PayMent = () => {
     setOpen(true);
   };
 
-  const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+  const handleCancel = () => {
     setOpen(false);
   };
   const listcard: cartTypes | null | undefined = useSelector(
@@ -80,13 +79,9 @@ const PayMent = () => {
 
   const deletecart = async (id: string, product_id: string) => {
     try {
-      const respone = await requestApi(
-        `carts/items/${id}?product_id=${product_id}`,
-        "DELETE",
-        {
-          product_id,
-        }
-      );
+      await requestApi(`carts/items/${id}?product_id=${product_id}`, "DELETE", {
+        product_id,
+      });
 
       fetchCart();
     } catch (error) {}

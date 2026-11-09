@@ -20,10 +20,15 @@ const ButtonClick: React.FC<buttonType> = ({
     <div>
       <button
         onClick={onClick}
-        className="button-primary  border border-yellow-300 rounded-full px-3 py-1  flex items-center"
+        className={[
+          "button-primary border border-yellow-300 rounded-full px-3 py-1 flex items-center",
+          classNameButton,
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
-        <i className="shop mr-2">
-          <ShoppingOutlined />
+        <i className={["shop mr-2", classNameIcon].filter(Boolean).join(" ")}>
+          {Icon ? <Icon /> : <ShoppingOutlined />}
         </i>
         {label}
       </button>

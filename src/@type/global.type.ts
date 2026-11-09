@@ -57,12 +57,12 @@ export type CategoryType = {
   name: string;
   slug: string;
 };
-// export type FavoriteType = {
-//   _id: string;
-//   name: string;
-//   origin: string;
-//   thumbnail_url: string;
-// };
+export type FavoriteType = {
+  _id: string;
+  name: string;
+  origin: string;
+  thumbnail_url: string;
+};
 
 export type cartItemType = {
   product_id: productTypes;
