@@ -380,4 +380,4 @@ Script dùng đúng path/payload mà `src/apis/index.ts` sinh ra, rồi assert s
 | 7 | Upload avatar/cover chưa có | Nút "Change Cover"/"Change Avatar" không hoạt động | Backend chưa có endpoint upload |
 | 8 | Price range & Additional filter chưa nối API | Filter không hoạt động | Backend chưa có endpoint lọc theo giá |
 | 9 | Không có Error Boundary | Lỗi render làm sập cả cây | Thêm `<ErrorBoundary>` quanh `<Routes>` |
-| 10 | `navigate()` trong render | Anti-pattern React | Dùng `<Navigate>` |
+| 10 | `navigate()` trong render ở `Admin.tsx` / `ProductAdmin.tsx` | Anti-pattern React | ✅ Đã xử lý một phần: thêm cờ `profileChecked` để không redirect oan lúc đang load profile. Nên dùng `<Navigate>` để hoàn toàn bỏ side-effect trong render |

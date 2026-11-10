@@ -829,18 +829,20 @@ export const API_BASE_URL =
 **Hiện trạng:**
 ```typescript
 // src/container/Admin/page/Admin.tsx
+const [profileChecked, setProfileChecked] = useState(false);
 const profile = async () => {
   const response = await getMyProfile();
   dispatch(setAdminStatus(response.data?.role === "Admin"));
+  setProfileChecked(true);
 };
-if (isadmin === false) { navigate("*"); return; }
+if (profileChecked && isadmin === false) { navigate("*"); return; }
 ```
 
 **Đánh giá:**
 - ✅ Role lấy từ API, không hardcode → tốt hơn so sánh email.
 - ❌ Kiểm tra ở **client** → không phải security boundary.
-- ❌ `navigate()` trong render → anti-pattern.
-- ⚠️ `isadmin` mặc định `false` → lúc chờ API, user bị đẩy 404 (UX bug).
+- ⚠️ `navigate()` trong render → anti-pattern (đã xử lý một phần bằng `profileChecked`).
+- ✅ `profileChecked` đã giải quyết UX bug "lúc chờ API, user bị đẩy 404".
 
 **Đề xuất:**
 ```tsx

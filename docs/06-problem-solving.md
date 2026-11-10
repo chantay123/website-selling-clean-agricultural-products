@@ -345,23 +345,34 @@ Component phụ thuộc vào **state của trang khác** thay vì tự lấy d�
 **Step 5 — Implement**
 
 ```typescript
+const [loading, setLoading] = useState(true);
+
 useEffect(() => {
+  let cancelled = false;
   const fetchProduct = async () => {
     try {
       const response = await getProductById(productId ?? "");
-      dispatch(setProduct([response.data]));
+      if (!cancelled) dispatch(setProduct([response.data]));
     } catch (error) {
       console.log(error);
+    } finally {
+      if (!cancelled) setLoading(false);
     }
   };
   fetchProduct();
+  return () => { cancelled = true; };
 }, [productId]);
+
+// Ba trạng thái thay vì một
+if (loading) return <Loading />;
+if (detail === undefined) return <NotFound />;
 ```
 
 **Step 6 — Verify**
 
-- Mở deep-link → sản phẩm hiện. ✅
+- Mở deep-link → sản phẩm hiện (hiển thị `<Loading />` trong lúc chờ). ✅
 - Điều hướng từ Home → vẫn hoạt động. ✅
+- Không còn nháy trang 404. ✅
 - `npx tsc --noEmit` → 0 error. ✅
 - `npm run build` → OK. ✅
 

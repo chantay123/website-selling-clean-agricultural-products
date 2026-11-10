@@ -667,7 +667,7 @@ function ProtectedRoute({ children }) {
 }
 ```
 
-**Áp dụng:** dự án chưa có route guard component. `MainProfile.tsx` check trong `useEffect` → `navigate("/login")`; `Admin.tsx` check `isadmin === false` → `navigate("*")`.
+**Áp dụng:** dự án chưa có route guard component. `MainProfile.tsx` check trong `useEffect` → `navigate("/login")`; `Admin.tsx` dùng cờ `profileChecked` → chỉ `navigate("*")` sau khi profile đã về (tránh redirect oan lúc đang load).
 
 **Đề xuất:** tách thành `<ProtectedRoute>` và `<AdminRoute>` để nhất quán.
 

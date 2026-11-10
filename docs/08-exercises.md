@@ -724,9 +724,9 @@ Render phải là **hàm thuần khiết quả** — không được side-effect
 
 ## Bài 5.4. `ProductDetail` — handle loading state
 
-**Yêu cầu:** Hiện `ProductDetail` gọi `navigate("*")` khi `detail === undefined` → nháy 404 lúc đang load. Sửa để có loading state.
+**Yêu cầu:** `ProductDetail` trước đây gọi `navigate("*")` khi `detail === undefined` → nháy 404 lúc đang load. Sửa để có loading state (bài này đã được áp dụng trong codebase).
 
-**Kỳ vọng:** Hiện `<Loading />` khi đang fetch, chỉ redirect 404 khi fetch xong và thật sự không tìm thấy.
+**Kỳ vọng:** Hiện `<Loading />` khi đang fetch, chỉ hiện `<NotFound />` khi fetch xong và thật sự không tìm thấy.
 
 <details>
 <summary>Lời giải</summary>

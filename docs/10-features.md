@@ -620,9 +620,9 @@ User mở /product/:productId
 
 **Output:** render chi tiết; `state.user.product` = `[detail]`.
 
-**Missing data:** `detail === undefined` → `navigate("*")` → trang 404. Nhưng điều này xảy ra **trong lúc fetch đang chạy** → màn hình nháy 404 rồi về lại detail. *Nên dùng state `loading`.*
+**Missing data:** `detail === undefined` → render `<NotFound />`. Đã tách 3 trạng thái: `loading` → `<Loading />`, `detail === undefined` → `<NotFound />`, còn lại render nội dung. Trước đây dùng `navigate("*")` trong render → màn hình nháy 404 trong lúc fetch đang chạy.
 
-**Error:** fetch lỗi → `console.log(error)` → `detail` undefined → navigate 404.
+**Error:** fetch lỗi → `console.log(error)` → `detail` undefined → `<NotFound />`.
 
 ### 5. Step-by-step
 
@@ -636,8 +636,8 @@ User mở /product/:productId
 | Lỗi | Nguyên nhân | Cách phát hiện | Sửa |
 |------|-------------|----------------|-----|
 | Deep-link → 404 | Store rỗng, không fetch | Mở F5 trên URL product | Đã sửa: thêm `useEffect` gọi `getProductById` |
-| Nháy trang 404 khi load | `navigate("*")` khi `detail` chưa có | Quay video mở trang | Thêm state loading |
-| `detail.productAttributes` undefined → crash | API trả product không có attribute | Console error | Guard `detail?.productAttributes?.map` |
+| Nháy trang 404 khi load | `navigate("*")` khi `detail` chưa có | Quay video mở trang | ✅ Đã sửa: thêm state `loading` + `<Loading />` / `<NotFound />` |
+| `detail.productAttributes` undefined → crash | API trả product không có attribute | Console error | ✅ Đã sửa: guard `(detail.productAttributes ?? []).map(...)` |
 | Nút Add to cart thêm nhầm attribute | `onClick={() => buttonAdd(detail._id)}` | Click nút thứ 2 | Truyền `attr._id` |
 | `navigate()` trong render | Side-effect trong render | React StrictMode double render | Dùng `<Navigate>` |
 
@@ -970,7 +970,7 @@ Admin mount
   → useEffect([]) → getMyProfile() → GET /users/@me/profile
     → dispatch(setAdminStatus(response.data?.role === "Admin"))
   → useEffect([]) → getProducts() → GET /products → dispatch(setProduct(...))
-  → if (isadmin === false) → navigate("*")
+  → if (profileChecked && isadmin === false) → navigate("*")
   → render <Table columns dataSource={extendedList} />
   → click "Delete" → deleteProductById(product._id)
     → deleteProduct(id) → DELETE /products?id=<id>
@@ -1006,7 +1006,7 @@ Admin mount
 | Lỗi | Nguyên nhân | Cách phát hiện | Sửa |
 |------|-------------|----------------|-----|
 | `getSuppliers()` gọi liên tục | Gọi trong render body → dispatch → re-render → gọi lại | Network tab thấy hàng loạt request | Đã sửa: bọc `useEffect` |
-| Admin thấy trang 404 khi chưa load xong | `isadmin` mặc định `false` → `navigate("*")` ngay | Mở `/admin` | Render loading cho tới khi profile về |
+| Admin thấy trang 404 khi chưa load xong | `isadmin` mặc định `false` → `navigate("*")` ngay | Mở `/admin` | ✅ Đã sửa: thêm `profileChecked` → chỉ redirect sau khi profile về |
 | Xoá không có phản hồi | chỉ `console.log` | — | Thêm toast |
 | `key={index}` trong Table | Không ổn định khi sort | — | Dùng `product._id` |
 

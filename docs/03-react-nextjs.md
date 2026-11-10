@@ -613,7 +613,7 @@ export function middleware(request: NextRequest) {
 export const config = { matcher: "/admin/:path*" };
 ```
 
-**Đối chiếu Agrimarket:** chưa có middleware; việc guard admin làm trong component (`Admin.tsx` → `navigate("*")`).
+**Đối chiếu Agrimarket:** chưa có middleware; việc guard admin làm trong component (`Admin.tsx` → `profileChecked` + `navigate("*")`).
 
 ## 7. Server-side rendering (SSR)
 
