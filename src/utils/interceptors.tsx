@@ -45,12 +45,31 @@ export const clearTokens = () => {
 };
 
 /**
+ * In-flight refresh promise.
+ *
+ * Several requests can fail with 401 at the same time. Without this guard
+ * each of them would trigger its own refresh call and the refresh token
+ * would be rotated several times, invalidating the session. Sharing a single
+ * promise makes sure the backend is only asked once.
+ */
+let refreshPromise: Promise<string | null> | null = null;
+
+/**
  * Requests a brand new access token using the refresh token.
  *
  * Returns `null` when the refresh token is missing or has been rejected,
  * in which case the session has to be terminated.
  */
 export const refreshAccessToken = async (): Promise<string | null> => {
+  if (!refreshPromise) {
+    refreshPromise = doRefreshAccessToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+};
+
+const doRefreshAccessToken = async (): Promise<string | null> => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
 

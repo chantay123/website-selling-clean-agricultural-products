@@ -195,6 +195,21 @@ sequenceDiagram
 
 **Guard `_retried`:** tránh vòng lặp vô hạn khi refresh token cũng hết hạn.
 
+**Dedupe refresh (quan trọng):** nếu 3 request cùng trả 401, mỗi request sẽ gọi `POST /users/token/refresh` một lần → refresh token bị rotate 3 lần → session hỏng. Vì vậy `refreshAccessToken` dùng chung **một promise**:
+
+```typescript
+let refreshPromise: Promise<string | null> | null = null;
+
+export const refreshAccessToken = async (): Promise<string | null> => {
+  if (!refreshPromise) {
+    refreshPromise = doRefreshAccessToken().finally(() => {
+      refreshPromise = null;   // reset sau khi xong để lần sau gọi mới thực sự refresh
+    });
+  }
+  return refreshPromise;
+};
+```
+
 ```typescript
 if (status === 401 && originalRequest && !originalRequest._retried) {
   originalRequest._retried = true;

@@ -286,6 +286,8 @@ Request bất kỳ → 401 Unauthorized
     → thất bại: clearTokens() + window.location.href = "/login"
 ```
 
+> **Dedupe:** `refreshAccessToken()` dùng chung một promise (`refreshPromise`) → nhiều request 401 đồng thời chỉ gọi refresh **1 lần**, tránh refresh token bị rotate nhiều lần làm hỏng session.
+
 **Phân quyền Admin:** `GET /users/@me/profile` trả `role`. `Admin.tsx` và `ProductAdmin.tsx` so sánh `role === "Admin"`, nếu không phải Admin → `navigate("*")` (trang 404).
 
 > ⚠️ **Hạn chế đã biết (không sửa trong phạm vi task này):** việc kiểm tra role diễn ra ở client. `Admin.tsx` dùng `navigate()` **trong render body** — đây là anti-pattern của React (side-effect trong render). Nên dùng `<Navigate to="*" replace />` trong JSX hoặc guard ở tầng route.
