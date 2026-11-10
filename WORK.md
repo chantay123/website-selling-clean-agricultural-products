@@ -381,6 +381,8 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 
 ### 12.2. Phân loại trạng thái endpoint
 
+> **Lưu ý (2026-11-10):** bảng dưới đây phản ánh **29 endpoint trong phạm vi bài toán ban đầu**. Probe bề mặt API lần 2 đã phát hiện thêm **7 nhóm endpoint chưa từng được tích hợp** (`banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments`) — xem `docs/04-api-integration.md` § 1.3.
+
 | Endpoint | Method | Trạng thái | Ghi chú |
 |----------|--------|------------|--------|
 | `/users/register` | POST | 🔴 BLOCKED_BY_BACKEND | 500 "Failed to send OTP" |
@@ -408,7 +410,28 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | `/carts` | GET | 🟡 UNVERIFIED | Cần token |
 | `/carts/items` | POST | 🟡 UNVERIFIED | Cần token |
 | `/carts/items/:cartId` | PUT/DELETE | 🟡 UNVERIFIED | Cần token |
-| `/orders` | GET/POST | 🟡 UNVERIFIED | Cần token |
+| `GET /orders` | GET/POST | 🟡 UNVERIFIED | Cần token |
+
+**Phát hiện mới từ probe bề mặt API (2026-11-10) — 7 nhóm chưa tích hợp:**
+
+Script `scripts/probe-surface.mjs` quét path × method trên toàn bộ backend. Kết quả nổi bật:
+
+| Nhóm | Route | Method | Trạng thái | UI tương ứng |
+|------|-------|--------|-----------|--------------|
+| `banners` | `/banners` | GET | 🟢 **200** (1332 bản ghi) | ❌ `CarouselItem.tsx` hardcode ảnh |
+| `blogs` | `/blogs`, `/blogs/:id` | GET | 🟢 **200** (33 bản ghi) | ❌ Chưa có trang blog |
+| `hashtags` | `/hashtags` | GET | 🟢 **200** | ❌ Chưa dùng |
+| `roles` | `/roles` | GET | 🟡 401 (route tồn tại) | ❌ |
+| `reports` | `/reports` | GET | 🟡 401 (route tồn tại) | ❌ |
+| `stocks` | `/stocks`, `/stocks/:id` | GET/PUT | 🟡 401 (route tồn tại) | ⚠️ `/stock` route có, nhưng page là placeholder |
+| `comments` | `/products/:id/comments` | GET/POST | 🟡 401 (route tồn tại) | ⚠️ Tab "Reviews" + form "Leave a Reply" trong `ProductDetail.tsx` đang dùng **dữ liệu tĩnh** |
+
+**Quy tắc đọc kết quả probe:**
+- `200` → route tồn tại + public
+- `400` → route tồn tại, thiếu param (vd `POST /products/search` thiếu `keyword`)
+- `401` → route tồn tại, cần Bearer token
+- `404` + body JSON `{"errors":{"id":...}}` → route-param không match id → **route vẫn tồn tại**
+- `404` + HTML `Cannot GET /api/v1/...` → route **không** tồn tại
 
 **Giải thích vì sao authenticated endpoints FAIL trong script:** script tạo user mới → backend gửi OTP thất bại (`500`) → user chưa verify → không có `access_token` → mọi request có `Authorization` đều trả `401 {"message":"You must be logged in to continue."}`. Đây là **hành vi đúng** của backend, không phải bug frontend.
 
@@ -471,6 +494,10 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | 10 | `Payment.tsx` dùng `key={index}` cho list → React khuyến nghị key ổn định | 🟢 Thấp | |
 | 11 | ~~`Myfavorite.tsx` gọi `getFavoriteProducts()` khi khách chưa đăng nhập~~ | ✅ **Đã xử lý**: guard bằng `isAuthenticated` |
 | 12 | Chưa có `Error Boundary` quanh `<Routes>` → lỗi render làm sập cả cây component | 🟢 Thấp | Đề xuất trong `docs/04-api-integration.md` § 8 |
+| 13 | **7 nhóm endpoint backend chưa từng được tích hợp**: `banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments` | 🔴 Cao | `src/apis/index.ts` — cần thêm helper + gắn UI (chi tiết `docs/04-api-integration.md` § 1.3) |
+| 14 | `/stock` route đã có nhưng page là placeholder (`<table>adasd</table>`), trong khi backend có đầy đủ `GET/POST/PUT/DELETE /stocks` | 🟡 Trung bình | `src/container/Admin/page/Stock/Stock.tsx` |
+| 15 | `ProductDetail.tsx` tab "Reviews" + form "Leave a Reply" dùng **dữ liệu tĩnh**, backend có `/products/:id/comments` (GET/POST) | 🟡 Trung bình | `src/container/Detail/page/ProductDetail/ProductDetail.tsx` |
+| 16 | `CarouselItem.tsx` hardcode 4 ảnh, backend có `GET /banners` trả 1332 banner | 🟡 Trung bình | `src/components/CarouselItem/CarouselItem.tsx` |
 
 ---
 

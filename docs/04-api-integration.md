@@ -50,6 +50,48 @@
 
 **Tổng: 29 endpoint.**
 
+> ⚠️ **Cập nhật 2026-11-10 (probe bề mặt API lần 2):** con số 29 ở trên chỉ phản ánh **phạm vi ban đầu** của bài toán. Khi probe toàn bộ bề mặt API (không chỉ các endpoint đã biết từ Swagger), đã phát hiện thêm **7 nhóm endpoint lớn chưa từng được tích hợp** — xem § 1.3 bên dưới. Tổng thực tế của backend là **~55 route**.
+
+### 1.3. Nhóm endpoint phát hiện thêm qua probe (chưa tích hợp)
+
+Ngày 2026-11-10 đã probe lại toàn bộ bề mặt API bằng `scripts/probe-surface.mjs` (quét path × method, phân biệt route thật với route-param bằng cách thay id hợp lệ / không hợp lệ). Kết quả: backend có **7 nhóm tài nguyên** ngoài phạm vi 29 endpoint ban đầu.
+
+| Nhóm | Route | Method | Kết quả probe | Có UI tương ứng? |
+|------|-------|--------|----------------|-----------------|
+| **banners** | `/banners` | GET / POST / DELETE | 🟢 GET **200** (1332 bản ghi, shape: `_id, slug, url, description, link`) | ❌ `CarouselItem.tsx` đang hardcode ảnh từ `public/image` + URL ngoài |
+| | `/banners/:id` | GET / PUT / DELETE | PUT/DELETE 401; GET `/banners/<id>` 404 → không có route đọc 1 banner | |
+| **blogs** | `/blogs` | GET / POST / DELETE | 🟢 GET **200** (33 bản ghi, shape: `_id, author_id, author_name, title, detail, status, comments_count, report_count, views_count, thumbnail`) | ❌ Không có trang blog |
+| | `/blogs/:id` | GET | 🟢 GET **200** (trả `data` dạng object) | |
+| | `/blogs/:id/like` | POST | 401 (route tồn tại) | ❌ |
+| | `/blogs/:id/comments` | GET / POST | 401 (route tồn tại) | ❌ |
+| | `/blogs/:id/comments/:commentId` | DELETE | 401 (route tồn tại) | ❌ |
+| **hashtags** | `/hashtags` | GET / POST / DELETE | 🟢 GET **200** (shape: `_id, name, slug, type, description, usage_count, isTrending`) | ❌ Chỉ có field `hashtags?: string[]` trong type, chưa dùng |
+| | `/hashtags/:id` | GET / PUT / DELETE | 401 | ❌ |
+| | `/hashtags/products` · `/hashtags/blogs` · `/hashtags/trending` · `/hashtags/search` | GET | 401 (route tồn tại) | ❌ |
+| **roles** | `/roles` | GET | 401 (route tồn tại; POST/DELETE 404) | ❌ |
+| | `/roles/:id` | PUT / DELETE | 401 (route tồn tại) | ❌ |
+| **reports** | `/reports` | GET / POST / DELETE | 401 (route tồn tại) | ❌ |
+| **stocks** | `/stocks` | GET / POST / DELETE | 401 (route tồn tại) | ❌ |
+| | `/stocks/:id` | GET / PUT / DELETE | 401 (route tồn tại) | ❌ Có màn `/stock` nhưng **placeholder** (`<table>adasd</table>`) |
+| **comments (sản phẩm)** | `/products/:id/comments` | GET / POST | 401 (route tồn tại) | ⚠️ `ProductDetail.tsx` có tab "Reviews" + form "Leave a Reply" **đang dùng dữ liệu tĩnh** |
+| | `/products/:id/comments/:commentId` | DELETE | 401 (route tồn tại) | ❌ |
+| **auth (alias)** | `/auth/users` · `/auth/users/:id` · `/auth/users/carts` · `/auth/users/orders` · `/auth/users/token` · `/auth/users/@me` · `/auth/users/products` · `/auth/users/password` · `/auth/users/otp` | GET / PUT / DELETE | 401 — đây là **router mount trùng lặp** của nhóm `users`, không phải API mới | — |
+
+**Kết luận quan trọng:** các endpoint `banners`, `blogs`, `hashtags` đều là **GET public → HTTP 200, đọc được ngay** nhưng frontend **chưa hề gọi**. Đây là phần "chưa call" thực sự.
+
+**Bảng chân trời mở rộng — route nào thực sự tồn tại:**
+
+| Kết quả | Ý nghĩa | Ví dụ |
+|---------|----------|-------|
+| `200` | Route tồn tại + public | `/products`, `/categories`, `/suppliers`, `/banners`, `/blogs`, `/hashtags` |
+| `400` | Route tồn tại, thiếu/sai param hoặc validation | `POST /users/login`, `POST /products/search` (thiếu `keyword`) |
+| `401` | Route tồn tại, **cần token** | `GET /carts`, `GET /reports`, `GET /stocks`, `GET /roles`, `POST /blogs/:id/like` |
+| `404` | Route **không** tồn tại | `GET /users/me`, `GET /blogs/slug/:x`, `POST /auth/users/login` |
+
+> Lưu ý: `404` với body `{"errors":{"id":...}}` (HTTP 400) là **route-param không match** (ví dụ `GET /blogs/abc` → 400 vì `abc` không phải ObjectId hợp lệ), **không** phải route thiếu. Ngược lại `404 Cannot GET /api/v1/...` (HTML do Express) là route thật sự không tồn tại.
+
+**Kết quả probe đầy đủ:** xem `scripts/probe-surface.mjs` (chạy `node scripts/probe-surface.mjs` để tái lập).
+
 **Xác nhận contract (probe live, 2026-11-10):**
 
 | Kiểm tra | Kết quả | Ý nghĩa |
@@ -68,6 +110,19 @@ Phân loại theo yêu cầu Part 2.3:
 | `NOT_INTEGRATED` (mới thêm) | 20 | #3, #4, #13–#29 |
 | `NOT_APPLICABLE_TO_EXISTING_UI` | 1 | #28 (`GET /orders` — chưa có màn hình "đơn hàng của tôi"; helper đã có sẵn để dùng) |
 | `BLOCKED_BY_BACKEND_OR_PERMISSION` | 1 | #1 (SMTP chưa cấu hình) |
+
+### 1.2.1. Trạng thái "đã gọi hết API chưa?" — trả lời ngắn
+
+| Tầng | Trạng thái | Chi tiết |
+|------|-----------|----------|
+| `src/apis/index.ts` — service layer | ✅ **27/27 helper** | Mọi endpoint trong phạm vi ban đầu đều có helper |
+| UI components/pages — **nhóm cũ** | ✅ **24/27 helper được gọi** | 3 helper không có UI: `likeProduct`, `unlikeProduct`, `getOrders` |
+| UI components/pages — **7 nhóm mới** (§ 1.3) | ❌ **0/7** | `banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments` — **chưa gọi endpoint nào** |
+| **Tổng backend** | ⚠️ **~24/55 route (~44%)** đã được gọi từ UI | Phần còn lại là nhóm mới + 3 helper orphan |
+
+**Trả lời câu hỏi "đã call hết tất cả API chưa": ❌ Chưa.**
+- Với phạm vi 29 endpoint ban đầu của bài toán: **code đã viết đủ 100%**, 24/27 được gọi từ UI, 3 cái còn lại không có chỗ để gắn (tuân thủ "không tự chế UI").
+- Với toàn bộ backend: **còn 7 nhóm endpoint chưa từng được chạm tới**, trong đó `banners` / `blogs` / `hashtags` là **public GET, đọc được ngay (HTTP 200)**.
 
 ---
 
