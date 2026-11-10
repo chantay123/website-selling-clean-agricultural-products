@@ -458,8 +458,10 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | 6 | ~~`ProductDetail.tsx` render `detail.productAttributes.map(...)` mà không guard~~ → **Đã xử lý**: dùng `(detail.productAttributes ?? []).map(...)` và `detail.category?.name` | ✅ Đã sửa | `ProductDetail.tsx` |
 | 7 | `HeaderItem.tsx` hiển thị `isprofile?.username` nhưng API trả `full_name`/`email` → tên hiển thị trống | 🟢 Thấp | Đã có `fullName` trong adapter |
 | 8 | Không có phân trang (pagination) — `GET /products` trả toàn bộ danh sách | 🟢 Thấp | Backend không trả metadata page |
-| 9 | 41 ESLint error còn lại đến từ code cũ | 🟢 Thấp | Ngoài phạm vi task |
+| 9 | 39 ESLint error còn lại đến từ code cũ (`no-var`, `no-explicit-any`) | 🟢 Thấp | Ngoài phạm vi task; tầng API mới lint sạch |
 | 10 | `Payment.tsx` dùng `key={index}` cho list → React khuyến nghị key ổn định | 🟢 Thấp | |
+| 11 | `HeaderItem.tsx` vẫn gọi `getMyProfile()` khi khách chưa đăng nhập → 401 bị nuốt bằng `console.log` | 🟢 Thấp | Nên guard bằng `isAuthenticated` |
+| 12 | Chưa có `Error Boundary` quanh `<Routes>` → lỗi render làm sập cả cây component | 🟢 Thấp | Đề xuất trong `docs/04-api-integration.md` § 8 |
 
 ---
 
