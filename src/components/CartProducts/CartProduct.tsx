@@ -1,7 +1,13 @@
 import "./style.scss";
 import { Flex, Layout } from "antd";
 import { useEffect } from "react";
-import requestApi from "../../utils/interceptors";
+import {
+  addToCart,
+  getCart,
+  getCategories,
+  getProducts,
+  getProductsByCategory,
+} from "../../apis";
 import {
   setCategory,
   setProduct,
@@ -25,10 +31,8 @@ const CartProduct = () => {
 
   const category = async () => {
     try {
-      const respone = await requestApi("categories", "GET", {});
-      const a = respone.data.data;
-      dispatch(setCategory(a));
-      console.log(respone);
+      const respone = await getCategories();
+      dispatch(setCategory(respone.data));
     } catch (error) {
       console.log(error);
     }
@@ -38,13 +42,10 @@ const CartProduct = () => {
   const filterCategory = useSelector((state: RootState) => state.user.category);
   const fetchProduct = async () => {
     try {
-      const respone = await requestApi(
-        !query ? "products" : `products/categories/${query}`,
-        "GET",
-        {}
-      );
-      const arr = respone.data.data;
-      dispatch(setProduct(arr));
+      const respone = query
+        ? await getProductsByCategory(query)
+        : await getProducts();
+      dispatch(setProduct(respone.data));
     } catch (error) {
       console.log(error);
     }
@@ -63,21 +64,26 @@ const CartProduct = () => {
   const filterProduct = lengthProduct > 5 ? product.slice(0, 8) : product;
 
   const buttonAdd = async (product_id: string) => {
+    const target = product.find((item) => item._id === product_id);
+    const attributeId = target?.productAttributes?.[0]?._id;
+
+    if (!attributeId) {
+      toast.error("Sản phẩm không có thuộc tính để thêm vào giỏ hàng");
+      return;
+    }
+
     try {
-      const respone = await requestApi("carts/items", "POST", {
+      await addToCart({
         items: [
           {
             product_id: product_id,
+            product_attribute_id: attributeId,
             quantity: 1,
           },
         ],
       });
-      console.log(respone);
-      const respones = await requestApi("carts", "GET", {});
-      console.log(respone);
-      const list = respones.data.data;
-      console.log(respone);
-      dispatch(setcartnumber(list.carts.length));
+      const respones = await getCart();
+      dispatch(setcartnumber(respones.data.items.length));
       const message = "add product successfully";
       toast.success(message);
     } catch (error) {
@@ -88,64 +94,14 @@ const CartProduct = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const respone = await requestApi("carts", "GET", {});
-        const list = respone.data.data;
-        dispatch(setcartnumber(list.items.length));
+        const respone = await getCart();
+        dispatch(setcartnumber(respone.data.items.length));
       } catch (error) {
-        console.log();
+        console.log(error);
       }
     };
     fetchCart();
   }, []);
-
-  // const favorite = async () => {
-  //   try {
-  //     const response = await requestApi("users/products/favorites", "GET", {});
-  //     console.log(response);
-  //     const a = response.data.data;
-  //     dispatch(setfavorite(a));
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const buttonLike = async (product_id: string) => {
-  //   console.log(product_id);
-  //   try {
-  //     await requestApi(`products/${product_id}/like`, "POST", {
-  //       product_id: product_id,
-  //     });
-  //     // favorite();
-  //   } catch (error: any) {
-  //     const { message } = error.response.data;
-  //     toast.error(message);
-  //   }
-  // };
-
-  // const buttonUnlike = async (product_id: string) => {
-  //   try {
-  //     const respone = await requestApi(
-  //       `products/${product_id}/unlike`,
-  //       "POST",
-  //       {
-  //         product_id: product_id,
-  //       }
-  //     );
-  //     // favorite();
-  //     console.log(respone);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const listfavorite = useSelector((state: RootState) => state.user.favorite);
-  // //check listfavorite
-  // const checklike = (_id: string) => {
-  //   if (listfavorite.some((e) => e._id === _id)) {
-  //     return true;
-  //   }
-  //   return false;
-  // };
 
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
@@ -163,7 +119,7 @@ const CartProduct = () => {
               </Link>
             </li>
             {filterCategory.map((item) => (
-              <li>
+              <li key={item._id}>
                 <Link
                   to={`?category=${item._id}`}
                   className="p-4 border-2 rounded-[30px] ml-4 "
@@ -183,23 +139,6 @@ const CartProduct = () => {
                 <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
                   {product.category?.name}
                 </div>
-                {/* <div className="absolute ml-64 mt-2">
-                  {product.productAttributes?.map((attr) => (
-                    <ButtonLike
-                      className={
-                        checklike(product._id) ? "bg-red-600" : "bg-gray-400"
-                      }
-                      key={attr._id}
-                      onclick={() => {
-                        if (checklike(product._id)) {
-                          buttonUnlike(product._id);
-                        } else {
-                          buttonLike(product._id);
-                        }
-                      }}
-                    />
-                  ))}
-                </div> */}
                 <div>
                   <Link to={`product/${product._id}`}>
                     <img
@@ -214,15 +153,13 @@ const CartProduct = () => {
                 </h2>
                 <div className="flex  mt-30 items-center justify-evenly mt-5">
                   <p className=" text_money p-4 text-xl  font-popins font-semibold">
-                    {product.sold}$/KG
+                    {product.price}$/KG
                   </p>
-                  {product.productAttributes?.map(() => (
-                    <ButtonClick
-                      label="Add to card"
-                      key={product._id}
-                      onClick={() => buttonAdd(product._id)}
-                    />
-                  ))}
+                  <ButtonClick
+                    label="Add to card"
+                    key={product._id}
+                    onClick={() => buttonAdd(product._id)}
+                  />
                 </div>
               </div>
             </div>

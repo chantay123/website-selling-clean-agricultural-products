@@ -1,6 +1,7 @@
 import { Alert, Button, Form, Input, Layout } from "antd";
 
-import requestApi from "../../../../utils/interceptors";
+import { getProductById, updateProduct } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
@@ -40,10 +41,45 @@ const EditAdmin = () => {
 
   const product = async () => {
     try {
-      const respone = await requestApi(`products/${editId}`, "GET", {});
-      const a = respone.data.data;
-      console.log(a);
-      setUserData(a);
+      const respone = await getProductById(editId ?? "");
+      const data = respone.data;
+      const attribute = (data.productAttributes?.[0] ?? {}) as Record<
+        string,
+        any
+      >;
+      setUserData({
+        name: data.name ?? "",
+        slug: data.slug ?? "",
+        description: data.description ?? "",
+        origin: data.origin ?? "",
+        sold: data.sold !== undefined ? String(data.sold) : "",
+        thumbnail_url: data.thumbnail_url ?? "",
+        attribute: {
+          weight: attribute.weight !== undefined ? String(attribute.weight) : "",
+          original_price:
+            attribute.original_price !== undefined
+              ? String(attribute.original_price)
+              : "",
+          discounted_percent:
+            attribute.discounted_percent !== undefined
+              ? String(attribute.discounted_percent)
+              : "",
+          dimensions: attribute.dimensions ?? "",
+          unit_of_measurement: attribute.unit_of_measurement ?? "",
+          quantity_per_unit:
+            attribute.quantity_per_unit !== undefined
+              ? String(attribute.quantity_per_unit)
+              : "",
+          certification: attribute.certification ?? "",
+          harvest_date: attribute.harvest_date ?? "",
+          link: attribute.link ?? "",
+          expiration_date: attribute.expiration_date ?? "",
+        },
+        hot: data.hot !== undefined ? String(data.hot) : "",
+        numberOfReview:
+          data.numberOfReview !== undefined ? String(data.numberOfReview) : "",
+        rating: data.rating !== undefined ? String(data.rating) : "",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -55,39 +91,43 @@ const EditAdmin = () => {
 
   const editProduct = async () => {
     const loadingToast = toast.loading("Updating....");
-    const response = await requestApi(`products/${editId}`, "PUT", {
-      name: userData.name,
-      slug: userData.slug,
-      description: userData.description,
-      origin: userData.origin,
-      sold: userData.sold,
-      thumbnail_url: userData.thumbnail_url,
-      attribute: {
-        weight: userData.attribute.weight,
-        original_price: userData.attribute.original_price,
-        discounted_percent: userData.attribute.discounted_percent,
-        dimensions: userData.attribute.dimensions,
-        unit_of_measurement: userData.attribute.unit_of_measurement,
-        quantity_per_unit: userData.attribute.quantity_per_unit,
-        certification: userData.attribute.certification,
-        harvest_date: userData.attribute.harvest_date,
-        link: userData.attribute.link,
-        expiration_date: userData.attribute.expiration_date,
-      },
-      hot: userData.hot,
-      numberOfReview: userData.numberOfReview,
-      rating: userData.rating,
-    });
-    const { message } = response.data;
     try {
+      const response = await updateProduct(editId ?? "", {
+        name: userData.name,
+        slug: userData.slug,
+        description: userData.description,
+        origin: userData.origin,
+        sold: userData.sold,
+        thumbnail_url: userData.thumbnail_url,
+        attribute: {
+          weight: userData.attribute.weight,
+          original_price: userData.attribute.original_price,
+          discounted_percent: userData.attribute.discounted_percent,
+          dimensions: userData.attribute.dimensions,
+          unit_of_measurement: userData.attribute.unit_of_measurement,
+          quantity_per_unit: userData.attribute.quantity_per_unit,
+          certification: userData.attribute.certification,
+          harvest_date: userData.attribute.harvest_date,
+          link: userData.attribute.link,
+          expiration_date: userData.attribute.expiration_date,
+        },
+        hot: userData.hot,
+        numberOfReview: userData.numberOfReview,
+        rating: userData.rating,
+      });
       toast.update(loadingToast, {
-        render: message,
+        render: response.message,
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
     } catch (error: any) {
-      console.log(error);
+      toast.update(loadingToast, {
+        render: getApiErrorMessage(error, "Lỗi cập nhật sản phẩm"),
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
   return (

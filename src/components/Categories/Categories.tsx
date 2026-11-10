@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import { SearchOutlined } from "@ant-design/icons";
-import requestApi from "../../utils/interceptors";
+import { searchProducts } from "../../apis";
 import { useSearchParams } from "react-router-dom";
 import { setProduct } from "../../redux/userReducer/userReducer";
 
@@ -40,14 +40,8 @@ const Categories = () => {
       return param;
     });
     try {
-      const respone = await requestApi(
-        `products/search?keyword=${keywords}`,
-        "POST",
-        {}
-      );
-      console.log(respone);
-      const arr = respone.data.data;
-      dispatch(setProduct(arr));
+      const respone = await searchProducts(keywords);
+      dispatch(setProduct(respone.data));
     } catch (error) {
       console.log(error);
     }

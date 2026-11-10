@@ -5,13 +5,15 @@ import {
   MinusCircleOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import requestApi from "../../utils/interceptors";
+import { getCart, removeCartItem, updateCartItems, createOrder } from "../../apis";
 import { useEffect, useState } from "react";
 import Footer from "../../components/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { setCart, setcartnumber } from "../../redux/userReducer/userReducer";
 import { RootState } from "../../redux/config";
 import { cartTypes } from "../../@type/global.type";
+import { toast } from "react-toastify";
+import { getApiErrorMessage } from "../../utils/api.adapter";
 
 const PayMent = () => {
   const [open, setOpen] = useState(false);
@@ -28,7 +30,6 @@ const PayMent = () => {
   );
 
   const renderlist = listcard?.items;
-  console.log(renderlist);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const handleIncrement = (productId: string) => {
@@ -55,20 +56,11 @@ const PayMent = () => {
   };
   const dispatch = useDispatch();
   const fetchCart = async () => {
-    const token = localStorage.getItem("token");
     try {
-      const respone = await requestApi(
-        "carts",
-        "GET",
-        {},
-        {
-          Authorization: `Bearer ${token}`,
-        }
-      );
-      const list = respone.data.data;
-      console.log(respone);
+      const respones = await getCart();
+      const list = respones.data;
       dispatch(setCart(list));
-      dispatch(setcartnumber(list.items));
+      dispatch(setcartnumber(list.items.length));
     } catch (error) {
       console.log(error);
     }
@@ -79,47 +71,57 @@ const PayMent = () => {
 
   const deletecart = async (id: string, product_id: string) => {
     try {
-      await requestApi(`carts/items/${id}?product_id=${product_id}`, "DELETE", {
-        product_id,
-      });
+      await removeCartItem(id, product_id);
 
       fetchCart();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // const order = async (value: any) => {
-  //   try {
-  //     const respone = await requestApi("orders", "POST", {
-  //       product_attribute_ids: renderlist?.map((v) => v.productAttributeId),
-  //       payment_method: value.payment,
-  //       address: value.address,
-  //       phone: value.phone,
-  //       note: value.note,
-  //     });
-  //     setOpen(false);
-  //     const message = "Payment success";
-  //     toast.success(message, {
-  //       autoClose: 500,
-  //     });
-  //     console.log(message);
-  //     await fetchCart();
-  //   } catch (error) {}
-  // };
+  /** Places the order for every item currently in the cart. */
+  const order = async (value: any) => {
+    if (!listcard || !renderlist || renderlist.length === 0) {
+      toast.error("Giỏ hàng đang trống");
+      return;
+    }
 
-  // const updateCart = async () => {
-  //   try {
-  //     const respone = await requestApi(`carts/items/${listcard?._id}`, "PUT", {
-  //       items: listcard?.carts.map((c) => {
-  //         return {
-  //           product_id: c.productDetails._id,
-  //           product_attribute_id: c.productAttributeId,
-  //           quantity: quantities[c.productDetails._id] || 1,
-  //         };
-  //       }),
-  //     });
-  //     fetchCart();
-  //   } catch (error) {}
-  // };
+    try {
+      const response = await createOrder({
+        product_attribute_ids: renderlist.map(
+          (item) => item.productAttributeId ?? ""
+        ),
+        payment_method: value.payment,
+        address: value.address,
+        phone: value.Phone,
+        note: value.note,
+      });
+      setOpen(false);
+      toast.success(response.message || "Payment success");
+      await fetchCart();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Lỗi thanh toán"));
+    }
+  };
+
+  /** Persists the quantities currently displayed in the cart. */
+  const updateCart = async () => {
+    if (!listcard || !renderlist) return;
+
+    try {
+      await updateCartItems(listcard._id, {
+        items: renderlist.map((item) => ({
+          product_id: item.product_id._id,
+          product_attribute_id: item.productAttributeId ?? "",
+          quantity: quantities[item.product_id._id] || 1,
+        })),
+      });
+      toast.success("Cập nhật giỏ hàng thành công");
+      fetchCart();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Lỗi cập nhật giỏ hàng"));
+    }
+  };
 
   return (
     <div>
@@ -170,7 +172,7 @@ const PayMent = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
-                            {cart.product_id.sold}$/KG
+                            {cart.price ?? cart.product_id.price}$/KG
                           </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -202,8 +204,8 @@ const PayMent = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
-                            {/* {quantities[cart.product_id._id] *
-                              cart.product_id.sold} */}
+                            {(quantities[cart.product_id._id] || 0) *
+                              (cart.price ?? 0)}
                             $
                           </p>
                         </td>
@@ -228,15 +230,10 @@ const PayMent = () => {
       </div>
       <div className="">
         <div className="mt-5 ml-20">
-          {/* <input
-            type="text"
-            className="border-0 border-b rounded me-5 py-3 mb-4"
-            placeholder="Coupon Code"
-          /> */}
           <button
-          // onClick={() => updateCart()}
-          // className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
-          // type="button"
+            onClick={() => updateCart()}
+            className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
+            type="button"
           >
             Save
           </button>
@@ -248,16 +245,6 @@ const PayMent = () => {
                   <h1 className="text-3xl mb-4">
                     Cart <span className="font-normal">Total</span>
                   </h1>
-                  {/* <div className="flex justify-between mb-4">
-                    <h5 className="mb-0 me-4">Subtotal:</h5>
-                    <p className="mb-0">{}</p>
-                  </div> */}
-                  {/* <div className="flex justify-between">
-                    <h5 className="mb-0 me-4">Shipping</h5>
-                    <div>
-                      <p className="mb-0">Flat rate: $3.00</p>
-                    </div>
-                  </div> */}
                   <p className="mb-0 text-right">Shipping to Viet Nam.</p>
                 </div>
                 <div className="py-4 mb-4 border-t border-b flex justify-between">
@@ -281,7 +268,7 @@ const PayMent = () => {
                     footer={null}
                   >
                     <Form
-                      // onFinish={(value) => order(value)}
+                      onFinish={(value) => order(value)}
                       name="wrap"
                       labelCol={{ flex: "110px" }}
                       labelAlign="left"

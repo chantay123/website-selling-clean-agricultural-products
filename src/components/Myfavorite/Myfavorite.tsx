@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import HearderItem from "../HeaderItem/HeaderItem";
-import requestApi from "../../utils/interceptors";
+import { getFavoriteProducts } from "../../apis";
 import { useDispatch, useSelector } from "react-redux";
 import { setfavorite } from "../../redux/userReducer/userReducer";
 import { useEffect } from "react";
@@ -10,17 +10,14 @@ const Myfavorite = () => {
   const dispatch = useDispatch();
   const favorite = async () => {
     try {
-      const response = await requestApi("users/products/favorites", "GET", {});
-      console.log(response);
-      const a = response.data.data;
-      dispatch(setfavorite(a));
+      const response = await getFavoriteProducts();
+      dispatch(setfavorite(response.data));
     } catch (error) {
       console.log(error);
     }
   };
 
   const listfavorite = useSelector((state: RootState) => state.user.favorite);
-  console.log(listfavorite);
   useEffect(() => {
     favorite();
   }, []);

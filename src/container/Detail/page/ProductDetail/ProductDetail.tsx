@@ -9,12 +9,14 @@ import { useState } from "react";
 import "./style.scss";
 import Footer from "../../../../components/Footer";
 import { useNavigate, useParams } from "react-router-dom";
-import requestApi from "../../../../utils/interceptors";
+import { addToCart, getCart, getProductById } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../redux/config";
 import ButtonClick from "../../../../components/Button/ButtonClick";
 import { toast } from "react-toastify";
-import { setcartnumber } from "../../../../redux/userReducer/userReducer";
+import { setcartnumber, setProduct } from "../../../../redux/userReducer/userReducer";
+import { useEffect } from "react";
 
 const customIcons: Record<number, React.ReactNode> = {
   1: <StarFilled style={{ color: "#81c408" }} />,
@@ -29,6 +31,22 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const { productId } = useParams();
   const product = useSelector((state: RootState) => state.user.product);
+
+  /**
+   * The product is fetched from the API so that the detail page also works
+   * when it is opened directly (deep link) and the store is still empty.
+   */
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await getProductById(productId ?? "");
+        dispatch(setProduct([response.data]));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
 
   const detail = product.find((p) => p._id === productId);
 
@@ -50,22 +68,29 @@ const ProductDetail = () => {
     return;
   }
   const buttonAdd = async (product_id: string) => {
+    const attributeId = detail?.productAttributes?.[0]?._id;
+
+    if (!attributeId) {
+      toast.error("Sản phẩm không có thuộc tính để thêm vào giỏ hàng");
+      return;
+    }
+
     try {
-      await requestApi("carts/items", "POST", {
+      await addToCart({
         items: [
           {
             product_id: product_id,
+            product_attribute_id: attributeId,
             quantity: 1,
           },
         ],
       });
-      const respones = await requestApi("carts", "GET", {});
-      const list = respones.data.data;
-      dispatch(setcartnumber(list.carts.length));
+      const respones = await getCart();
+      dispatch(setcartnumber(respones.data.items.length));
       const message = "add product successfully";
       toast.success(message);
     } catch (error) {
-      console.log(error);
+      toast.error(getApiErrorMessage(error, "Lỗi thêm vào giỏ hàng"));
     }
   };
   return (

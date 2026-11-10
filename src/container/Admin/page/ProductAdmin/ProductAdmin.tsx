@@ -1,5 +1,5 @@
 import { Space, Table, TableProps } from "antd";
-import requestApi from "../../../../utils/interceptors";
+import { deleteProduct, getMyProfile, getProducts, getSuppliers } from "../../../../apis";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,9 +20,8 @@ import Sidebar from "../../components/Sidebar";
 const ProductAdmin = () => {
   const profile = async () => {
     try {
-      const response = await requestApi("users/@me/profile", "GET", {});
-      const a = response.data.data;
-      dispatch(setAdminStatus(a?.role === "Admin"));
+      const response = await getMyProfile();
+      dispatch(setAdminStatus(response.data?.role === "Admin"));
     } catch (error) {
       dispatch(setAdminStatus(false));
       console.log(error);
@@ -33,10 +32,9 @@ const ProductAdmin = () => {
   }, []);
 
   const isadmin = useSelector((state: RootState) => state.user.isAdmin);
-  const deleteProduct = async (product_id: any) => {
-    console.log(product_id);
+  const deleteProductById = async (product_id: any) => {
     try {
-      await requestApi(`products?id=${product_id}`, "DELETE", {});
+      await deleteProduct(product_id);
       fetchPRODUCT();
     } catch (error) {
       console.log(error);
@@ -55,10 +53,8 @@ const ProductAdmin = () => {
   const dispatch = useDispatch();
   const fetchPRODUCT = async () => {
     try {
-      const response = await requestApi("products", "GET", {});
-      const a = response.data.data;
-      dispatch(setProduct(a));
-      console.log(response);
+      const response = await getProducts();
+      dispatch(setProduct(response.data));
     } catch (error) {
       console.log(error);
     }
@@ -109,7 +105,7 @@ const ProductAdmin = () => {
       render: (_attributes: ProductAttribute[], productTypes) => (
         <Space size="middle">
           <button
-            onClick={() => deleteProduct(productTypes._id)}
+            onClick={() => deleteProductById(productTypes._id)}
             className="rounded-md border px-4 py-2 text-white bg-red-600"
           >
             <i>
@@ -161,11 +157,8 @@ const ProductAdmin = () => {
 
   const supplier = async () => {
     try {
-      const respone = await requestApi("suppliers", "GET", {});
-      const a = respone.data.data;
-      console.log(a);
-      dispatch(setsupplier(a));
-      console.log(respone);
+      const respone = await getSuppliers();
+      dispatch(setsupplier(respone.data));
     } catch (error) {
       console.log(error);
     }

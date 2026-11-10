@@ -2,11 +2,12 @@ import { Flex } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
-import requestApi from "../../utils/interceptors";
+import { addToCart, getCart } from "../../apis";
 import ButtonClick from "../Button/ButtonClick";
 import { setcartnumber } from "../../redux/userReducer/userReducer";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
@@ -19,18 +20,26 @@ const Cart = () => {
 
   //props
   const buttonAdd = async (product_id: string) => {
+    const target = filterProduct.find((item) => item._id === product_id);
+    const attributeId = target?.productAttributes?.[0]?._id;
+
+    if (!attributeId) {
+      toast.error("Sản phẩm không có thuộc tính để thêm vào giỏ hàng");
+      return;
+    }
+
     try {
-      await requestApi("carts", "POST", {
+      await addToCart({
         items: [
           {
-            product: product_id,
+            product_id: product_id,
+            product_attribute_id: attributeId,
             quantity: 1,
           },
         ],
       });
-      const respones = await requestApi("carts", "GET", {});
-      const list = respones.data.data;
-      dispatch(setcartnumber(list.items.length));
+      const respones = await getCart();
+      dispatch(setcartnumber(respones.data.items.length));
     } catch (error) {
       console.log(error);
     }
@@ -38,17 +47,16 @@ const Cart = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const respone = await requestApi("carts", "GET", {});
-        const list = respone.data.data;
-        console.log(respone);
-        dispatch(setcartnumber(list.items.length));
-      } catch (error) {}
+        const respone = await getCart();
+        dispatch(setcartnumber(respone.data.items.length));
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchCart();
   }, []);
 
   const filterProduct = useSelector((state: RootState) => state.user.product);
-  console.log(filterProduct);
   return (
     <Flex wrap="wrap" gap="35px">
       {filterProduct.map((product) => (
@@ -71,15 +79,13 @@ const Cart = () => {
             </h2>
             <div className="flex  mt-30 items-center justify-evenly mt-5">
               <p className=" text_money p-4 text-xl  font-popins font-semibold">
-                {product.sold}$/KG
+                {product.price}$/KG
               </p>
-              {product.productAttributes.map((_attr, index) => (
-                <ButtonClick
-                  label="Add to cart"
-                  key={`${product._id}-${index}`}
-                  onClick={() => buttonAdd(product._id)}
-                />
-              ))}
+              <ButtonClick
+                label="Add to cart"
+                key={`${product._id}`}
+                onClick={() => buttonAdd(product._id)}
+              />
             </div>
           </div>
         </div>
