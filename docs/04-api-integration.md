@@ -21,7 +21,7 @@
 | 1 | POST | `/users/register` | – | Đăng ký | `src/container/Auth/pages/Register/Register.tsx` | 🔴 Backend lỗi SMTP (500 "Failed to send OTP") |
 | 2 | POST | `/users/login` | – | Đăng nhập | `src/container/Auth/pages/Login/Login.tsx` | ✅ Tích hợp, verify 400 validation |
 | 3 | POST | `/users/logout` | Bearer | Đăng xuất | `src/components/HeaderItem/HeaderItem.tsx` | ✅ Tích hợp, chưa verify live (cần token) |
-| 4 | POST | `/users/token/refresh` | refresh_token | Refresh access token | `src/utils/interceptors.tsx` | ✅ Tích hợp |
+| 4 | POST | `/users/token/refresh` | refresh_token | Refresh access token | `src/utils/interceptors.tsx` | ✅ Tích hợp; 🟢 route đã verify (400 validation đúng khi body sai) |
 | 5 | GET | `/users/@me/profile` | Bearer | Header avatar, trang Profile, check Admin | `HeaderItem.tsx`, `MainProfile.tsx`, `Admin.tsx`, `ProductAdmin.tsx` | ✅ Tích hợp |
 | 6 | PUT | `/users/@me/profile` | Bearer | Cập nhật hồ sơ | `src/container/Profile/Page/MainProfile.tsx` | ✅ Tích hợp |
 | 7 | POST | `/users/password/change` | Bearer | Đổi mật khẩu | `src/container/Auth/pages/ChangePassword/ChangePassword.tsx` | ✅ Tích hợp |
@@ -49,6 +49,15 @@
 | 29 | POST | `/orders` | Bearer | Checkout | `src/container/Payment/Payment.tsx` | ✅ Tích hợp |
 
 **Tổng: 29 endpoint.**
+
+**Xác nhận contract (probe live, 2026-11-10):**
+
+| Kiểm tra | Kết quả | Ý nghĩa |
+|---|---|---|
+| `POST /users/token/refresh` (body sai) | `400 {"errors":{"refresh_token":{"msg":"The refresh token has already been used or does not exist."}}}` | ✅ Route tồn tại, validation đúng field `refresh_token` |
+| `POST /users/refresh-token` / `users/token` / `users/refresh` | `404 Cannot POST ...` | ❌ Các path này không tồn tại → `users/token/refresh` là path chính xác |
+| `GET /users/me` | `404 Cannot GET /api/v1/users/me` | ❌ Path hồ sơ là `/users/@me/profile`, không phải `/users/me` |
+| `POST /users/register` (4 email) | Account được tạo nhưng *unverified* → `POST /users/login` trả `400 "Account is unverified."` | 🔴 Backend không gửi được email OTP (SMTP) — frontend flow đúng, không thể verify endpoint cần token |
 
 Phân loại theo yêu cầu Part 2.3:
 

@@ -370,6 +370,15 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | Authenticated endpoints (profile, carts, likes, orders, logout) | ❌ FAIL — do **backend** chặn, không phải do frontend |
 | `POST /users/register` | ❌ 500 `{"message":"Failed to send OTP"}` — backend không gửi được email OTP (SMTP chưa cấu hình / hết quota) |
 
+**Xác nhận bổ sung (probe trực tiếp, 2026-11-10):**
+
+| Kiểm tra | Kết quả |
+|---|---|
+| `POST /users/register` (4 email khác nhau) | Account **được tạo trong DB** nhưng luôn ở trạng thái *unverified* → `POST /users/login` trả `400 {"errors":{"email":{"msg":"Account is unverified."}}}` |
+| `POST /users/token/refresh` với body sai | `400 {"errors":{"refresh_token":{"msg":"The refresh token has already been used or does not exist."}}}` → **route đúng**, validation chạy đúng |
+| `POST /users/refresh-token`, `POST /users/token`, `POST /users/refresh` | `404 Cannot POST ...` → các path này không tồn tại (xác nhận `users/token/refresh` là path chính xác) |
+| `GET /users/me` | `404 Cannot GET /api/v1/users/me` → path đúng của hồ sơ là `/users/@me/profile` |
+
 ### 12.2. Phân loại trạng thái endpoint
 
 | Endpoint | Method | Trạng thái | Ghi chú |
@@ -377,7 +386,7 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | `/users/register` | POST | 🔴 BLOCKED_BY_BACKEND | 500 "Failed to send OTP" |
 | `/users/login` | POST | 🟡 PARTIAL | Trả 400 "Account is unverified" cho account mới — **đúng flow** (cần verify OTP trước) |
 | `/users/logout` | POST | 🟡 UNVERIFIED | Cần access token hợp lệ |
-| `/users/token/refresh` | POST | 🟡 UNVERIFIED | Cần refresh token hợp lệ |
+| `/users/token/refresh` | POST | 🟢 **ROUTE VERIFIED** | Route tồn tại (trả 400 `Validation error` với field `refresh_token` khi body sai) — chưa verify được vòng refresh thật vì thiếu token hợp lệ |
 | `/users/@me/profile` | GET/PUT | 🟡 UNVERIFIED | Cần access token |
 | `/users/password/change` | POST | 🟡 UNVERIFIED | Cần access token |
 | `/users/password/forgot` | POST | 🟡 UNVERIFIED | |
