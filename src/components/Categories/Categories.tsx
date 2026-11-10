@@ -1,5 +1,5 @@
 import "./style.scss";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
 import { SearchOutlined } from "@ant-design/icons";
@@ -24,12 +24,10 @@ const Categories = () => {
   }, group);
 
   const [amount, setAmount] = useState(0);
-  const handleInputChange = async (event: any) => {
-    console.log(event.target.value);
-    setAmount(event.target.value);
-    useEffect(() => {
-      handleInputChange;
-    }, []);
+  // The price range only drives the local UI state; the filtering itself is
+  // done by the API through the category / keyword query parameters.
+  const handleInputChange = (event: any) => {
+    setAmount(Number(event.target.value));
   };
   //Search product by name
   const handleSeachChange = async (event: any) => {

@@ -155,15 +155,19 @@ const ProductAdmin = () => {
 
   const data: extendedProductType[] = extendedList;
 
-  const supplier = async () => {
-    try {
-      const respone = await getSuppliers();
-      dispatch(setsupplier(respone.data));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  supplier();
+  // The supplier list is fetched once on mount, not on every render, to
+  // avoid an endless request/dispatch loop.
+  useEffect(() => {
+    const supplier = async () => {
+      try {
+        const respone = await getSuppliers();
+        dispatch(setsupplier(respone.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    supplier();
+  }, []);
 
   const navigate = useNavigate();
   if (isadmin === false) {
