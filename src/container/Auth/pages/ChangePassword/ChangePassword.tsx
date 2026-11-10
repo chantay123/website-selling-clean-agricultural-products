@@ -2,7 +2,8 @@ import { Button, Form, Input } from "antd";
 import { BG } from "../../../../constants/images";
 import { LockOutlined } from "@ant-design/icons";
 
-import requestApi from "../../../../utils/interceptors";
+import { changePassword as changePasswordApi } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -11,31 +12,16 @@ const ChangePassword = () => {
   const changepassWordSubmit = async (value: any) => {
     const { old_password, password, confirm_password } = value;
     try {
-      const response = await requestApi("auth/changepassword", "POST", {
+      const response = await changePasswordApi({
         old_password,
         password,
         confirm_password,
       });
-      const { message } = response.data;
+      const { message } = response;
       toast.success(message);
       navigate("/");
     } catch (error: any) {
-      console.log(error);
-      const { message } = error.response.data;
-      let receivedmessage = message;
-      toast.error(message);
-      const { status } = error.response;
-
-      console.log(status);
-      if (status == 422) {
-        const { msg } =
-          error.response.data.errors.password ||
-          error.response.data.errors.confirm_password;
-        {
-          receivedmessage = msg;
-        }
-      }
-      toast.error(receivedmessage);
+      toast.error(getApiErrorMessage(error, "Lỗi đổi mật khẩu"));
     }
   };
   return (

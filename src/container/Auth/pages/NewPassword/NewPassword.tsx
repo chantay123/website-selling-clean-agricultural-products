@@ -3,7 +3,8 @@ import { Button, Form, Input } from "antd";
 import "tailwindcss/tailwind.css";
 import { BG } from "../../../../constants/images";
 import "./style.scss";
-import requestApi from "../../../../utils/interceptors";
+import { resetPassword as resetPasswordApi } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -15,28 +16,17 @@ const NewPassword = () => {
   const sumbmitnNewPassword = async (values: any) => {
     const { email, password, confirm_password } = values;
     try {
-      const response = await requestApi("users/password/reset", "POST", {
+      const response = await resetPasswordApi({
         email,
         password,
         confirm_password,
       });
-      const { message } = response.data;
+      const { message } = response;
       toast.success(message);
       navigate("/");
       dispatch(setIsFogotPassword(false));
     } catch (error: any) {
-      const { message } = error.response.data;
-      let receivedmessage = message;
-      console.log(error);
-      const { status } = error.response;
-      if (status == 422) {
-        const { msg } =
-          error.response.data.errors.email ||
-          error.response.data.errors.password ||
-          error.response.data.errors.confirm_password;
-        receivedmessage = msg;
-      }
-      toast.error(receivedmessage);
+      toast.error(getApiErrorMessage(error, "Lỗi đặt lại mật khẩu"));
     }
   };
   return (

@@ -7,8 +7,9 @@ import { Avatar, Badge, Dropdown, MenuProps } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/config";
-import requestApi from "../../utils/interceptors";
-import { ACCESS_TOKEN, clearStore } from "../../utils/setting";
+import { getMyProfile, logout as logoutApi } from "../../apis";
+import { REFRESH_TOKEN, getCookie } from "../../utils/setting";
+import { clearTokens } from "../../utils/interceptors";
 import {
   setAuthenticationStatus,
   setprofile,
@@ -76,11 +77,17 @@ const HearderItem = () => {
 
   const logout = async () => {
     try {
-      clearStore(ACCESS_TOKEN);
+      const refreshToken = getCookie(REFRESH_TOKEN);
+      if (refreshToken) {
+        await logoutApi(refreshToken);
+      }
+      clearTokens();
       toast.success("Đăng xuất thành công");
       dispatch(setAuthenticationStatus(false));
     } catch (error: any) {
       console.error("Logout failed:", error);
+      clearTokens();
+      dispatch(setAuthenticationStatus(false));
       toast.error("Lỗi đăng xuất");
     }
   };
@@ -91,10 +98,8 @@ const HearderItem = () => {
   const cartnumber = useSelector((state: RootState) => state.user.cartnumber);
   const fetchAvatar = async () => {
     try {
-      const response = await requestApi("auth/me", "GET", {});
-      const avatar = response.data.data;
-      console.log(response);
-      dispatch(setprofile(avatar));
+      const response = await getMyProfile();
+      dispatch(setprofile(response.data));
     } catch (error) {
       console.log("Error fetching avatar:", error);
     }

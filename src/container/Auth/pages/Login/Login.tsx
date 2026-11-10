@@ -2,36 +2,38 @@ import "./style.scss";
 import { Button, Checkbox, Form, Input } from "antd";
 import { BG } from "../../../../constants/images";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import requestApi from "../../../../utils/interceptors";
+import { login as loginApi } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 
 import { toast } from "react-toastify";
 
-import { setAuthenticationStatus } from "../../../../redux/userReducer/userReducer";
+import { setAuthenticationStatus, setAdminStatus } from "../../../../redux/userReducer/userReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, setStore } from "../../../../utils/setting";
+import { ACCESS_TOKEN, REFRESH_TOKEN, setCookie, setStore } from "../../../../utils/setting";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //call api login
   const loginSubmit = async (values: any) => {
-    const { username, password } = values;
+    const { email, password } = values;
     try {
-      const response = await requestApi("auth/login", "POST", {
-        username,
-        password,
-      });
-      console.log(response);
-      const { access_token } = response.data.data;
+      const response = await loginApi({ email, password });
+      const { access_token, refresh_token, role } = response.data;
       setStore(ACCESS_TOKEN, access_token);
+      if (refresh_token) {
+        setCookie(REFRESH_TOKEN, refresh_token, 7);
+      }
       toast.success("Đăng nhập thành công!");
 
       dispatch(setAuthenticationStatus(true));
+      if (role === "Admin") {
+        dispatch(setAdminStatus(true));
+      }
       navigate("/");
     } catch (error: any) {
-      const { message } = error.response?.data || {};
-      toast.error(message || "Lỗi đăng nhập");
+      toast.error(getApiErrorMessage(error, "Lỗi đăng nhập"));
     }
   };
   return (
@@ -51,12 +53,12 @@ const Login = () => {
         </h2>
         <Form.Item
           className="text-xs "
-          name="username"
-          rules={[{ required: true, message: "Please input your Username!" }]}
+          name="email"
+          rules={[{ required: true, message: "Please input your Email!" }]}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon w-full " />}
-            placeholder="Username"
+            placeholder="Email"
             className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
           />
         </Form.Item>

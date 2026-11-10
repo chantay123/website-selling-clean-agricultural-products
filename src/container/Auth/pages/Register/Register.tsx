@@ -8,37 +8,29 @@ import {
   PhoneOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import requestApi from "../../../../utils/interceptors";
+import { register as registerApi } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
   const registerSubmit = async (values: any) => {
-    const { username, password, email, phone } = values;
+    const { email, password, confirm_password, phone, full_name } = values;
     try {
-      const response = await requestApi("auth/signup", "POST", {
-        username,
-        password,
+      const response = await registerApi({
         email,
+        password,
+        confirm_password,
         phone,
+        full_name,
       });
 
-      const { message } = response.data;
+      const { message } = response;
       toast.success(message);
       navigate("/login");
     } catch (error: any) {
-      const { message } = error.response.data;
-      let receivedmessage = message;
-
-      const { status } = error.response;
-      if (status == 422) {
-        const { msg } =
-          error.response.data.errors.full_name ||
-          error.response.data.errors.email;
-        receivedmessage = msg;
-      }
-      toast.error(receivedmessage);
+      toast.error(getApiErrorMessage(error, "Lỗi đăng ký"));
     }
   };
 
@@ -57,15 +49,15 @@ const Register = () => {
         <h1 className="text-center text-4xl mb-8 font-bold">Sign up</h1>
         <Form.Item
           className="text-xs "
-          name="username"
-          rules={[{ required: true, message: "Please input your Username!" }]}
+          name="full_name"
+          rules={[{ required: true, message: "Please input your Full name!" }]}
         >
           <Input
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
             prefix={
               <UserOutlined className="site-form-item-icon w-full mr-2" />
             }
-            placeholder="Username"
+            placeholder="Full name"
           />
         </Form.Item>
         <Form.Item
@@ -76,6 +68,19 @@ const Register = () => {
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
             type="Password"
             placeholder="Password"
+            prefix={<LockOutlined className="site-form-item-icon mr-2" />}
+          />
+        </Form.Item>
+        <Form.Item
+          name="confirm_password"
+          rules={[
+            { required: true, message: "Please input your Confirm password!" },
+          ]}
+        >
+          <Input.Password
+            className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
+            type="Password"
+            placeholder="Confirm password"
             prefix={<LockOutlined className="site-form-item-icon mr-2" />}
           />
         </Form.Item>

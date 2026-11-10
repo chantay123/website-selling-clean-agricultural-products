@@ -3,7 +3,8 @@ import { BG } from "../../../../constants/images";
 import "tailwindcss/tailwind.css";
 import { MailOutlined } from "@ant-design/icons";
 import "./sytle.scss";
-import requestApi from "../../../../utils/interceptors";
+import { forgotPassword as forgotPasswordApi } from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -13,21 +14,15 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const ForgotPassword = async (values: any) => {
-    const { username } = values;
+    const { email } = values;
     try {
-      const response = await requestApi("users/password/forgot", "POST", {
-        email: username,
-      });
-      const { message } = response.data;
+      const response = await forgotPasswordApi(email);
+      const { message } = response;
       toast.success(message);
       navigate("/verification");
       dispatch(setIsFogotPassword(true));
     } catch (error: any) {
-      const { status } = error.response;
-      if (status == 400) {
-        const { message } = error.response.data;
-        toast.error(message);
-      }
+      toast.error(getApiErrorMessage(error, "Lỗi quên mật khẩu"));
     }
   };
 
@@ -52,7 +47,7 @@ const ForgotPassword = () => {
         </p>
         <Form.Item
           className="text-xs pt-10 pb-5 xs:pt-5"
-          name="username"
+          name="email"
           rules={[{ required: true, message: "Please input your email!" }]}
         >
           <Input

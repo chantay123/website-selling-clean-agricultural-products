@@ -14,11 +14,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/config";
 import { useEffect, useState } from "react";
 
-import requestApi from "../../../utils/interceptors";
+import { getMyProfile, updateMyProfile } from "../../../apis";
+import { getApiErrorMessage } from "../../../utils/api.adapter";
 
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { StatusCodes } from "http-status-codes";
 
 const MainProfile = () => {
   const navigate = useNavigate();
@@ -41,35 +41,27 @@ const MainProfile = () => {
     cover_photo: "",
     gender: "Male",
   });
-
   const onFinish = async (value: any) => {
     const loadingToast = toast.loading("Updating....");
     const { address } = value;
-    const response = await requestApi("users/@me/profile", "PUT", {
-      fullName: userData.fullName,
-      phone: userData.phone,
-      gender: userData.gender,
-      avatar: userData.avatar,
-      thumbnail: userData.cover_photo,
-      address: address,
-    });
-    const { message } = response.data;
     try {
+      const response = await updateMyProfile({
+        full_name: value.full_name || userData.fullName,
+        phone: value.phone || userData.phone,
+        gender: userData.gender || "Male",
+        avatar: userData.avatar,
+        thumbnail: userData.cover_photo,
+        address: address,
+      });
       toast.update(loadingToast, {
-        render: message,
+        render: response.message,
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
     } catch (error: any) {
-      const { message } = error.respone.data;
-      let errMessage = message;
-      if (error.response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
-        const { msg } = error.response.data.errors.address;
-        errMessage = msg;
-      }
       toast.update(loadingToast, {
-        render: errMessage,
+        render: getApiErrorMessage(error, "Lỗi cập nhật hồ sơ"),
         type: "error",
         isLoading: false,
         autoClose: 3000,
@@ -79,9 +71,17 @@ const MainProfile = () => {
 
   const profile = async () => {
     try {
-      const response = await requestApi("auth/me", "GET", {});
-      const data = response.data.data;
-      setUserData(data);
+      const response = await getMyProfile();
+      const data = response.data;
+      setUserData({
+        email: data.email ?? "",
+        fullName: data.fullName ?? "",
+        phone: data.phone ?? "",
+        address: data.address ?? "",
+        avatar: data.avatarUrl ?? "",
+        cover_photo: data.thumbnail ?? "",
+        gender: (data.gender as string) ?? "Male",
+      });
     } catch (error) {
       console.log(error);
     }

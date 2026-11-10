@@ -12,7 +12,12 @@ import { BG } from "../../../../constants/images";
 import { Button, CountdownProps, Statistic } from "antd";
 import { getStore, setStore } from "../../../../utils/setting";
 import "./style.scss";
-import requestApi from "../../../../utils/interceptors";
+import {
+  authenticateForgotPassword,
+  authenticateOtp,
+  resendOtp as resendOtpApi,
+} from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/config";
@@ -91,41 +96,21 @@ const Verification = () => {
     if (otpString.length === OTP_LENGTH) {
       if (forgotpassword === true) {
         try {
-          const response = await requestApi(
-            "users/password/forgot/authenticate",
-            "POST",
-            {
-              code: otpString,
-            }
-          );
-          const { message } = response.data;
+          const response = await authenticateForgotPassword(otpString);
+          const { message } = response;
           toast.success(message);
           navigate("/new-password");
         } catch (error: any) {
-          const { status } = error.response;
-          if (status == 404) {
-            const { message } = error.response.data;
-            toast.error(message);
-          }
+          toast.error(getApiErrorMessage(error, "Mã OTP không đúng"));
         }
       } else {
         try {
-          const response = await requestApi("users/otp/authenticate", "POST", {
-            otp: otpString,
-          });
-          const { message } = response.data;
+          const response = await authenticateOtp(otpString);
+          const { message } = response;
           toast.success(message);
           navigate("/");
         } catch (error: any) {
-          console.log(error);
-          const { message } = error.response.data;
-          let receivedmessage = message;
-          const { status } = error.response;
-          if (status == 422) {
-            const { msg } = error.response.data.errors.otp;
-            receivedmessage = msg;
-          }
-          toast.error(receivedmessage);
+          toast.error(getApiErrorMessage(error, "Mã OTP không đúng"));
         }
       }
     } else {
@@ -135,14 +120,11 @@ const Verification = () => {
   //call api resend otp
   const handleResendClick = async () => {
     try {
-      const response = await requestApi("users/otp/revalidate", "POST", {
-        email,
-      });
-      console.log(response);
-      const { message } = response.data;
+      const response = await resendOtpApi(email ?? "");
+      const { message } = response;
       toast.success(message);
     } catch (error: any) {
-      console.log(error);
+      toast.error(getApiErrorMessage(error, "Lỗi gửi lại OTP"));
     }
   };
 
