@@ -1,6 +1,6 @@
 import { Space, Table, TableProps } from "antd";
 import { deleteProduct, getMyProfile, getProducts, getSuppliers } from "../../../../apis";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setAdminStatus,
@@ -18,6 +18,9 @@ import { Link, useNavigate } from "react-router-dom";
 import HeaderAdmin from "../../components/HeaderAdmin";
 import Sidebar from "../../components/Sidebar";
 const ProductAdmin = () => {
+  // The role is only known after the profile request finishes, so the guard
+  // needs to know the difference between "not an admin" and "not loaded yet".
+  const [profileChecked, setProfileChecked] = useState(false);
   const profile = async () => {
     try {
       const response = await getMyProfile();
@@ -25,6 +28,8 @@ const ProductAdmin = () => {
     } catch (error) {
       dispatch(setAdminStatus(false));
       console.log(error);
+    } finally {
+      setProfileChecked(true);
     }
   };
   useEffect(() => {
@@ -170,7 +175,7 @@ const ProductAdmin = () => {
   }, []);
 
   const navigate = useNavigate();
-  if (isadmin === false) {
+  if (profileChecked && isadmin === false) {
     navigate("*");
     return;
   }

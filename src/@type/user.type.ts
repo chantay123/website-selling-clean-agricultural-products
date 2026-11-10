@@ -86,3 +86,28 @@ export type updateProfilePayloadType = {
   avatar?: string;
   thumbnail?: string;
 };
+
+/** Body accepted by `PUT /products/:id`. */
+export type updateProductPayloadType = {
+  name?: string;
+  slug?: string;
+  description?: string;
+  origin?: string;
+  sold?: number | string;
+  thumbnail_url?: string;
+  hot?: boolean | string;
+  rating?: number | string;
+  numberOfReview?: number | string;
+  attribute?: {
+    weight?: number | string;
+    original_price?: number | string;
+    discounted_percent?: number | string;
+    dimensions?: string;
+    unit_of_measurement?: string;
+    quantity_per_unit?: number | string;
+    certification?: string;
+    harvest_date?: string;
+    link?: string;
+    expiration_date?: string;
+  };
+};

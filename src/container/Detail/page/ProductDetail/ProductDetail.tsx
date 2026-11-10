@@ -8,12 +8,14 @@ import {
 import { useState } from "react";
 import "./style.scss";
 import Footer from "../../../../components/Footer";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { addToCart, getCart, getProductById } from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../redux/config";
 import ButtonClick from "../../../../components/Button/ButtonClick";
+import Loading from "../../../../components/Loading";
+import NotFound from "../../../../components/NotFound";
 import { toast } from "react-toastify";
 import { setcartnumber, setProduct } from "../../../../redux/userReducer/userReducer";
 import { useEffect } from "react";
@@ -27,7 +29,6 @@ const customIcons: Record<number, React.ReactNode> = {
 };
 
 const ProductDetail = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { productId } = useParams();
   const product = useSelector((state: RootState) => state.user.product);
@@ -36,16 +37,24 @@ const ProductDetail = () => {
    * The product is fetched from the API so that the detail page also works
    * when it is opened directly (deep link) and the store is still empty.
    */
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+    let cancelled = false;
     const fetchProduct = async () => {
       try {
         const response = await getProductById(productId ?? "");
-        dispatch(setProduct([response.data]));
+        if (!cancelled) dispatch(setProduct([response.data]));
       } catch (error) {
         console.log(error);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     fetchProduct();
+    return () => {
+      cancelled = true;
+    };
   }, [productId]);
 
   const detail = product.find((p) => p._id === productId);
@@ -63,10 +72,11 @@ const ProductDetail = () => {
     }
   };
   const [value, setValue] = useState(3);
-  if (detail === undefined) {
-    navigate("*");
-    return;
-  }
+  // The product detail is loaded asynchronously, so the page has three
+  // states: loading, not found and success. Redirecting while the request
+  // is still running would send the user to the 404 page by mistake.
+  if (loading) return <Loading />;
+  if (detail === undefined) return <NotFound />;
   const buttonAdd = async (product_id: string) => {
     const attributeId = detail?.productAttributes?.[0]?._id;
 
@@ -114,7 +124,7 @@ const ProductDetail = () => {
               </h4>
               <p className=" text-color text-xl mb-6">
                 {" "}
-                Category: {detail.category.name}
+                Category: {detail.category?.name}
               </p>
             </div>
             <div className="flex font-black my-3 mb-4 ">
@@ -164,7 +174,7 @@ const ProductDetail = () => {
                 </button>
               </div>
               <div className="mt-6">
-                {detail.productAttributes.map((attr) => (
+                {(detail.productAttributes ?? []).map((attr) => (
                   <ButtonClick
                     label="Add to cart"
                     key={attr._id}

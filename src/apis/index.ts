@@ -12,6 +12,7 @@ import {
   addToCartPayloadType,
   loginPayloadType,
   registerPayloadType,
+  updateProductPayloadType,
   updateProfilePayloadType,
 } from "../@type/user.type";
 import {
@@ -309,7 +310,7 @@ export const deleteProduct = async (id: string) => {
 /** `PUT /products/:id` */
 export const updateProduct = async (
   id: string,
-  payload: Record<string, any>
+  payload: updateProductPayloadType
 ) => {
   const response = await requestApi(`products/${id}`, "PUT", payload);
   return response.data as apiResponseType<unknown>;

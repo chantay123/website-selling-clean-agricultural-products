@@ -24,7 +24,7 @@ export type productTypes = {
   slug: string;
   description: string;
   origin: string;
-  category_id: Object;
+  category_id?: string;
   sold?: number;
   thumbnail_url: string;
   images?: ProductImageType[];

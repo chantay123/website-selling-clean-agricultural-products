@@ -438,6 +438,9 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | `src/container/Admin/page/ProductAdmin/ProductAdmin.tsx` | API helpers; `getSuppliers()` chuyển vào `useEffect` | URL cứng + infinite loop |
 | `src/container/Admin/page/EditAdmin/EditAdmin.tsx` | `getProductById`, `updateProduct` | Chưa tích hợp |
 | `scripts/verify-integration.mjs` (mới) | 32 assertion | Xác minh Part 3.4 |
+| `src/container/Detail/page/ProductDetail/ProductDetail.tsx` | thêm `loading` state, `<Loading />` / `<NotFound />` thay cho `navigate("*")` trong render; guard `productAttributes`/`category` | Tránh 404 nháy + crash khi thiếu attribute |
+| `src/container/Admin/page/Admin.tsx` | thêm `profileChecked` → chỉ redirect 404 sau khi đã load profile | Không redirect oan lúc đang xác thực role |
+| `src/container/Admin/page/ProductAdmin/ProductAdmin.tsx` | thêm `profileChecked` tương tự | Như trên |
 
 ---
 
@@ -447,10 +450,10 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 |---|--------|--------|--------|
 | 1 | Backend không gửi được email OTP → `POST /users/register` trả 500, không tạo được tài khoản mới để test auth flow | 🔴 Cao | Backend (`Failed to send OTP`) |
 | 2 | Swagger UI yêu cầu Basic Auth, `SWAGGER_USERNAME`/`SWAGGER_PASSWORD` không có trong env → không đọc được spec chính thức | 🟡 Trung bình | Hạ tầng tài liệu |
-| 3 | `navigate()` gọi trong render body (side-effect trong render) ở `Admin.tsx`, `ProductAdmin.tsx`, `ProductDetail.tsx` | 🟡 Trung bình | Nên dùng `<Navigate>` |
+| 3 | ~~`navigate()` gọi trong render body (side-effect trong render) ở `Admin.tsx`, `ProductAdmin.tsx`, `ProductDetail.tsx`~~ → **Đã xử lý**: `ProductDetail.tsx` dùng `<Loading />` / `<NotFound />`; `Admin.tsx` + `ProductAdmin.tsx` chỉ redirect sau khi đã load profile (`profileChecked`) | ✅ Đã sửa | `ProductDetail.tsx`, `Admin.tsx`, `ProductAdmin.tsx` |
 | 4 | `redux-persist` không purge khi logout → state `isAuthenticated` có thể bị rehydrate | 🟡 Trung bình | `src/redux/config.tsx` |
 | 5 | `src/components/Categories/Categories.tsx` còn filter "Price"/"Additional" chỉ là UI tĩnh, chưa nối API | 🟢 Thấp | Business requirement chưa có endpoint tương ứng |
-| 6 | `ProductDetail.tsx` render `detail.productAttributes.map(...)` mà không guard → nếu API trả product không có attribute sẽ crash | 🟡 Trung bình | Nên guard `detail?.productAttributes?.map` |
+| 6 | ~~`ProductDetail.tsx` render `detail.productAttributes.map(...)` mà không guard~~ → **Đã xử lý**: dùng `(detail.productAttributes ?? []).map(...)` và `detail.category?.name` | ✅ Đã sửa | `ProductDetail.tsx` |
 | 7 | `HeaderItem.tsx` hiển thị `isprofile?.username` nhưng API trả `full_name`/`email` → tên hiển thị trống | 🟢 Thấp | Đã có `fullName` trong adapter |
 | 8 | Không có phân trang (pagination) — `GET /products` trả toàn bộ danh sách | 🟢 Thấp | Backend không trả metadata page |
 | 9 | 41 ESLint error còn lại đến từ code cũ | 🟢 Thấp | Ngoài phạm vi task |

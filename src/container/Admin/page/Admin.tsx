@@ -34,6 +34,9 @@ import Icon from "@ant-design/icons/lib/components/Icon";
 import { Link, useNavigate } from "react-router-dom";
 
 const Admin = () => {
+  // The role is only known after the profile request finishes, so the guard
+  // needs to know the difference between "not an admin" and "not loaded yet".
+  const [profileChecked, setProfileChecked] = useState(false);
   const profile = async () => {
     try {
       const response = await getMyProfile();
@@ -41,6 +44,8 @@ const Admin = () => {
     } catch (error) {
       dispatch(setAdminStatus(false));
       console.log(error);
+    } finally {
+      setProfileChecked(true);
     }
   };
   useEffect(() => {
@@ -298,7 +303,7 @@ const Admin = () => {
     }
   };
   const navigate = useNavigate();
-  if (isadmin === false) {
+  if (profileChecked && isadmin === false) {
     navigate("*");
     return;
   }
