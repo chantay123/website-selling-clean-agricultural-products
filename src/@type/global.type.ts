@@ -164,6 +164,41 @@ export type apiResponseType<T> = {
   dateTime: string;
 };
 
+/** Shape of a banner returned by `GET /banners`. */
+export type BannerType = {
+  _id: string;
+  slug: string;
+  url: string;
+  description?: string;
+  link?: string;
+};
+
+/** Shape of a blog post returned by `GET /blogs`. */
+export type BlogType = {
+  _id: string;
+  author_id?: string;
+  author_name?: string;
+  title: string;
+  description?: string;
+  detail?: string;
+  status?: string;
+  comments_count?: number;
+  report_count?: number;
+  views_count?: number;
+  thumbnail?: string;
+};
+
+/** Shape of a hashtag returned by `GET /hashtags`. */
+export type HashtagType = {
+  _id: string;
+  name: string;
+  slug: string;
+  type?: string;
+  description?: string;
+  usage_count?: number;
+  isTrending?: boolean;
+};
+
 /** Error envelope returned by the Agrimarket API. */
 export type apiErrorType = {
   message: string;

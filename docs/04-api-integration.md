@@ -54,6 +54,8 @@
 
 ### 1.3. Nhóm endpoint phát hiện thêm qua probe (chưa tích hợp)
 
+> ✅ **Cập nhật 2026-11-10 (lần 2):** nhóm `banners`, `blogs`, `hashtags` đã được **tích hợp đầy đủ** (xem § 1.4). 4 nhóm còn lại (`roles`, `reports`, `stocks`, `products/:id/comments`) vẫn chưa gắn UI.
+
 Ngày 2026-11-10 đã probe lại toàn bộ bề mặt API bằng `scripts/probe-surface.mjs` (quét path × method, phân biệt route thật với route-param bằng cách thay id hợp lệ / không hợp lệ). Kết quả: backend có **7 nhóm tài nguyên** ngoài phạm vi 29 endpoint ban đầu.
 
 | Nhóm | Route | Method | Kết quả probe | Có UI tương ứng? |
@@ -92,6 +94,27 @@ Ngày 2026-11-10 đã probe lại toàn bộ bề mặt API bằng `scripts/prob
 
 **Kết quả probe đầy đủ:** xem `scripts/probe-surface.mjs` (chạy `node scripts/probe-surface.mjs` để tái lập).
 
+### 1.4. Tích hợp nhóm public (banners → blogs → hashtags)
+
+Ba nhóm public đã được đưa vào ứng dụng:
+
+| Endpoint | Helper | Component gắn vào | Hành vi |
+|----------|--------|-------------------|---------|
+| `GET /banners` | `getBanners()` | `src/components/CarouselItem/CarouselItem.tsx` | Carousel hero lấy ảnh từ API (`banner.url` là URL Cloudinary). Giữ 4 ảnh cũ làm **fallback** khi API lỗi/rỗng. |
+| `GET /blogs` | `getBlogs()` | `src/components/BlogSection/BlogSection.tsx` (mới) | Section "From Our Blog" trên Home, lấy 3 bài `status === "Published"` mới nhất. |
+| `GET /blogs/:id` | `getBlogById()` | `src/apis/index.ts` | Helper sẵn sàng cho màn hình chi tiết bài viết (chưa có UI). |
+| `GET /hashtags` | `getHashtags()` | `src/components/Categories/Categories.tsx` | Mục "Hashtags" trong sidebar `/shop`. Bấm 1 tag → chạy `searchProducts(tag.slug)` (backend chỉ match search theo **name/slug** sản phẩm, **không** hỗ trợ `GET /products?hashtag=` — đã probe xác nhận param này bị backend bỏ qua). |
+
+**Kiểm chứng:**
+
+| Kiểm tra | Kết quả |
+|----------|---------|
+| `scripts/verify-public-content.ps1` | ✅ **13/13 assertion pass** (`/banners` 1332 bản ghi, `/blogs` 33 bản ghi, `/blogs/:id` trả đúng bài, `/hashtags` 4 bản ghi — shape `_id/slug/description`, `title`, `name/slug`) |
+| `npx tsc --noEmit` | ✅ 0 error |
+| `npx eslint` (các file đã sửa) | ✅ 0 lỗi (đã loại bỏ luôn 3 `no-explicit-any` cũ trong `Categories.tsx`) |
+| `npm run build` | ✅ PASS |
+| Runtime UI (browser) | ✅ `/banners` → carousel dùng ảnh Cloudinary; `/blogs` → 3 card "From Our Blog"; `/hashtags` → 4 nút tag trong sidebar |
+
 **Xác nhận contract (probe live, 2026-11-10):**
 
 | Kiểm tra | Kết quả | Ý nghĩa |
@@ -115,14 +138,15 @@ Phân loại theo yêu cầu Part 2.3:
 
 | Tầng | Trạng thái | Chi tiết |
 |------|-----------|----------|
-| `src/apis/index.ts` — service layer | ✅ **27/27 helper** | Mọi endpoint trong phạm vi ban đầu đều có helper |
+| `src/apis/index.ts` — service layer | ✅ **31/31 helper** | 27 helper cũ + `getBanners`, `getBlogs`, `getBlogById`, `getHashtags` |
 | UI components/pages — **nhóm cũ** | ✅ **24/27 helper được gọi** | 3 helper không có UI: `likeProduct`, `unlikeProduct`, `getOrders` |
-| UI components/pages — **7 nhóm mới** (§ 1.3) | ❌ **0/7** | `banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments` — **chưa gọi endpoint nào** |
-| **Tổng backend** | ⚠️ **~24/55 route (~44%)** đã được gọi từ UI | Phần còn lại là nhóm mới + 3 helper orphan |
+| UI components/pages — **nhóm public mới** | ✅ **3/4** | `banners`, `blogs`, `hashtags` đã gắn UI; `blogs/:id` mới chỉ có helper |
+| UI components/pages — **nhóm private mới** | ❌ **0/4** | `roles`, `reports`, `stocks`, `products/:id/comments` — **chưa gọi endpoint nào** |
+| **Tổng backend** | ⚠️ **~27/55 route (~49%)** đã được gọi từ UI | Phần còn lại là nhóm private mới + 4 helper orphan |
 
 **Trả lời câu hỏi "đã call hết tất cả API chưa": ❌ Chưa.**
-- Với phạm vi 29 endpoint ban đầu của bài toán: **code đã viết đủ 100%**, 24/27 được gọi từ UI, 3 cái còn lại không có chỗ để gắn (tuân thủ "không tự chế UI").
-- Với toàn bộ backend: **còn 7 nhóm endpoint chưa từng được chạm tới**, trong đó `banners` / `blogs` / `hashtags` là **public GET, đọc được ngay (HTTP 200)**.
+- Với phạm vi 29 endpoint ban đầu: **code đã viết đủ 100%**, 24/27 được gọi từ UI, 3 cái còn lại không có chỗ để gắn (tuân thủ "không tự chế UI").
+- Với toàn bộ backend: **còn 4 nhóm endpoint private chưa từng được chạm tới** (`roles`, `reports`, `stocks`, `products/:id/comments`) — tất cả đều trả `401` nên cần token hợp lệ mới kiểm chứng được.
 
 ---
 

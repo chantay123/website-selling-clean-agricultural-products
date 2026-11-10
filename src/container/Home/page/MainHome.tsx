@@ -1,4 +1,5 @@
 import BestsellerProducts from "../../../components/BestsellerProducts/BestsellerProducts";
+import BlogSection from "../../../components/BlogSection";
 import CartProduct from "../../../components/CartProducts/CartProduct";
 import ExoticFruits from "../../../components/Exotic Fruits";
 import Footer from "../../../components/Footer";
@@ -17,6 +18,7 @@ const Mainhome = () => {
       <CartProduct />
       <ExoticFruits />
       <BestsellerProducts />
+      <BlogSection />
       <OurTestimonial />
       <Footer />
     </div>

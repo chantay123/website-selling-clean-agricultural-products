@@ -1,9 +1,12 @@
 import requestApi from "../utils/interceptors";
 import {
   apiResponseType,
+  BannerType,
+  BlogType,
   cartTypes,
   CategoryType,
   FavoriteType,
+  HashtagType,
   productTypes,
   profileType,
   SupplierType,
@@ -218,6 +221,56 @@ export const getCategories = async () => {
 export const getSuppliers = async () => {
   const response = await requestApi("suppliers", "GET", {});
   const payload = response.data as apiResponseType<SupplierType[]>;
+  return {
+    ...payload,
+    data: Array.isArray(payload.data) ? payload.data : [],
+  };
+};
+
+/* -------------------------------- banners -------------------------------- */
+
+/**
+ * `GET /banners`
+ *
+ * The banner collection is a public resource used by the hero carousel.
+ */
+export const getBanners = async () => {
+  const response = await requestApi("banners", "GET", {});
+  const payload = response.data as apiResponseType<BannerType[]>;
+  return {
+    ...payload,
+    data: Array.isArray(payload.data) ? payload.data : [],
+  };
+};
+
+/* --------------------------------- blogs --------------------------------- */
+
+/** `GET /blogs` */
+export const getBlogs = async () => {
+  const response = await requestApi("blogs", "GET", {});
+  const payload = response.data as apiResponseType<BlogType[]>;
+  return {
+    ...payload,
+    data: Array.isArray(payload.data) ? payload.data : [],
+  };
+};
+
+/** `GET /blogs/:id` */
+export const getBlogById = async (id: string) => {
+  const response = await requestApi(`blogs/${id}`, "GET", {});
+  const payload = response.data as apiResponseType<BlogType>;
+  return {
+    ...payload,
+    data: payload.data,
+  };
+};
+
+/* ------------------------------- hashtags ------------------------------- */
+
+/** `GET /hashtags` */
+export const getHashtags = async () => {
+  const response = await requestApi("hashtags", "GET", {});
+  const payload = response.data as apiResponseType<HashtagType[]>;
   return {
     ...payload,
     data: Array.isArray(payload.data) ? payload.data : [],

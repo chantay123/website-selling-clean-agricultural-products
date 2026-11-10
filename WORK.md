@@ -412,17 +412,17 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | `/carts/items/:cartId` | PUT/DELETE | 🟡 UNVERIFIED | Cần token |
 | `GET /orders` | GET/POST | 🟡 UNVERIFIED | Cần token |
 
-**Phát hiện mới từ probe bề mặt API (2026-11-10) — 7 nhóm chưa tích hợp:**
+**Phát hiện mới từ probe bề mặt API (2026-11-10) — 7 nhóm, 3 nhóm đã tích hợp:**
 
 Script `scripts/probe-surface.mjs` quét path × method trên toàn bộ backend. Kết quả nổi bật:
 
 | Nhóm | Route | Method | Trạng thái | UI tương ứng |
 |------|-------|--------|-----------|--------------|
-| `banners` | `/banners` | GET | 🟢 **200** (1332 bản ghi) | ❌ `CarouselItem.tsx` hardcode ảnh |
-| `blogs` | `/blogs`, `/blogs/:id` | GET | 🟢 **200** (33 bản ghi) | ❌ Chưa có trang blog |
-| `hashtags` | `/hashtags` | GET | 🟢 **200** | ❌ Chưa dùng |
-| `roles` | `/roles` | GET | 🟡 401 (route tồn tại) | ❌ |
-| `reports` | `/reports` | GET | 🟡 401 (route tồn tại) | ❌ |
+| `banners` | `/banners` | GET | 🟢 **200** (1332 bản ghi) | ✅ **Đã tích hợp** — `CarouselItem.tsx` (có fallback) |
+| `blogs` | `/blogs`, `/blogs/:id` | GET | 🟢 **200** (33 bản ghi) | ✅ **Đã tích hợp** — `BlogSection.tsx` mới trên Home |
+| `hashtags` | `/hashtags` | GET | 🟢 **200** | ✅ **Đã tích hợp** — mục "Hashtags" trong `Categories.tsx` |
+| `roles` | `/roles` | GET | 🟡 401 (route tồn tại) | ❌ Chưa tích hợp |
+| `reports` | `/reports` | GET | 🟡 401 (route tồn tại) | ❌ Chưa tích hợp |
 | `stocks` | `/stocks`, `/stocks/:id` | GET/PUT | 🟡 401 (route tồn tại) | ⚠️ `/stock` route có, nhưng page là placeholder |
 | `comments` | `/products/:id/comments` | GET/POST | 🟡 401 (route tồn tại) | ⚠️ Tab "Reviews" + form "Leave a Reply" trong `ProductDetail.tsx` đang dùng **dữ liệu tĩnh** |
 
@@ -494,10 +494,12 @@ Script `scripts/probe-surface.mjs` quét path × method trên toàn bộ backend
 | 10 | `Payment.tsx` dùng `key={index}` cho list → React khuyến nghị key ổn định | 🟢 Thấp | |
 | 11 | ~~`Myfavorite.tsx` gọi `getFavoriteProducts()` khi khách chưa đăng nhập~~ | ✅ **Đã xử lý**: guard bằng `isAuthenticated` |
 | 12 | Chưa có `Error Boundary` quanh `<Routes>` → lỗi render làm sập cả cây component | 🟢 Thấp | Đề xuất trong `docs/04-api-integration.md` § 8 |
-| 13 | **7 nhóm endpoint backend chưa từng được tích hợp**: `banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments` | 🔴 Cao | `src/apis/index.ts` — cần thêm helper + gắn UI (chi tiết `docs/04-api-integration.md` § 1.3) |
+| 13 | **4 nhóm endpoint backend chưa từng được tích hợp**: `roles`, `reports`, `stocks`, `products/:id/comments` | 🔴 Cao | `src/apis/index.ts` — cần thêm helper + gắn UI (chi tiết `docs/04-api-integration.md` § 1.3) |
 | 14 | `/stock` route đã có nhưng page là placeholder (`<table>adasd</table>`), trong khi backend có đầy đủ `GET/POST/PUT/DELETE /stocks` | 🟡 Trung bình | `src/container/Admin/page/Stock/Stock.tsx` |
 | 15 | `ProductDetail.tsx` tab "Reviews" + form "Leave a Reply" dùng **dữ liệu tĩnh**, backend có `/products/:id/comments` (GET/POST) | 🟡 Trung bình | `src/container/Detail/page/ProductDetail/ProductDetail.tsx` |
-| 16 | `CarouselItem.tsx` hardcode 4 ảnh, backend có `GET /banners` trả 1332 banner | 🟡 Trung bình | `src/components/CarouselItem/CarouselItem.tsx` |
+| 16 | ~~`CarouselItem.tsx` hardcode 4 ảnh, backend có `GET /banners` trả 1332 banner~~ → **Đã xử lý**: carousel gọi `getBanners()`, giữ 4 ảnh cũ làm fallback | ✅ Đã sửa | `src/components/CarouselItem/CarouselItem.tsx` |
+| 17 | ~~Backend có `GET /blogs` (33 bài) + `GET /hashtags` (4 tag) chưa dùng~~ → **Đã xử lý**: `BlogSection` mới trên Home; mục "Hashtags" trong sidebar `/shop` | ✅ Đã sửa | `src/components/BlogSection/`, `src/components/Categories/Categories.tsx` |
+| 18 | `GET /products?hashtag=<slug>` bị backend **bỏ qua** (trả về toàn bộ sản phẩm) → chỉ search theo `name`/`slug` sản phẩm | 🟢 Thấp | Ghi nhận giới hạn backend; UI dùng `searchProducts(tag.slug)` |
 
 ---
 
