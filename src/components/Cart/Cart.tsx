@@ -17,6 +17,9 @@ const style: React.CSSProperties = {
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
 
   //props
   const buttonAdd = async (product_id: string) => {
@@ -45,6 +48,11 @@ const Cart = () => {
     }
   };
   useEffect(() => {
+    // The cart is a private resource: calling it while the visitor is not
+    // logged in would return a 401 and the interceptor would send the guest
+    // to the login page.
+    if (!isAuthenticated) return;
+
     const fetchCart = async () => {
       try {
         const respone = await getCart();
@@ -54,7 +62,7 @@ const Cart = () => {
       }
     };
     fetchCart();
-  }, []);
+  }, [isAuthenticated]);
 
   const filterProduct = useSelector((state: RootState) => state.user.product);
   return (

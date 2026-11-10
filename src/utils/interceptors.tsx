@@ -142,14 +142,21 @@ export default function requestApi(
       if (status === 401 && originalRequest && !originalRequest._retried) {
         originalRequest._retried = true;
 
+        // A visitor who never signed in has no refresh token. Redirecting to
+        // the login page in that case would kick every guest out of the
+        // public pages, so the error is simply propagated.
+        const hadSession = Boolean(getRefreshToken());
+
         const newToken = await refreshAccessToken();
         if (newToken) {
           originalRequest.headers.set("Authorization", `Bearer ${newToken}`);
           return instance.request(originalRequest);
         }
 
-        clearTokens();
-        window.location.href = "/login";
+        if (hadSession) {
+          clearTokens();
+          window.location.href = "/login";
+        }
       }
 
       return Promise.reject(err);

@@ -28,6 +28,9 @@ const CartProduct = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("category");
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
 
   const category = async () => {
     try {
@@ -92,6 +95,11 @@ const CartProduct = () => {
   };
 
   useEffect(() => {
+    // The cart is a private resource: calling it while the visitor is not
+    // logged in would return a 401 and the interceptor would send the guest
+    // to the login page.
+    if (!isAuthenticated) return;
+
     const fetchCart = async () => {
       try {
         const respone = await getCart();
@@ -101,7 +109,7 @@ const CartProduct = () => {
       }
     };
     fetchCart();
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
