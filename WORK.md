@@ -406,7 +406,7 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 | Kiểm tra | Lệnh | Kết quả |
 |----------|------|---------|
 | TypeScript | `npx tsc --noEmit` | ✅ **PASS** — 0 error |
-| ESLint | `npx eslint . --ext ts,tsx` | ⚠️ 56 problems (41 error, 15 warning) — **phần lớn là code cũ** (`no-var`, `no-explicit-any` trong `utils/setting.ts`, `main.tsx`, `mainProfile.tsx`…). Không sửa vì ngoài phạm vi integration và sửa sẽ là rewrite. |
+| ESLint | `npx eslint . --ext ts,tsx` | ⚠️ 54 problems (39 error, 15 warning) — **phần lớn là code cũ** (`no-var`, `no-explicit-any` trong `utils/setting.ts`, `main.tsx`, các trang Auth…). Không sửa vì ngoài phạm vi integration và sửa sẽ là rewrite. Tầng API mới (`src/apis`, `src/utils/api.adapter.ts`, `src/@type`) đã lint **sạch 0 lỗi**. |
 | Build | `npm run build` | ✅ **PASS** — `tsc && vite build` thành công |
 | Regression | So sánh `git diff` từng file | ✅ Không thay đổi UI/UX, không đổi tên biến/hàm/type, không thêm dependency |
 
