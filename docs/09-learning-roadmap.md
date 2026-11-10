@@ -272,7 +272,7 @@ Phase 9  Debugging & Problem Solving ──────────────�
 ## Áp dụng vào Agrimarket
 
 - `src/utils/api.adapter.ts` — generic normalization.
-- `src/hooks/useAsync.ts` (bài 6.2) — discriminated union cho async state.
+- `src/hooks/useAsync.ts` (bài 6.2 — đề xuất, chưa tồn tại) — discriminated union cho async state.
 - `src/apis/index.ts` — `apiResponseType<T>` xuyên suốt.
 
 ## Dấu hiệu sẵn sàng cho Phase 5
@@ -330,7 +330,7 @@ Phase 9  Debugging & Problem Solving ──────────────�
 
 - `src/container/...` — các page.
 - `src/components/...` — component dùng chung.
-- `src/redux/userReducer/userReducer.ts` — global state.
+- `src/redux/userReducer/userReducer.tsx` — global state.
 - `src/hooks/` — nơi tích hợp các custom hook mới.
 
 ## Dấu hiệu sẵn sàng cho Phase 6
@@ -503,8 +503,8 @@ Phase 9  Debugging & Problem Solving ──────────────�
 
 ## Áp dụng vào Agrimarket
 
-- `src/redux/userReducer/userReducer.ts` — slice `user`.
-- `src/redux/config.ts` — store + persist.
+- `src/redux/userReducer/userReducer.tsx` — slice `user`.
+- `src/redux/config.tsx` — store + persist.
 - `src/utils/setting.ts` — `setStore`/`getStore` cho redux persist.
 
 ## Dấu hiệu sẵn sàng cho Phase 9
