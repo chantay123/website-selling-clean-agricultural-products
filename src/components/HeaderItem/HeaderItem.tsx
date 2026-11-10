@@ -106,8 +106,13 @@ const HearderItem = () => {
   };
 
   useEffect(() => {
+    // The profile is a private resource. Requesting it for a guest would
+    // answer with a 401 and the interceptor would send the visitor to the
+    // login page even though there is nothing to log into.
+    if (!isAuthenticated) return;
+
     fetchAvatar();
-  }, []);
+  }, [isAuthenticated]);
 
   const isprofile = useSelector((state: RootState) => state.user.profile);
   return (

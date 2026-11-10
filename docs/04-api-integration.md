@@ -387,7 +387,7 @@ Script dùng đúng path/payload mà `src/apis/index.ts` sinh ra, rồi assert s
 | # | Hạn chế | Ảnh hưởng | Hướng xử lý |
 |---|---------|-----------|-------------|
 | 1 | ~~`GET /carts` được gọi khi chưa đăng nhập → 401 → redirect `/login`~~ | ✅ **Đã xử lý**: `CartProduct.tsx` + `Cart.tsx` chỉ gọi `getCart()` khi `isAuthenticated === true` |
-| 2 | `GET /users/@me/profile` ở Header cũng bị gọi khi chưa đăng nhập | Tương tự #1 | Guard bằng `isAuthenticated` (nên làm — `HeaderItem.tsx` vẫn gọi ở mount) |
+| 2 | ~~`GET /users/@me/profile` ở Header cũng bị gọi khi chưa đăng nhập~~ | ✅ **Đã xử lý**: `HeaderItem.tsx` chỉ gọi `getMyProfile()` khi `isAuthenticated === true` |
 | 3 | Không có pagination | Tải toàn bộ danh sách sản phẩm | Backend chưa trả metadata page |
 | 4 | Search không debounce | Nhiều request | Debounce 300ms |
 | 5 | `likeProduct`/`unlikeProduct` chưa gắn UI | Tính năng like không dùng được | Gắn `ButtonLike` + optimistic update |
