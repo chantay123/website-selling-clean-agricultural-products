@@ -46,7 +46,7 @@ Agrimarket là **sàn thương mại điện tử nông sản sạch (organic fo
 | Mã | Yêu cầu | Nơi hiện thực |
 |----|----------|----------------|
 | BR-01 | Người dùng chưa đăng nhập vẫn xem được danh sách & chi tiết sản phẩm | `src/components/CartProducts/CartProduct.tsx`, `src/container/Detail/page/ProductDetail/ProductDetail.tsx` |
-| BR-02 | Giỏ hàng & đơn hàng chỉ dành cho user đã đăng nhập | `src/utils/interceptors.tsx` (401 → refresh → `/login`) |
+| BR-02 | Giỏ hàng & đơn hàng chỉ dành cho user đã đăng nhập | `src/utils/interceptors.tsx` (401 → refresh → `/login`), `src/components/Cart/Cart.tsx` + `CartProduct.tsx` (chỉ gọi `getCart()` khi `isAuthenticated`) |
 | BR-03 | Tài khoản phải xác thực OTP mới đăng nhập được | `POST /users/otp/authenticate` tại `src/container/Auth/pages/Verification/Verification.tsx` |
 | BR-04 | Quyền Admin được phân theo `role` từ profile API | `src/container/Admin/page/Admin.tsx`, `ProductAdmin.tsx` |
 | BR-05 | Mỗi sản phẩm có 1+ `product_attribute`; giá hiển thị suy ra từ attribute | `src/utils/api.adapter.ts` → `normalizeProduct` |
