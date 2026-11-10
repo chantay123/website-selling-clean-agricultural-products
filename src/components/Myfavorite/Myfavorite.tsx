@@ -18,9 +18,17 @@ const Myfavorite = () => {
   };
 
   const listfavorite = useSelector((state: RootState) => state.user.favorite);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
   useEffect(() => {
+    // The favourites are a private resource: calling them for a guest would
+    // return a 401 and the interceptor would send the visitor to the login
+    // page.
+    if (!isAuthenticated) return;
+
     favorite();
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <div>

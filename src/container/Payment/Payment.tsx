@@ -55,6 +55,9 @@ const PayMent = () => {
     }));
   };
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
   const fetchCart = async () => {
     try {
       const respones = await getCart();
@@ -66,8 +69,13 @@ const PayMent = () => {
     }
   };
   useEffect(() => {
+    // The cart is a private resource: calling it while the visitor is not
+    // logged in would return a 401 and the interceptor would send the guest
+    // to the login page.
+    if (!isAuthenticated) return;
+
     fetchCart();
-  }, []);
+  }, [isAuthenticated]);
 
   const deletecart = async (id: string, product_id: string) => {
     try {
