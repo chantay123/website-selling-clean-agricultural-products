@@ -16,16 +16,10 @@ const contentStyle: React.CSSProperties = {
  * API is unreachable. They keep the original look of the hero section.
  */
 const fallbackSlides = [
-  { url: "../../../public/image/hero-img-1.png", description: "" },
-  { url: "../../../public/image/hero-img-2.jpg", description: "" },
-  {
-    url: "https://bloganchoi.com/wp-content/uploads/2021/03/ra-cu-qua-giup-ban-no-lau-hon.jpg",
-    description: "",
-  },
-  {
-    url: "https://media.tapchitaichinh.vn/w1480/images/upload/buituananh/05202021/3551_gia_thuc_pham_hom_nay.jpg",
-    description: "",
-  },
+  { url: "/image/hero-img-1.png", description: "" },
+  { url: "/image/hero-img-2.jpg", description: "" },
+  { url: "/image/banner-fruits.jpg", description: "" },
+  { url: "/image/single-item.jpg", description: "" },
 ];
 
 const CarouselItem = () => {

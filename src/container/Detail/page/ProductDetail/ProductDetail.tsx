@@ -278,7 +278,7 @@ const ProductDetail = () => {
               <div className="tab-pane" id="nav-mission">
                 <div className="flex mb-4">
                   <img
-                    src="img/avatar.jpg"
+                    src="/image/avatar.jpg"
                     className="rounded-full p-3 w-24 h-24"
                     alt="Avatar"
                   />
@@ -309,7 +309,7 @@ const ProductDetail = () => {
                 </div>
                 <div className="flex">
                   <img
-                    src="img/avatar.jpg"
+                    src="/image/avatar.jpg"
                     className="rounded-full p-3 w-24 h-24"
                     alt="Avatar"
                   />

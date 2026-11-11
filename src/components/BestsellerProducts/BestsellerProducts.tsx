@@ -28,11 +28,11 @@ const BestsellerProducts = () => {
                 <Fancybox>
                   <a
                     data-fancybox="gallery"
-                    href="../../../public/image/best-product-4.jpg"
+                    href="/image/best-product-4.jpg"
                   >
                     <img
                       className="rounded-full  "
-                      src="../../../public/image/best-product-4.jpg"
+                      src="/image/best-product-4.jpg"
                       alt=""
                     />
                   </a>
@@ -70,7 +70,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="../../../public/image/best-product-2.jpg"
+                  src="/image/best-product-2.jpg"
                   alt=""
                 />
               </Col>
@@ -106,7 +106,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="../../../public/image/best-product-6.jpg"
+                  src="/image/best-product-6.jpg"
                   alt=""
                 />
               </Col>
@@ -146,7 +146,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full  "
-                  src="../../../public/image/best-product-1.jpg"
+                  src="/image/best-product-1.jpg"
                   alt=""
                 />
               </Col>
@@ -182,7 +182,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="../../../public/image/best-product-5.jpg"
+                  src="/image/best-product-5.jpg"
                   alt=""
                 />
               </Col>
@@ -218,7 +218,7 @@ const BestsellerProducts = () => {
               <Col span={12}>
                 <img
                   className="rounded-full"
-                  src="../../../public/image/best-product-3.jpg"
+                  src="/image/best-product-3.jpg"
                   alt=""
                 />
               </Col>
@@ -253,7 +253,7 @@ const BestsellerProducts = () => {
           <div style={style}>
             <img
               className="rounded-xl w-[400px] h-[250px]"
-              src="../../../public/image/vegetable-item-2.jpg"
+              src="/image/vegetable-item-2.jpg"
               alt=""
             />
             <div className=" mt-4 ">
@@ -287,7 +287,7 @@ const BestsellerProducts = () => {
           <div style={style}>
             <img
               className="rounded-xl w-[400px] h-[250px]"
-              src="../../../public/image/vegetable-item-1.jpg"
+              src="/image/vegetable-item-1.jpg"
               alt=""
             />
             <div className=" mt-4 ">
@@ -321,7 +321,7 @@ const BestsellerProducts = () => {
           <div style={style}>
             <img
               className="rounded-xl w-[400px] h-[250px]"
-              src="../../../public/image/vegetable-item-4.jpg"
+              src="/image/vegetable-item-4.jpg"
               alt=""
             />
             <div className=" mt-4 ">
@@ -355,7 +355,7 @@ const BestsellerProducts = () => {
           <div style={style}>
             <img
               className="rounded-xl w-[400px] h-[250px]"
-              src="../../../public/image/vegetable-item-6.jpg"
+              src="/image/vegetable-item-6.jpg"
               alt=""
             />
             <div className=" mt-4 ">

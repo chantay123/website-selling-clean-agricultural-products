@@ -8,6 +8,31 @@ const style: React.CSSProperties = {
   height: "300px",
 };
 
+/**
+ * The images live in `public/image`, which Vite copies to the root of the
+ * build output. They must therefore be referenced with an absolute path
+ * (`/image/...`); a relative path such as `../../../public/image/...` only
+ * resolves in the dev server and results in a broken image in production.
+ */
+const portfolioItems = [
+  {
+    title: "Mushrooms of all kinds",
+    image: "/image/fruite-item-3.jpg",
+  },
+  {
+    title: "Special Location",
+    image: "/image/featur-1.jpg",
+  },
+  {
+    title: "Vegetables",
+    image: "/image/vegetable-item-1.jpg",
+  },
+  {
+    title: "Fruits",
+    image: "/image/fruite-item-1.jpg",
+  },
+];
+
 const ProductPortfolio = () => {
   const navigate = useNavigate();
   return (
@@ -20,63 +45,26 @@ const ProductPortfolio = () => {
         </div>
         <div>
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col className="gutter-row" span={6}>
-              <div style={style} className="rounded-[10px]">
-                <a className="bg-red-700" href="">
-                  <div>
-                    <img
-                      onClick={() => navigate("/shop")}
-                      className="rounded mb-10 w-[300px] h-[180px] object-cover"
-                      src="https://linhchihoanggia.com/data/images/nam-huong-dong-co.jpg"
-                      alt=""
-                    />
-                  </div>
+            {portfolioItems.map((item) => (
+              <Col className="gutter-row" span={6} key={item.title}>
+                <div style={style} className="rounded-[10px]">
+                  <a className="bg-red-700" href="">
+                    <div>
+                      <img
+                        onClick={() => navigate("/shop")}
+                        className="rounded mb-10 w-[300px] h-[180px] object-cover"
+                        src={item.image}
+                        alt={item.title}
+                      />
+                    </div>
 
-                  <h2 className="flex justify-center text-xl font-bold mt-10 ">
-                    Mushrooms of all kinds
-                  </h2>
-                </a>
-              </div>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <div style={style} className="rounded-[10px]">
-                <img
-                  onClick={() => navigate("/shop")}
-                  className="w-[300px] h-[180px] rounded object-cover"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQREd4iqd30WNFeRkkIWpwLfbopr7J96VkAiQnuhVBDkw&s "
-                  alt=""
-                />
-                <h2 className="flex justify-center text-xl font-bold mt-10 ">
-                  Special Location
-                </h2>
-              </div>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <div style={style} className="rounded-[10px]">
-                <img
-                  onClick={() => navigate("/shop")}
-                  className="w-[300px] h-[180px] rounded object-cover"
-                  src="https://atvstp.namdinh.gov.vn/wp-content/uploads/2021/09/Cach-lua-chon-va-bao-quan-rau-cu-qua-ngay-Tet.jpg"
-                  alt=""
-                />
-                <h2 className="flex justify-center text-xl font-bold mt-10 ">
-                  Vegetables
-                </h2>
-              </div>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <div style={style} className="rounded-[10px]">
-                <img
-                  onClick={() => navigate("/shop")}
-                  className="w-[300px] h-[180px] rounded object-cover"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6ChPzNZ5MCno36L0eyGl-kx-foUMGXIPKow&s"
-                  alt=""
-                />
-                <h2 className="flex justify-center text-xl font-bold mt-10">
-                  Fruits
-                </h2>
-              </div>
-            </Col>
+                    <h2 className="flex justify-center text-xl font-bold mt-10 ">
+                      {item.title}
+                    </h2>
+                  </a>
+                </div>
+              </Col>
+            ))}
           </Row>
         </div>
       </div>

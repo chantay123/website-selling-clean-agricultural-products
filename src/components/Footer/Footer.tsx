@@ -128,7 +128,7 @@ const Footer = () => {
               <p className="mb-2 text-base">Email: Example@gmail.com</p>
               <p className="mb-2 text-base">Phone: +0123 4567 8910</p>
               <p className="mb-2 text-base">Payment Accepted</p>
-              <img src="img/payment.png" alt="" />
+              <img src="/image/payment.png" alt="" />
             </div>
           </Col>
         </Row>
