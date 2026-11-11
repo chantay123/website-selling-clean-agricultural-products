@@ -10,7 +10,13 @@ import "./style.scss";
 import Footer from "../../../../components/Footer";
 import { useParams } from "react-router-dom";
 import { addToCart, getCart, getProductById } from "../../../../apis";
+import {
+  createProductComment,
+  deleteProductComment,
+  getProductComments,
+} from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
+import { CommentType } from "../../../../@type/global.type";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../redux/config";
 import ButtonClick from "../../../../components/Button/ButtonClick";
@@ -18,7 +24,7 @@ import Loading from "../../../../components/Loading";
 import NotFound from "../../../../components/NotFound";
 import { toast } from "react-toastify";
 import { setcartnumber, setProduct } from "../../../../redux/userReducer/userReducer";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 const customIcons: Record<number, React.ReactNode> = {
   1: <StarFilled style={{ color: "#81c408" }} />,
@@ -55,7 +61,7 @@ const ProductDetail = () => {
     return () => {
       cancelled = true;
     };
-  }, [productId]);
+  }, [productId, dispatch]);
 
   const detail = product.find((p) => p._id === productId);
 
@@ -72,6 +78,77 @@ const ProductDetail = () => {
     }
   };
   const [value, setValue] = useState(3);
+
+  /**
+   * Reviews.
+   *
+   * `GET /products/:id/comments` is a private endpoint, so the list is only
+   * requested for a signed in visitor. Anonymous visitors still see the tab
+   * but get a short invitation to log in.
+   */
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
+  const [comments, setComments] = useState<CommentType[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [commentName, setCommentName] = useState("");
+  const [commentEmail, setCommentEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchComments = useCallback(async () => {
+    if (!productId) return;
+    setCommentsLoading(true);
+    try {
+      const response = await getProductComments(productId);
+      setComments(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, [productId]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !productId) return;
+    fetchComments();
+  }, [isAuthenticated, productId, fetchComments]);
+
+  /** Publishes the review written in the "Leave a Reply" form. */
+  const handleSubmitComment = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!commentText.trim()) {
+      toast.warn("Vui lòng nhập nội dung đánh giá");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await createProductComment(productId ?? "", {
+        content: commentText.trim(),
+        rating: value,
+      });
+      setCommentText("");
+      toast.success("Đăng đánh giá thành công");
+      fetchComments();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Lỗi đăng đánh giá"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  /** Removes a review (admin or author). */
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await deleteProductComment(productId ?? "", commentId);
+      toast.success("Xoá đánh giá thành công");
+      fetchComments();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Lỗi xoá đánh giá"));
+    }
+  };
   // The product detail is loaded asynchronously, so the page has three
   // states: loading, not found and success. Redirecting while the request
   // is still running would send the user to the 404 page by mistake.
@@ -276,68 +353,61 @@ const ProductDetail = () => {
             )}
             {activeTab === "reviews" && (
               <div className="tab-pane" id="nav-mission">
-                <div className="flex mb-4">
-                  <img
-                    src="/image/avatar.jpg"
-                    className="rounded-full p-3 w-24 h-24"
-                    alt="Avatar"
-                  />
-                  <div className="ml-4">
-                    <p className="mb-2 text-sm">April 12, 2024</p>
-                    <div className="flex justify-between">
-                      <h5>Jason Smith</h5>
-                      <div className="flex font-black my-3 mb-4 ">
-                        <Flex gap="middle" vertical>
-                          <Flex gap="middle">
-                            <Rate
-                              disabled
-                              defaultValue={4}
-                              character={({ index = 0 }) =>
-                                customIcons[index + 1]
-                              }
-                            />
-                          </Flex>
-                        </Flex>
+                {!isAuthenticated ? (
+                  <p className="text-gray-600">
+                    Đăng nhập để xem và gửi đánh giá cho sản phẩm này.
+                  </p>
+                ) : commentsLoading ? (
+                  <p className="text-gray-600">Đang tải đánh giá...</p>
+                ) : comments.length === 0 ? (
+                  <p className="text-gray-600">
+                    Chưa có đánh giá nào cho sản phẩm này.
+                  </p>
+                ) : (
+                  comments.map((comment) => (
+                    <div key={comment._id} className="flex mb-4">
+                      <img
+                        src={comment.avatar || "/image/avatar.jpg"}
+                        className="rounded-full p-3 w-24 h-24"
+                        alt="Avatar"
+                      />
+                      <div className="ml-4">
+                        <p className="mb-2 text-sm">
+                          {comment.created_at
+                            ? new Date(comment.created_at).toLocaleDateString(
+                                "vi-VN"
+                              )
+                            : ""}
+                        </p>
+                        <div className="flex justify-between">
+                          <h5>{comment.user_name || comment.username || "Người dùng"}</h5>
+                          {comment.rating ? (
+                            <div className="flex font-black my-3 mb-4 ">
+                              <Flex gap="middle" vertical>
+                                <Flex gap="middle">
+                                  <Rate
+                                    disabled
+                                    defaultValue={comment.rating}
+                                    character={({ index = 0 }) =>
+                                      customIcons[index + 1]
+                                    }
+                                  />
+                                </Flex>
+                              </Flex>
+                            </div>
+                          ) : null}
+                        </div>
+                        <p>{comment.content || ""}</p>
+                        <button
+                          onClick={() => handleDeleteComment(comment._id)}
+                          className="mt-2 text-sm text-red-600 underline"
+                        >
+                          Xoá
+                        </button>
                       </div>
                     </div>
-                    <p>
-                      The generated Lorem Ipsum is therefore always free from
-                      repetition injected humour, or non-characteristic words
-                      etc. Susp endisse ultricies nisi vel quam suscipit{" "}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex">
-                  <img
-                    src="/image/avatar.jpg"
-                    className="rounded-full p-3 w-24 h-24"
-                    alt="Avatar"
-                  />
-                  <div className="ml-4">
-                    <p className="mb-2 text-sm">April 12, 2024</p>
-                    <div className="flex justify-between">
-                      <h5>Sam Peters</h5>
-                      <div className="flex font-black my-3 mb-4 ">
-                        <Flex gap="middle" vertical>
-                          <Flex gap="middle">
-                            <Rate
-                              disabled
-                              defaultValue={4}
-                              character={({ index = 0 }) =>
-                                customIcons[index + 1]
-                              }
-                            />
-                          </Flex>
-                        </Flex>
-                      </div>
-                    </div>
-                    <p>
-                      The generated Lorem Ipsum is therefore always free from
-                      repetition injected humour, or non-characteristic words
-                      etc. Susp endisse ultricies nisi vel quam suscipit{" "}
-                    </p>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             )}
             {activeTab === "vision" && (
@@ -356,7 +426,7 @@ const ProductDetail = () => {
         </div>
       </div>
       <div className=" mt-20 ml-20 mr-20 ">
-        <form action="#">
+        <form action="#" onSubmit={handleSubmitComment}>
           <h4 className="mb-5 font-bold">Leave a Reply</h4>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
@@ -365,6 +435,8 @@ const ProductDetail = () => {
                   type="text"
                   className="form-control border-0 w-full p-2"
                   placeholder="Your Name *"
+                  value={commentName}
+                  onChange={(event) => setCommentName(event.target.value)}
                 />
               </div>
             </div>
@@ -374,6 +446,8 @@ const ProductDetail = () => {
                   type="email"
                   className="form-control border-0 w-full p-2"
                   placeholder="Your Email *"
+                  value={commentEmail}
+                  onChange={(event) => setCommentEmail(event.target.value)}
                 />
               </div>
             </div>
@@ -385,6 +459,8 @@ const ProductDetail = () => {
                   className="form-control border-0 w-full p-2"
                   placeholder="Your Review *"
                   spellCheck="false"
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
                 ></textarea>
               </div>
             </div>
@@ -398,9 +474,10 @@ const ProductDetail = () => {
                 </div>
                 <button
                   type="submit"
-                  className="btn border border-secondary text-primary rounded-full px-4 py-3"
+                  disabled={submitting}
+                  className="btn border border-secondary text-primary rounded-full px-4 py-3 disabled:opacity-50"
                 >
-                  Post Comment
+                  {submitting ? "Posting..." : "Post Comment"}
                 </button>
               </div>
             </div>

@@ -14,6 +14,8 @@ export type routeTypes = {
   changepassword: string;
   myfavorite: string;
   stock: string;
+  report: string;
+  role: string;
   productadmin: string;
   editadmin: string;
 };
@@ -204,4 +206,75 @@ export type apiErrorType = {
   message: string;
   errors?: Record<string, { type: string; msg: string; path: string }>;
   statusCode?: number;
+};
+
+/**
+ * Shape of a role returned by `GET /roles`.
+ *
+ * The endpoint is only reachable by an authenticated administrator, so the
+ * fields are optional to stay compatible with the different shapes the
+ * backend may return.
+ */
+export type RoleType = {
+  _id: string;
+  name?: string;
+  slug?: string;
+  description?: string;
+  isActive?: boolean;
+};
+
+/** Shape of a report returned by `GET /reports`. */
+export type ReportType = {
+  _id: string;
+  /** Kind of resource the report points at (`product`, `blog`, ...). */
+  target_type?: string;
+  target_id?: string;
+  reason?: string;
+  description?: string;
+  /** `Pending`, `Approved`, `Rejected`, ... */
+  status?: string;
+  user_id?: string;
+  user_name?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+/** Shape of a stock record returned by `GET /stocks`. */
+export type StockType = {
+  _id: string;
+  product_id?: string;
+  /** Denormalised product name, when the backend embeds it. */
+  product_name?: string;
+  quantity?: number;
+  original_price?: number;
+  discount_price?: number;
+  total_price?: number;
+  unit_of_measurement?: string;
+  expiration_date?: string;
+  harvest_date?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+/**
+ * Shape of a comment returned by `GET /products/:id/comments` and
+ * `GET /blogs/:id/comments`.
+ */
+export type CommentType = {
+  _id: string;
+  product_id?: string;
+  blog_id?: string;
+  user_id?: string;
+  /** Display name of the author, when the backend embeds it. */
+  user_name?: string;
+  username?: string;
+  email?: string;
+  avatar?: string;
+  content?: string;
+  /** Star rating attached to the comment, when it is a product review. */
+  rating?: number;
+  parent_id?: string;
+  created_at?: string;
+  updated_at?: string;
 };

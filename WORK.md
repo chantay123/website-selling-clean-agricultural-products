@@ -381,7 +381,7 @@ Script gọi đúng URL + payload mà `src/apis/index.ts` sinh ra, rồi kiểm 
 
 ### 12.2. Phân loại trạng thái endpoint
 
-> **Lưu ý (2026-11-10):** bảng dưới đây phản ánh **29 endpoint trong phạm vi bài toán ban đầu**. Probe bề mặt API lần 2 đã phát hiện thêm **7 nhóm endpoint chưa từng được tích hợp** (`banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments`) — xem `docs/04-api-integration.md` § 1.3.
+> **Lưu ý (2026-11-11):** bảng dưới đây phản ánh **29 endpoint trong phạm vi bài toán ban đầu**. Probe bề mặt API lần 2 đã phát hiện thêm **7 nhóm endpoint** (`banners`, `blogs`, `hashtags`, `roles`, `reports`, `stocks`, `products/:id/comments`) — **cả 7 nhóm đã được tích hợp**, xem `docs/04-api-integration.md` § 1.3–§ 1.5.
 
 | Endpoint | Method | Trạng thái | Ghi chú |
 |----------|--------|------------|--------|
@@ -421,10 +421,10 @@ Script `scripts/probe-surface.mjs` quét path × method trên toàn bộ backend
 | `banners` | `/banners` | GET | 🟢 **200** (1332 bản ghi) | ✅ **Đã tích hợp** — `CarouselItem.tsx` (có fallback) |
 | `blogs` | `/blogs`, `/blogs/:id` | GET | 🟢 **200** (33 bản ghi) | ✅ **Đã tích hợp** — `BlogSection.tsx` mới trên Home |
 | `hashtags` | `/hashtags` | GET | 🟢 **200** | ✅ **Đã tích hợp** — mục "Hashtags" trong `Categories.tsx` |
-| `roles` | `/roles` | GET | 🟡 401 (route tồn tại) | ❌ Chưa tích hợp |
-| `reports` | `/reports` | GET | 🟡 401 (route tồn tại) | ❌ Chưa tích hợp |
-| `stocks` | `/stocks`, `/stocks/:id` | GET/PUT | 🟡 401 (route tồn tại) | ⚠️ `/stock` route có, nhưng page là placeholder |
-| `comments` | `/products/:id/comments` | GET/POST | 🟡 401 (route tồn tại) | ⚠️ Tab "Reviews" + form "Leave a Reply" trong `ProductDetail.tsx` đang dùng **dữ liệu tĩnh** |
+| `roles` | `/roles`, `/roles/:id` | GET/PUT/DELETE | 🟡 401 (route tồn tại) | ✅ **Đã tích hợp** — trang `/role` (`Role.tsx` mới) |
+| `reports` | `/reports`, `/reports/:id` | GET/POST/DELETE | 🟡 401 (route tồn tại) | ✅ **Đã tích hợp** — trang `/report` (`Report.tsx` mới) |
+| `stocks` | `/stocks`, `/stocks/:id` | GET/PUT/POST/DELETE | 🟡 401 (route tồn tại) | ✅ **Đã tích hợp** — `/stock` viết lại từ placeholder thành bảng kho hàng |
+| `comments` | `/products/:id/comments` | GET/POST/DELETE | 🟡 401 (route tồn tại) | ✅ **Đã tích hợp** — tab "Reviews" + form "Leave a Reply" trong `ProductDetail.tsx` (thay dữ liệu tĩnh) |
 
 **Quy tắc đọc kết quả probe:**
 - `200` → route tồn tại + public
@@ -494,12 +494,15 @@ Script `scripts/probe-surface.mjs` quét path × method trên toàn bộ backend
 | 10 | `Payment.tsx` dùng `key={index}` cho list → React khuyến nghị key ổn định | 🟢 Thấp | |
 | 11 | ~~`Myfavorite.tsx` gọi `getFavoriteProducts()` khi khách chưa đăng nhập~~ | ✅ **Đã xử lý**: guard bằng `isAuthenticated` |
 | 12 | Chưa có `Error Boundary` quanh `<Routes>` → lỗi render làm sập cả cây component | 🟢 Thấp | Đề xuất trong `docs/04-api-integration.md` § 8 |
-| 13 | **4 nhóm endpoint backend chưa từng được tích hợp**: `roles`, `reports`, `stocks`, `products/:id/comments` | 🔴 Cao | `src/apis/index.ts` — cần thêm helper + gắn UI (chi tiết `docs/04-api-integration.md` § 1.3) |
-| 14 | `/stock` route đã có nhưng page là placeholder (`<table>adasd</table>`), trong khi backend có đầy đủ `GET/POST/PUT/DELETE /stocks` | 🟡 Trung bình | `src/container/Admin/page/Stock/Stock.tsx` |
-| 15 | `ProductDetail.tsx` tab "Reviews" + form "Leave a Reply" dùng **dữ liệu tĩnh**, backend có `/products/:id/comments` (GET/POST) | 🟡 Trung bình | `src/container/Detail/page/ProductDetail/ProductDetail.tsx` |
+| 13 | ~~**4 nhóm endpoint backend chưa từng được tích hợp**: `roles`, `reports`, `stocks`, `products/:id/comments`~~ → **Đã xử lý**: thêm helper + gắn UI cho cả 4 nhóm | ✅ Đã sửa | `src/apis/index.ts`, `src/container/Admin/page/{Role,Report,Stock}/`, `ProductDetail.tsx` |
+| 14 | ~~`/stock` route đã có nhưng page là placeholder (`<table>adasd</table>`)~~ → **Đã xử lý**: viết lại thành bảng kho hàng (sửa số lượng inline, xoá bản ghi) | ✅ Đã sửa | `src/container/Admin/page/Stock/Stock.tsx` |
+| 15 | ~~`ProductDetail.tsx` tab "Reviews" + form "Leave a Reply" dùng **dữ liệu tĩnh**~~ → **Đã xử lý**: gọi `GET/POST/DELETE /products/:id/comments` | ✅ Đã sửa | `src/container/Detail/page/ProductDetail/ProductDetail.tsx` |
 | 16 | ~~`CarouselItem.tsx` hardcode 4 ảnh, backend có `GET /banners` trả 1332 banner~~ → **Đã xử lý**: carousel gọi `getBanners()`, giữ 4 ảnh cũ làm fallback | ✅ Đã sửa | `src/components/CarouselItem/CarouselItem.tsx` |
 | 17 | ~~Backend có `GET /blogs` (33 bài) + `GET /hashtags` (4 tag) chưa dùng~~ → **Đã xử lý**: `BlogSection` mới trên Home; mục "Hashtags" trong sidebar `/shop` | ✅ Đã sửa | `src/components/BlogSection/`, `src/components/Categories/Categories.tsx` |
 | 18 | `GET /products?hashtag=<slug>` bị backend **bỏ qua** (trả về toàn bộ sản phẩm) → chỉ search theo `name`/`slug` sản phẩm | 🟢 Thấp | Ghi nhận giới hạn backend; UI dùng `searchProducts(tag.slug)` |
+| 19 | Backend lỗi SMTP → `POST /users/register` trả `500 "Failed to send OTP"`, tài khoản tạo ra luôn ở trạng thái *unverified* → **không lấy được access token** để verify live các endpoint private (`roles`, `reports`, `stocks`, `comments`) | 🔴 Cao | **Cần backend cấu hình SMTP** (hoặc cung cấp access token hợp lệ) → `scripts/verify-private-content.ps1 -Token "<token>"` |
+| 20 | `GET /roles/:id` và `GET /reports/:id` **không tồn tại** (404 `Cannot GET`) — chỉ có `GET /roles` + `PUT|DELETE /roles/:id` và `GET|POST /reports` + `DELETE /reports/:id` | 🟢 Thấp | Đã gỡ 2 helper sai khỏi `src/apis/index.ts` |
+| 21 | Shape response của `roles` / `reports` / `stocks` / `comments` **chưa verify được** (tất cả trả `401`) → các field trong `RoleType` / `ReportType` / `StockType` / `CommentType` đang để optional | 🟡 Trung bình | Cần access token hợp lệ để rà lại type cho khớp thực tế |
 
 ---
 

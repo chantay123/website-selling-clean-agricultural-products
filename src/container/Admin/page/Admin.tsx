@@ -53,7 +53,7 @@ const Admin = () => {
   }, []);
 
   const isadmin = useSelector((state: RootState) => state.user.isAdmin);
-  const deleteProductById = async (product_id: any) => {
+  const deleteProductById = async (product_id: string) => {
     try {
       await deleteProduct(product_id);
       fetchPRODUCT();

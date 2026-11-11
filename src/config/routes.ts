@@ -16,6 +16,8 @@ const routes: routeTypes = {
   changepassword: "/changepassword",
   myfavorite: "/myfavorite",
   stock: "/stock",
+  report: "/report",
+  role: "/role",
   productadmin: "/productadmin",
   editadmin: "/editadmin/:editId",
 } as const;

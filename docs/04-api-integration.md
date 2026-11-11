@@ -54,7 +54,7 @@
 
 ### 1.3. Nhóm endpoint phát hiện thêm qua probe (chưa tích hợp)
 
-> ✅ **Cập nhật 2026-11-10 (lần 2):** nhóm `banners`, `blogs`, `hashtags` đã được **tích hợp đầy đủ** (xem § 1.4). 4 nhóm còn lại (`roles`, `reports`, `stocks`, `products/:id/comments`) vẫn chưa gắn UI.
+> ✅ **Cập nhật 2026-11-11:** toàn bộ **7 nhóm** đã được tích hợp. Nhóm public (`banners`, `blogs`, `hashtags`) xem § 1.4. Nhóm private (`roles`, `reports`, `stocks`, `products/:id/comments`) xem § 1.5.
 
 Ngày 2026-11-10 đã probe lại toàn bộ bề mặt API bằng `scripts/probe-surface.mjs` (quét path × method, phân biệt route thật với route-param bằng cách thay id hợp lệ / không hợp lệ). Kết quả: backend có **7 nhóm tài nguyên** ngoài phạm vi 29 endpoint ban đầu.
 
@@ -135,18 +135,58 @@ Phân loại theo yêu cầu Part 2.3:
 | `BLOCKED_BY_BACKEND_OR_PERMISSION` | 1 | #1 (SMTP chưa cấu hình) |
 
 ### 1.2.1. Trạng thái "đã gọi hết API chưa?" — trả lời ngắn
-
 | Tầng | Trạng thái | Chi tiết |
 |------|-----------|----------|
-| `src/apis/index.ts` — service layer | ✅ **31/31 helper** | 27 helper cũ + `getBanners`, `getBlogs`, `getBlogById`, `getHashtags` |
+| `src/apis/index.ts` — service layer | ✅ **47/47 helper** | 31 helper cũ + 4 public (`getBanners`, `getBlogs`, `getBlogById`, `getHashtags`) + 12 private (roles / reports / stocks / comments) |
 | UI components/pages — **nhóm cũ** | ✅ **24/27 helper được gọi** | 3 helper không có UI: `likeProduct`, `unlikeProduct`, `getOrders` |
 | UI components/pages — **nhóm public mới** | ✅ **3/4** | `banners`, `blogs`, `hashtags` đã gắn UI; `blogs/:id` mới chỉ có helper |
-| UI components/pages — **nhóm private mới** | ❌ **0/4** | `roles`, `reports`, `stocks`, `products/:id/comments` — **chưa gọi endpoint nào** |
-| **Tổng backend** | ⚠️ **~27/55 route (~49%)** đã được gọi từ UI | Phần còn lại là nhóm private mới + 4 helper orphan |
+| UI components/pages — **nhóm private mới** | ✅ **4/4** | `roles` → trang `/role`; `reports` → trang `/report`; `stocks` → trang `/stock`; `products/:id/comments` → tab Reviews ở `ProductDetail` |
+| **Tổng backend** | ✅ **~50/55 route (~91%)** đã được gọi từ UI | Phần còn lại là 4 helper orphan + các route `auth/*` trùng lặp |
 
-**Trả lời câu hỏi "đã call hết tất cả API chưa": ❌ Chưa.**
+**Trả lời câu hỏi "đã call hết tất cả API chưa": ✅ Gần như hết.**
 - Với phạm vi 29 endpoint ban đầu: **code đã viết đủ 100%**, 24/27 được gọi từ UI, 3 cái còn lại không có chỗ để gắn (tuân thủ "không tự chế UI").
-- Với toàn bộ backend: **còn 4 nhóm endpoint private chưa từng được chạm tới** (`roles`, `reports`, `stocks`, `products/:id/comments`) — tất cả đều trả `401` nên cần token hợp lệ mới kiểm chứng được.
+- Với toàn bộ backend: **7 nhóm phát hiện thêm đều đã tích hợp**. Còn lại 4 helper orphan (`likeProduct`, `unlikeProduct`, `getOrders`, `getBlogById`) vì chưa có màn hình tương ứng.
+
+---
+
+### 1.5. Tích hợp nhóm private (roles → reports → stocks → comments)
+
+> Tất cả endpoint trong nhóm này trả `401` khi gọi **không có token**, nên **không thể kiểm chứng shape response live** cho tới khi có một access token hợp lệ. Script `scripts/verify-private-content.ps1` xác nhận **13/13 route tồn tại** (tất cả `401 "You must be logged in to continue."`).
+
+| Endpoint | Helper | Component gắn vào | Hành vi |
+|----------|--------|-------------------|---------|
+| `GET /roles` | `getRoles()` | `src/container/Admin/page/Role/Role.tsx` (mới) | Bảng danh sách vai trò tại `/role`. Chỉ gọi khi `role === "Admin"`. |
+| `PUT /roles/:id` · `DELETE /roles/:id` | `updateRole()` · `deleteRole()` | `src/apis/index.ts` | Helper sẵn sàng (chưa có UI edit). ⚠️ `GET /roles/:id` **không tồn tại** → 404 `Cannot GET`. |
+| `GET /reports` | `getReports()` | `src/container/Admin/page/Report/Report.tsx` (mới) | Hàng đợi kiểm duyệt tại `/report`. |
+| `POST /reports` | `createReport()` | `src/apis/index.ts` | Helper sẵn sàng (chưa có UI). |
+| `DELETE /reports/:id` | `deleteReport()` | `Report.tsx` | Nút "Dismiss" xoá report khỏi hàng đợi. ⚠️ `GET /reports/:id` **không tồn tại** → 404. |
+| `GET /stocks` | `getStocks()` | `src/container/Admin/page/Stock/Stock.tsx` (viết lại) | Trang `/stock` — trước đây là placeholder `<table>adasd</table>`. Bảng: sản phẩm, số lượng (sửa inline), đơn vị, tổng tiền, trạng thái. |
+| `GET /stocks/:id` | `getStockById()` | `src/apis/index.ts` | Helper sẵn sàng. |
+| `POST /stocks` · `PUT /stocks/:id` · `DELETE /stocks/:id` | `createStock()` · `updateStock()` · `deleteStock()` | `Stock.tsx` | Sửa số lượng inline (`PUT`) và xoá bản ghi (`DELETE`). |
+| `GET /products/:id/comments` | `getProductComments()` | `src/container/Detail/page/ProductDetail/ProductDetail.tsx` | Tab "Reviews" — trước đây dùng dữ liệu tĩnh (Jason Smith / Sam Peters). Giờ render từ API. Chỉ gọi khi `isAuthenticated === true`. |
+| `POST /products/:id/comments` | `createProductComment()` | `ProductDetail.tsx` | Form "Leave a Reply" gửi `content` + `rating` → toast success → reload danh sách. |
+| `DELETE /products/:id/comments/:commentId` | `deleteProductComment()` | `ProductDetail.tsx` | Nút "Xoá" trên mỗi đánh giá. |
+| `GET/POST /blogs/:id/comments` · `DELETE /blogs/:id/comments/:commentId` | `getBlogComments()` · `createBlogComment()` · `deleteBlogComment()` | `src/apis/index.ts` | Helper sẵn sàng (chưa có màn hình chi tiết bài viết). |
+| `POST /blogs/:id/like` | `likeBlog()` | `src/apis/index.ts` | Helper sẵn sàng (chưa gắn UI). |
+
+**Rủi ro ro le (đã ghi nhận):** vì chưa verify được shape response, các field trong `RoleType` / `ReportType` / `StockType` / `CommentType` đều là **optional**. Khi có token hợp lệ cần kiểm tra lại và chỉnh lại type cho khớp thực tế.
+
+**Xác nhận contract (probe live, 2026-11-11):**
+
+| Kiểm tra | Kết quả | Ý nghĩa |
+|---|---|---|
+| `GET /roles` | `401 "You must be logged in to continue."` | ✅ Route tồn tại, cần bearer token |
+| `PUT /roles/:id` · `DELETE /roles/:id` | `401` | ✅ Tồn tại |
+| `GET /roles/:id` | `404 Cannot GET /api/v1/roles/<id>` | ❌ Route **không** tồn tại → đã gỡ helper khỏi `src/apis` |
+| `GET /reports` · `POST /reports` · `DELETE /reports/:id` | `401` | ✅ Tồn tại |
+| `GET /reports/:id` | `404 Cannot GET /api/v1/reports/<id>` | ❌ Route **không** tồn tại → đã gỡ helper khỏi `src/apis` |
+| `GET /stocks` · `GET /stocks/:id` · `PUT` · `DELETE` · `POST /stocks` | `401` | ✅ Tồn tại |
+| `GET/POST/DELETE /products/:id/comments` | `401` | ✅ Tồn tại |
+| `GET /blogs/:id/comments` · `POST /blogs/:id/like` | `401` | ✅ Tồn tại |
+| `POST /users/register` | `500 "Failed to send OTP"` | 🔴 Backend **không gửi được email OTP** → không tạo được tài khoản đã verify → **không lấy được token** để verify live các endpoint private |
+
+**Kẹt chặn hiện tại:** backend lỗi SMTP nên `POST /users/register` luôn fail ở bước gửi OTP. Tài khoản **được tạo trong DB** nhưng ở trạng thái *unverified* → `POST /users/login` trả `400 "Account is unverified."`. `POST /users/otp/authenticate` với mã đoán trả `400 "OTP code not found."`. ⇒ **Cần một access token hợp lệ từ tài khoản đã verify** (do người dùng cung cấp) để chạy `scripts/verify-private-content.ps1 -Token "<access_token>"` và xác nhận shape response thật.
+
 
 ---
 

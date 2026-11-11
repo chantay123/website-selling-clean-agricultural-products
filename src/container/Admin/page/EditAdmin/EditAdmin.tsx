@@ -2,6 +2,7 @@ import { Alert, Button, Form, Input, Layout } from "antd";
 
 import { getProductById, updateProduct } from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
+import { ProductAttribute } from "../../../../@type/global.type";
 import { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
@@ -43,10 +44,7 @@ const EditAdmin = () => {
     try {
       const respone = await getProductById(editId ?? "");
       const data = respone.data;
-      const attribute = (data.productAttributes?.[0] ?? {}) as Record<
-        string,
-        any
-      >;
+      const attribute = (data.productAttributes?.[0] ?? {}) as ProductAttribute;
       setUserData({
         name: data.name ?? "",
         slug: data.slug ?? "",
@@ -121,7 +119,7 @@ const EditAdmin = () => {
         isLoading: false,
         autoClose: 3000,
       });
-    } catch (error: any) {
+    } catch (error) {
       toast.update(loadingToast, {
         render: getApiErrorMessage(error, "Lỗi cập nhật sản phẩm"),
         type: "error",
