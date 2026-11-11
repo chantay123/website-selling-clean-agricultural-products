@@ -1,0 +1,8 @@
+/* Layout helpers for the blog detail page. */
+.blog-detail-page {
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}

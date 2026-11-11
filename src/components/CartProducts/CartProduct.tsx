@@ -20,8 +20,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
-  height: "380px",
-  width: "310px",
+  paddingBottom: "1rem",
 };
 
 const CartProduct = () => {
@@ -112,17 +111,18 @@ const CartProduct = () => {
   }, [isAuthenticated]);
 
   return (
-    <Layout className="bg-white ml-20 mr-20 mt-10 mb-10">
-      <div className="mt-20 items-center flex ">
-        <div className=" mt-20 ">
-          <div>
-            <h2 className="text-4xl font-bold mb-12">Our Organic Products</h2>
-          </div>
-        </div>
-        <div className="mt-10 ml-72">
-          <ul className="flex text-sm ">
+    <Layout className="bg-white mx-5 sm:mx-10 lg:ml-20 lg:mr-20 mt-10 mb-10">
+      <div className="mt-16 sm:mt-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center lg:text-left">
+          Our Organic Products
+        </h2>
+        <div className="w-full lg:w-auto lg:ml-72">
+          <ul className="flex flex-wrap gap-2 sm:gap-4 text-sm justify-center lg:justify-start">
             <li>
-              <Link to="?" className="p-3 border-2 rounded-[30px] ">
+              <Link
+                to="?"
+                className="inline-block p-3 border-2 rounded-[30px]"
+              >
                 All Products
               </Link>
             </li>
@@ -130,7 +130,7 @@ const CartProduct = () => {
               <li key={item._id}>
                 <Link
                   to={`?category=${item._id}`}
-                  className="p-4 border-2 rounded-[30px] ml-4 "
+                  className="inline-block p-3 sm:p-4 border-2 rounded-[30px]"
                 >
                   {item.name}
                 </Link>
@@ -139,28 +139,31 @@ const CartProduct = () => {
           </ul>
         </div>
       </div>
-      <div>
-        <Flex wrap="wrap" gap="35px">
+      <div className="mt-8">
+        <Flex wrap="wrap" gap={24}>
           {filterProduct.map((product) => (
-            <div key={product._id} className="gutter-row  ">
-              <div style={style} className="rounded-[10px] relative">
-                <div className=" absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
+            <div key={product._id} className="gutter-row w-full sm:w-[310px]">
+              <div
+                style={style}
+                className="rounded-[10px] relative w-full h-auto min-h-[380px] flex flex-col"
+              >
+                <div className="absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
                   {product.category?.name}
                 </div>
                 <div>
                   <Link to={`product/${product._id}`}>
                     <img
-                      className="w-[400px] h-[200px] rounded object-cover"
+                      className="w-full h-[200px] rounded object-cover"
                       src={product.thumbnail_url}
-                      alt=""
+                      alt={product.name}
                     />
                   </Link>
                 </div>
-                <h2 className="flex justify-center text-2xl font-bold mt-8 ">
+                <h2 className="flex justify-center text-2xl font-bold mt-8 px-2 text-center">
                   {product.name}
                 </h2>
-                <div className="flex  mt-30 items-center justify-evenly mt-5">
-                  <p className=" text_money p-4 text-xl  font-popins font-semibold">
+                <div className="flex items-center justify-evenly mt-5 mb-4 px-2 mt-auto">
+                  <p className="text_money p-4 text-xl font-popins font-semibold">
                     {product.price}$/KG
                   </p>
                   <ButtonClick

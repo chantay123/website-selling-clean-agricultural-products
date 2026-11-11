@@ -18,6 +18,8 @@ export type routeTypes = {
   role: string;
   productadmin: string;
   editadmin: string;
+  blog: string;
+  blogDetail: string;
 };
 
 export type productTypes = {
@@ -185,6 +187,7 @@ export type BlogType = {
   detail?: string;
   status?: string;
   comments_count?: number;
+  likes_count?: number;
   report_count?: number;
   views_count?: number;
   thumbnail?: string;

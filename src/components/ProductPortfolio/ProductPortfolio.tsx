@@ -2,11 +2,6 @@ import { Col, Row } from "antd";
 import "./style.scss";
 import "tailwindcss/tailwind.css";
 import { useNavigate } from "react-router-dom";
-const style: React.CSSProperties = {
-  background: "#f4f6f8 ",
-  padding: "14px 14px",
-  height: "300px",
-};
 
 /**
  * The images live in `public/image`, which Vite copies to the root of the
@@ -37,28 +32,40 @@ const ProductPortfolio = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <div className=" mt-20 ml-20 mr-12 rounded-md">
-        <div className="mb-8 ">
-          <h2 className="items-center flex justify-center text-4xl font-bold">
+      <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:ml-20 lg:mr-12 rounded-md">
+        <div className="mb-8">
+          <h2 className="items-center flex justify-center text-3xl sm:text-4xl font-bold text-center px-4">
             Product Portfolio
           </h2>
         </div>
         <div>
-          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+          <Row gutter={[24, 24]}>
             {portfolioItems.map((item) => (
-              <Col className="gutter-row" span={6} key={item.title}>
-                <div style={style} className="rounded-[10px]">
-                  <a className="bg-red-700" href="">
+              <Col
+                className="gutter-row"
+                xs={12}
+                sm={12}
+                md={6}
+                key={item.title}
+              >
+                <div className="rounded-[10px] bg-[#f4f6f8] p-3 h-full">
+                  <a
+                    className="block"
+                    href=""
+                    onClick={(event) => {
+                      event.preventDefault();
+                      navigate("/shop");
+                    }}
+                  >
                     <div>
                       <img
-                        onClick={() => navigate("/shop")}
-                        className="rounded mb-10 w-[300px] h-[180px] object-cover"
+                        className="rounded w-full h-[130px] sm:h-[160px] lg:h-[180px] object-cover"
                         src={item.image}
                         alt={item.title}
                       />
                     </div>
 
-                    <h2 className="flex justify-center text-xl font-bold mt-10 ">
+                    <h2 className="flex justify-center text-base sm:text-xl font-bold mt-4 lg:mt-10 text-center">
                       {item.title}
                     </h2>
                   </a>

@@ -1,4 +1,3 @@
-import { BG } from "../../../../constants/images";
 import "tailwindcss/tailwind.css";
 import "./style.scss";
 import { Button, Form, Input } from "antd";
@@ -12,6 +11,7 @@ import { register as registerApi } from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import AuthLayout from "../../components/AuthLayout";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -30,23 +30,18 @@ const Register = () => {
       toast.success(message);
       navigate("/login");
     } catch (error: any) {
-      toast.error(getApiErrorMessage(error, "Lỗi đăng ký"));
+      toast.error(getApiErrorMessage(error, "L?i dang k�"));
     }
   };
 
   return (
-    <div className="Main w-screen h-screen">
-      <img
-        className="w-full h-full object-cover"
-        src={BG.MAIN_BG}
-        alt="background"
-      />
+    <AuthLayout>
       <Form
         onFinish={registerSubmit}
         name="normal_login"
-        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-16 xs:px-3 xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%] sm:mt-20 md:w-[50%] md:mt-1 md:px-8 lg:w-[40%] xl:w-[25%]"
+        className="login-form w-full max-w-[440px] rounded-xl bg-white p-6 sm:p-10 shadow-lg"
       >
-        <h1 className="text-center text-4xl mb-8 font-bold">Sign up</h1>
+        <h1 className="text-center text-3xl sm:text-4xl mb-6 font-bold">Sign up</h1>
         <Form.Item
           className="text-xs "
           name="full_name"
@@ -113,12 +108,13 @@ const Register = () => {
           >
             Sign up
           </Button>
-          <div className="flex justify-center text-center mt-3">
+          <div className="flex justify-center text-center mt-3 gap-2">
             <p> Don't have an account?</p>
             <a
-              className="register text-[13px] font-bold text-green-400 text-center ml-2"
+              className="register text-[13px] font-bold text-green-400 text-center"
               href=""
-              onClick={() => {
+              onClick={(event) => {
+                event.preventDefault();
                 navigate("/login");
               }}
             >
@@ -127,7 +123,7 @@ const Register = () => {
           </div>
         </Form.Item>
       </Form>
-    </div>
+    </AuthLayout>
   );
 };
 

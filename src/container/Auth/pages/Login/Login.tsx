@@ -1,6 +1,5 @@
 import "./style.scss";
 import { Button, Checkbox, Form, Input } from "antd";
-import { BG } from "../../../../constants/images";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { login as loginApi } from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
@@ -11,6 +10,7 @@ import { setAuthenticationStatus, setAdminStatus } from "../../../../redux/userR
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN, setCookie, setStore } from "../../../../utils/setting";
+import AuthLayout from "../../components/AuthLayout";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,18 +37,13 @@ const Login = () => {
     }
   };
   return (
-    <div className="login w-screen h-screen relative ">
-      <img
-        className="w-full h-full object-cover"
-        src={BG.MAIN_BG}
-        alt="background"
-      />
+    <AuthLayout>
       <Form
         onFinish={loginSubmit}
         name="normal_login"
-        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl  bg-white  xs:px-3  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-2/3 sm:w-[43%]  md:w-[50%]  md:px-8 lg:w-[40%]  lg:p-12 xl:w-[25%] "
+        className="login-form w-full max-w-[440px] rounded-xl bg-white p-6 sm:p-10 shadow-lg"
       >
-        <h2 className="  text-center text-4xl xs:mb-6 font-bold xs:text-3xl xs:mt-5 lg:mt-3 text-black  text-8xl  ">
+        <h2 className="text-center text-3xl sm:text-4xl font-bold text-black mb-6">
           Login
         </h2>
         <Form.Item
@@ -82,9 +77,10 @@ const Login = () => {
             </Checkbox>
           </Form.Item>
           <a
-            className="login-form-forgot underline font-bold  sm:text-[12px] sm:ml-30 ss:ml-6  text-[15px] xs:text-[12px] xs:ml-16 xss:ml-12  3xl:text-[15px] 3xl:ml-24  lg:ml-12 smm:ml-32 sm:ml-14 md:ml-20"
+            className="login-form-forgot underline font-bold  sm:text-[12px] sm:ml-30 ss:ml-6  text-[15px] xs:text-[12px] xs:ml-16  xss:ml-12  3xl:text-[15px] 3xl:ml-24  lg:ml-12 smm:ml-32 sm:ml-14 md:ml-20"
             href=""
-            onClick={() => {
+            onClick={(event) => {
+              event.preventDefault();
               navigate("/forgot-password");
             }}
           >
@@ -101,7 +97,8 @@ const Login = () => {
           <div className="flex justify-center text-center mt-3  xs:flex xs:justify-between xs:px-3  3xl:text-[15px] sm:text-[12px]">
             <p> Don't have an account?</p>
             <a
-              onClick={() => {
+              onClick={(event) => {
+                event.preventDefault();
                 navigate("/register");
               }}
               className="register text-[13px] font-bold text-green-400 text-center 3xl:text-[15px] sm:text-[12px]"
@@ -112,7 +109,7 @@ const Login = () => {
           </div>
         </Form.Item>
       </Form>
-    </div>
+    </AuthLayout>
   );
 };
 

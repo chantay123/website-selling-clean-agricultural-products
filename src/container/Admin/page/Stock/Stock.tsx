@@ -11,8 +11,7 @@ import { StockType } from "../../../../@type/global.type";
 import { useDispatch, useSelector } from "react-redux";
 import { setAdminStatus } from "../../../../redux/userReducer/userReducer";
 import { RootState } from "../../../../redux/config";
-import HeaderAdmin from "../../components/HeaderAdmin";
-import Sidebar from "../../components/Sidebar";
+import AdminLayout from "../../components/AdminLayout";
 import { toast } from "react-toastify";
 
 /**
@@ -57,7 +56,7 @@ const Stock = () => {
       const response = await getStocks();
       setStocks(response.data);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Lỗi tải danh sách kho hàng"));
+      toast.error(getApiErrorMessage(error, "L?i t?i danh s�ch kho h�ng"));
     } finally {
       setLoading(false);
     }
@@ -71,10 +70,10 @@ const Stock = () => {
   const handleQuantityChange = async (id: string, quantity: number) => {
     try {
       await updateStock(id, { quantity });
-      toast.success("Cập nhật số lượng thành công");
+      toast.success("C?p nh?t s? lu?ng th�nh c�ng");
       fetchStocks();
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Lỗi cập nhật kho hàng"));
+      toast.error(getApiErrorMessage(error, "L?i c?p nh?t kho h�ng"));
     }
   };
 
@@ -82,10 +81,10 @@ const Stock = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteStock(id);
-      toast.success("Xoá bản ghi kho hàng thành công");
+      toast.success("Xo� b?n ghi kho h�ng th�nh c�ng");
       fetchStocks();
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Lỗi xoá kho hàng"));
+      toast.error(getApiErrorMessage(error, "L?i xo� kho h�ng"));
     }
   };
 
@@ -157,27 +156,21 @@ const Stock = () => {
   if (profileChecked && isadmin === false) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
-        Bạn không có quyền truy cập trang quản trị.
+        B?n kh�ng c� quy?n truy c?p trang qu?n tr?.
       </div>
     );
   }
 
   return (
-    <div>
-      <HeaderAdmin />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-6">
-          <h2 className="text-2xl font-semibold mb-4">Kho hàng</h2>
-          <Table<StockType>
-            loading={loading}
-            columns={columns}
-            dataSource={stocks.map((stock) => ({ ...stock, key: stock._id }))}
-            pagination={{ pageSize: 10 }}
-          />
-        </div>
-      </div>
-    </div>
+    <AdminLayout title="Kho h�ng">
+      <Table<StockType>
+        loading={loading}
+        columns={columns}
+        dataSource={stocks.map((stock) => ({ ...stock, key: stock._id }))}
+        pagination={{ pageSize: 10, responsive: true }}
+        scroll={{ x: "max-content" }}
+      />
+    </AdminLayout>
   );
 };
 

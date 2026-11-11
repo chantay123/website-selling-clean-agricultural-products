@@ -207,7 +207,7 @@ const EditAdmin = () => {
               ]}
             >
               <div className="relative ">
-                <h2 className="ml-20 text-3xl">Edit product</h2>
+                <h2 className="ml-4 sm:ml-20 text-2xl sm:text-3xl">Edit product</h2>
                 <div className=" w-full xs:mt-20 lg:mt-10 3xl:mt-44 3xl:px-10 lg:px-10 xs:px-5 mt-3 ">
                   <div className="flex flex-col lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
@@ -468,12 +468,12 @@ const EditAdmin = () => {
                 </div>
               </div>
             </Form>
-            <div className=" ml-10 flex gap-4">
+            <div className="ml-4 sm:ml-10 flex flex-wrap gap-4">
               <Form.Item className="mt-2">
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="h-12 w-60 border-2 border-baltext-black rounded-full font-popins text-base btn-hover"
+                  className="h-12 w-40 sm:w-60 border-2 border-baltext-black rounded-full font-popins text-base btn-hover"
                 >
                   Update
                 </Button>
@@ -482,7 +482,7 @@ const EditAdmin = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="h-12 w-60 border-2 border-baltext-black rounded-full font-popins text-base btn-hover"
+                  className="h-12 w-40 sm:w-60 border-2 border-baltext-black rounded-full font-popins text-base btn-hover"
                   // onClick={() => {
                   //   Navigate");
                   // }}

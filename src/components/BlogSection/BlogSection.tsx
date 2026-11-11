@@ -1,7 +1,9 @@
-import { Card, Col, Row } from "antd";
+import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getBlogs } from "../../apis";
 import { BlogType } from "../../@type/global.type";
+import BlogCard from "../BlogCard";
 import "./style.scss";
 
 /**
@@ -37,42 +39,28 @@ const BlogSection = () => {
   if (latest.length === 0) return null;
 
   return (
-    <div className="mt-20 ml-20 mr-20">
-      <h2 className="flex justify-center text-4xl font-bold">From Our Blog</h2>
+    <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:mx-20">
+      <h2 className="flex justify-center text-3xl sm:text-4xl font-bold">
+        From Our Blog
+      </h2>
       <p className="flex justify-center text-base mt-2 mb-8">
         News and stories about clean agricultural products
       </p>
-      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+      <Row gutter={[24, 24]}>
         {latest.map((blog) => (
-          <Col key={blog._id} className="gutter-row" span={8}>
-            <Card
-              bordered={false}
-              className="bg-gray-100 rounded-md h-full"
-              cover={
-                blog.thumbnail ? (
-                  <img
-                    className="w-full h-[180px] object-cover"
-                    src={blog.thumbnail}
-                    alt={blog.title}
-                  />
-                ) : undefined
-              }
-            >
-              <h3 className="text-xl font-bold mb-2">{blog.title}</h3>
-              <p className="text-sm text-gray-500 mb-3">
-                {blog.author_name || "Agrimarket"}
-              </p>
-              <p className="text-base mb-4">
-                {blog.description || blog.detail || ""}
-              </p>
-              <div className="flex gap-4 text-sm text-gray-500">
-                <span>{blog.views_count ?? 0} views</span>
-                <span>{blog.comments_count ?? 0} comments</span>
-              </div>
-            </Card>
+          <Col key={blog._id} xs={24} sm={12} lg={8}>
+            <BlogCard blog={blog} />
           </Col>
         ))}
       </Row>
+      <div className="flex justify-center mt-8">
+        <Link
+          to="/blog"
+          className="px-6 py-2 border-2 border-secondary text-primary rounded-full hover:bg-green-400 hover:text-white transition-colors"
+        >
+          View all articles
+        </Link>
+      </div>
     </div>
   );
 };

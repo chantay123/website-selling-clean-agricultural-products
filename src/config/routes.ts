@@ -20,6 +20,8 @@ const routes: routeTypes = {
   role: "/role",
   productadmin: "/productadmin",
   editadmin: "/editadmin/:editId",
+  blog: "/blog",
+  blogDetail: "/blog/:blogId",
 } as const;
 
 export default routes;

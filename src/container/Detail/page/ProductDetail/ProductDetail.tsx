@@ -185,21 +185,25 @@ const ProductDetail = () => {
       <Layout>
         <HeaderItem />
       </Layout>
-      <div className="mt-32 ml-20 mr-20">
-        <Row>
-          <Col span={8}>
-            <div className="border rounded ">
+      <div className="mt-24 sm:mt-32 mx-5 sm:mx-10 lg:ml-20 lg:mr-20">
+        <Row gutter={[24, 24]}>
+          <Col xs={24} lg={8}>
+            <div className="border rounded overflow-hidden">
               <a href="">
-                <img src={detail?.thumbnail_url} alt="" />
+                <img
+                  className="w-full h-auto object-cover"
+                  src={detail?.thumbnail_url}
+                  alt={detail.name}
+                />
               </a>
             </div>
           </Col>
-          <Col span={12} className=" ml-5">
+          <Col xs={24} lg={12} className="lg:ml-5">
             <div>
-              <h4 className=" text-cool-gray-600 text-4xl font-bold mb-4 ">
+              <h4 className="text-cool-gray-600 text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
                 {detail.name}
               </h4>
-              <p className=" text-color text-xl mb-6">
+              <p className="text-color text-lg sm:text-xl mb-6">
                 {" "}
                 Category: {detail.category?.name}
               </p>
@@ -216,10 +220,10 @@ const ProductDetail = () => {
               </Flex>
             </div>
             <div>
-              <p className=" text-color mb-4 text-xl  mt-3 ">
+              <p className="text-color mb-4 text-lg sm:text-xl mt-3">
                 {detail?.description}
               </p>
-              <p className="text-color text-xl mb-6">
+              <p className="text-color text-lg sm:text-xl mb-6">
                 Susp endisse ultricies nisi vel quam suscipit. Sabertooth
                 peacock flounder chain pickerel hatchetfish, pencilfish
                 snailfish
@@ -305,7 +309,7 @@ const ProductDetail = () => {
                   aholehole trumpetfish pilot fish airbreathing catfish,
                   electric ray sweeper.
                 </p>
-                <div className="mt-5 w-[500px]">
+                <div className="mt-5 w-full max-w-[500px]">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="grid grid-cols-2 bg-gray-100 text-center py-2">
                       <div className="col-span-1">
@@ -365,13 +369,13 @@ const ProductDetail = () => {
                   </p>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment._id} className="flex mb-4">
+                    <div key={comment._id} className="flex mb-4 gap-3">
                       <img
                         src={comment.avatar || "/image/avatar.jpg"}
-                        className="rounded-full p-3 w-24 h-24"
+                        className="rounded-full w-16 h-16 sm:w-24 sm:h-24 shrink-0 object-cover"
                         alt="Avatar"
                       />
-                      <div className="ml-4">
+                      <div className="ml-0 sm:ml-4 flex-1 min-w-0">
                         <p className="mb-2 text-sm">
                           {comment.created_at
                             ? new Date(comment.created_at).toLocaleDateString(
@@ -379,10 +383,12 @@ const ProductDetail = () => {
                               )
                             : ""}
                         </p>
-                        <div className="flex justify-between">
-                          <h5>{comment.user_name || comment.username || "Người dùng"}</h5>
+                        <div className="flex flex-wrap justify-between gap-2">
+                          <h5 className="break-words">
+                            {comment.user_name || comment.username || "Người dùng"}
+                          </h5>
                           {comment.rating ? (
-                            <div className="flex font-black my-3 mb-4 ">
+                            <div className="flex font-black my-3 mb-4">
                               <Flex gap="middle" vertical>
                                 <Flex gap="middle">
                                   <Rate
@@ -397,7 +403,7 @@ const ProductDetail = () => {
                             </div>
                           ) : null}
                         </div>
-                        <p>{comment.content || ""}</p>
+                        <p className="break-words">{comment.content || ""}</p>
                         <button
                           onClick={() => handleDeleteComment(comment._id)}
                           className="mt-2 text-sm text-red-600 underline"
@@ -425,7 +431,7 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <div className=" mt-20 ml-20 mr-20 ">
+      <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:ml-20 lg:mr-20">
         <form action="#" onSubmit={handleSubmitComment}>
           <h4 className="mb-5 font-bold">Leave a Reply</h4>
           <div className="grid gap-4 md:grid-cols-2">

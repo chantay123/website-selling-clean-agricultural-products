@@ -6,8 +6,7 @@ import { RoleType } from "../../../../@type/global.type";
 import { useDispatch, useSelector } from "react-redux";
 import { setAdminStatus } from "../../../../redux/userReducer/userReducer";
 import { RootState } from "../../../../redux/config";
-import HeaderAdmin from "../../components/HeaderAdmin";
-import Sidebar from "../../components/Sidebar";
+import AdminLayout from "../../components/AdminLayout";
 import { toast } from "react-toastify";
 
 /**
@@ -50,7 +49,7 @@ const Role = () => {
       const response = await getRoles();
       setRoles(response.data);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Lỗi tải danh sách vai trò"));
+      toast.error(getApiErrorMessage(error, "L?i t?i danh s�ch vai tr�"));
     } finally {
       setLoading(false);
     }
@@ -83,27 +82,21 @@ const Role = () => {
   if (profileChecked && isadmin === false) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
-        Bạn không có quyền truy cập trang quản trị.
+        B?n kh�ng c� quy?n truy c?p trang qu?n tr?.
       </div>
     );
   }
 
   return (
-    <div>
-      <HeaderAdmin />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-6">
-          <h2 className="text-2xl font-semibold mb-4">Vai trò</h2>
-          <Table<RoleType>
-            loading={loading}
-            columns={columns}
-            dataSource={roles.map((role) => ({ ...role, key: role._id }))}
-            pagination={{ pageSize: 10 }}
-          />
-        </div>
-      </div>
-    </div>
+    <AdminLayout title="Vai tr�">
+      <Table<RoleType>
+        loading={loading}
+        columns={columns}
+        dataSource={roles.map((role) => ({ ...role, key: role._id }))}
+        pagination={{ pageSize: 10, responsive: true }}
+        scroll={{ x: "max-content" }}
+      />
+    </AdminLayout>
   );
 };
 

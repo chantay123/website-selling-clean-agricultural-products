@@ -97,9 +97,13 @@ const MainProfile = () => {
         <Content className="bg-blue-900">
           <div className="w-screen ">
             <input style={{ display: "none" }} />
-            <img className="w-full h-52 object-cover" src={BG.MAIN_BG} alt="" />
+            <img
+              className="w-full h-32 sm:h-52 object-cover"
+              src={BG.MAIN_BG}
+              alt=""
+            />
             <Button
-              className="absolute btn-cover right-10 top-5 border-white border-2 bg-gray-opacity font-popins text-white"
+              className="absolute btn-cover right-4 sm:right-10 top-5 border-white border-2 bg-gray-opacity font-popins text-white"
               icon={<CameraOutlined />}
             >
               Change Cover
@@ -273,21 +277,21 @@ const MainProfile = () => {
                     </div> */}
                   </div>
 
-                  <div className="flex gap-4">
-                    <Form.Item className="mt-2">
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <Form.Item className="mt-2 w-full sm:w-auto">
                       <Button
                         type="primary"
                         htmlType="submit"
-                        className="h-12 w-60 border-2 border-white rounded-full font-popins text-base btn-hover"
+                        className="h-12 w-full sm:w-60 border-2 border-white rounded-full font-popins text-base btn-hover"
                       >
                         Update
                       </Button>
                     </Form.Item>
-                    <Form.Item className="mt-2">
+                    <Form.Item className="mt-2 w-full sm:w-auto">
                       <Button
                         type="primary"
-                        htmlType="submit"
-                        className="h-12 w-60 border-2 border-white rounded-full font-popins text-base btn-hover"
+                        htmlType="button"
+                        className="h-12 w-full sm:w-60 border-2 border-white rounded-full font-popins text-base btn-hover"
                         onClick={() => {
                           navigate("/");
                         }}

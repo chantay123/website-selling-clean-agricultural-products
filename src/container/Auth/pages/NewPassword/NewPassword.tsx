@@ -1,7 +1,6 @@
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "tailwindcss/tailwind.css";
-import { BG } from "../../../../constants/images";
 import "./style.scss";
 import { resetPassword as resetPasswordApi } from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
@@ -9,6 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setIsFogotPassword } from "../../../../redux/userReducer/userReducer";
+import AuthLayout from "../../components/AuthLayout";
 
 const NewPassword = () => {
   const navigate = useNavigate();
@@ -30,31 +30,26 @@ const NewPassword = () => {
     }
   };
   return (
-    <div className=" login w-screen h-screen relative">
-      <img
-        className="w-full h-full object-cover"
-        src={BG.MAIN_BG}
-        alt="background"
-      />
+    <AuthLayout>
       <Form
         onFinish={sumbmitnNewPassword}
         name="normal_login"
-        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white  xs:px-5  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-1/2 sm:w-[43%] sm:mt-20 md:w-[50%] md:mt-1 md:px-8 lg:w-[40%] xl:w-[23%]  "
+        className="login-form w-full max-w-[440px] rounded-xl bg-white p-6 sm:p-10 shadow-lg"
       >
-        <h2 className="text-black clear-both  text-4xl font-bold not-italic mb-3 mt-3 xs:text-[28px] 3xl:text-4xl ">
+        <h2 className="text-black clear-both text-3xl sm:text-4xl font-bold not-italic mb-3">
           Create new password
         </h2>
-        <p className="text-black font-popins text-sm mt-2  font-medium xs:text-xs ">
+        <p className="text-black font-popins text-sm mt-2 font-medium">
           Set the news password for your account so you can sign in and access
           all features.
         </p>
         <Form.Item
-          className="text-xs   xs:pt-5"
+          className="text-xs"
           name="email"
           rules={[{ required: true, message: "Please input your email!" }]}
         >
           <Input
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-12 "
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-12"
             prefix={<MailOutlined className="mr-2" />}
             placeholder="johnpham@gmail.com"
           />
@@ -97,14 +92,15 @@ const NewPassword = () => {
             <hr className="w-full border-[1px]" />
           </div>
           <Button
-            htmlType="submit"
+            htmlType="button"
+            onClick={() => navigate("/login")}
             className="login-form-button w-full font-bold  "
           >
             Log in
           </Button>
         </Form.Item>
       </Form>
-    </div>
+    </AuthLayout>
   );
 };
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const navigate = useNavigate();
   return (
-    <div className="bg-white w-64 h-screen p-6">
+    <div className="bg-white w-64 min-h-screen lg:h-screen p-6">
       <div className="space-y-4">
         <div className="text-base text-gray-500">GENERAL</div>
         <a
@@ -285,7 +285,7 @@ const Sidebar = () => {
           </span>
         </a>
       </div>
-      <button className="bg-red-500 mt-48 text-white ml-8 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+      <button className="bg-red-500 mt-12 lg:mt-48 text-white ml-8 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
         Đăng xuất
       </button>
     </div>

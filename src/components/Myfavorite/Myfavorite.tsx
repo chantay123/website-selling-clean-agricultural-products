@@ -37,45 +37,46 @@ const Myfavorite = () => {
           <HearderItem />
         </Layout>
       </section>
-      <div className="ml-20 mr-20 mt-20">
+      <div className="mx-5 sm:mx-10 lg:ml-20 lg:mr-20 mt-16 sm:mt-20">
         <div className="container-fluid py-5">
-          <h2 className="text-3xl">My favorite product</h2>
+          <h2 className="text-2xl sm:text-3xl">My favorite product</h2>
           <div className="container py-5">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white ">
                 <thead className="border-b ">
                   <tr>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Image
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                      slug
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
+                      origin
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider"></th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {listfavorite &&
-                    listfavorite.map((favorite, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                    listfavorite.map((favorite) => (
+                      <tr key={favorite._id}>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center ">
                             <img
-                              className="w-24 h-24 rounded-full"
+                              className="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover"
                               src={favorite.thumbnail_url}
+                              alt={favorite.name}
                             />
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">{favorite.name}</p>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">{favorite.origin}</p>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap"></td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap"></td>
                       </tr>
                     ))}
                 </tbody>

@@ -138,52 +138,53 @@ const PayMent = () => {
           <HearderItem />
         </Layout>
       </div>
-      <div className="ml-20 mr-20 mt-20">
+      <div className="mx-5 sm:mx-10 lg:ml-20 lg:mr-20 mt-16 sm:mt-20">
         <div className="container-fluid py-5">
           <div className="container py-5">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white ">
                 <thead className="border-b ">
                   <tr>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Image
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Price
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Quantity
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider"></th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {renderlist &&
-                    renderlist.map((cart, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                    renderlist.map((cart) => (
+                      <tr key={cart.product_id._id}>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center ">
                             <img
-                              className="w-24 h-24 rounded-full"
+                              className="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover"
                               src={cart.product_id.thumbnail_url}
+                              alt={cart.product_id.name}
                             />
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">{cart.product_id.name}</p>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
                             {cart.price ?? cart.product_id.price}$/KG
                           </p>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mt-4">
                             <button
                               className="btn-minus  "
@@ -210,14 +211,14 @@ const PayMent = () => {
                             </button>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
                             {(quantities[cart.product_id._id] || 0) *
                               (cart.price ?? 0)}
                             $
                           </p>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <button className="rounded-full  border-gray-300 p-2 mt-4">
                             <i className="fa fa-times text-red-500">
                               <CloseCircleOutlined
@@ -237,7 +238,7 @@ const PayMent = () => {
         </div>
       </div>
       <div className="">
-        <div className="mt-5 ml-20">
+        <div className="mt-8 mx-5 sm:mx-10 lg:ml-20 lg:mr-20">
           <button
             onClick={() => updateCart()}
             className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
@@ -245,12 +246,11 @@ const PayMent = () => {
           >
             Save
           </button>
-          <div className=" justify-end mt-5 flex mr-20 ">
-            <div className="col-8"></div>
-            <div className="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-              <div className="bg-gray-100 rounded  w-[500px] ">
+          <div className="justify-end mt-5 flex">
+            <div className="w-full sm:w-8/12 md:w-7/12 lg:w-6/12 xl:w-4/12">
+              <div className="bg-gray-100 rounded w-full">
                 <div className="p-4">
-                  <h1 className="text-3xl mb-4">
+                  <h1 className="text-2xl sm:text-3xl mb-4">
                     Cart <span className="font-normal">Total</span>
                   </h1>
                   <p className="mb-0 text-right">Shipping to Viet Nam.</p>

@@ -95,13 +95,13 @@ const Categories = () => {
   return (
     <div>
       <div>
-        <div className=" w-full">
+        <div className="w-full">
           <div className="container mx-auto p-5">
             <div className="">
-              <div className="flex w-5">
+              <div className="flex w-full sm:w-5">
                 <input
                   type="search"
-                  className="flex-1 border border-gray-300 rounded-l py-3 px-10 focus:outline-none"
+                  className="flex-1 min-w-0 border border-gray-300 rounded-l py-3 px-4 sm:px-10 focus:outline-none"
                   placeholder="keywords"
                   value={searchTerm}
                   onChange={handleSeachChange}
@@ -112,16 +112,16 @@ const Categories = () => {
               </div>
             </div>
             <div className="mb-5 mt-6">
-              <h4 className="mb-4 text-2xl text-catg font-semibold">
+              <h4 className="mb-4 text-xl sm:text-2xl text-catg font-semibold">
                 Categories
               </h4>
               <ul className="list-none">
                 {Object.entries(category)?.map(([slug, product]) => (
-                  <li>
+                  <li key={slug}>
                     <div className="flex justify-between items-center">
                       <a
                         href="#"
-                        className="flex items-center font-semibold text-xl mb-2"
+                        className="flex items-center font-semibold text-lg sm:text-xl mb-2"
                       >
                         {slug}
                       </a>
@@ -133,7 +133,7 @@ const Categories = () => {
             </div>
             {hashtags.length > 0 && (
               <div className="mb-5 mt-6">
-                <h4 className="mb-4 text-2xl text-catg font-semibold">
+                <h4 className="mb-4 text-xl sm:text-2xl text-catg font-semibold">
                   Hashtags
                 </h4>
                 <ul className="list-none flex flex-wrap gap-3">
@@ -142,7 +142,7 @@ const Categories = () => {
                       <button
                         type="button"
                         onClick={() => handleHashtagClick(hashtag)}
-                        className="border border-gray-300 rounded-full px-4 py-1 text-base font-semibold hover:bg-gray-100"
+                        className="border border-gray-300 rounded-full px-4 py-1 text-sm sm:text-base font-semibold hover:bg-gray-100"
                       >
                         {hashtag.name}
                       </button>
@@ -153,7 +153,9 @@ const Categories = () => {
             )}
             <div>
               <div className="mb-8 mt-14">
-                <h4 className="mb-2 text-2xl text-catg font-semibold">Price</h4>
+                <h4 className="mb-2 text-xl sm:text-2xl text-catg font-semibold">
+                  Price
+                </h4>
                 <input
                   type="range"
                   className="w-full"
@@ -175,7 +177,7 @@ const Categories = () => {
               </div>
             </div>
             <div className="mb-3 mt-14">
-              <h4 className=" mb-4 text-2xl  text-catg font-semibold">
+              <h4 className="mb-4 text-xl sm:text-2xl text-catg font-semibold">
                 Additional
               </h4>
               <div className="mb-2">
@@ -223,7 +225,6 @@ const Categories = () => {
                   value="Beverages"
                 />
                 <label className="text-base text-catg" htmlFor="Categories-4">
-                  {" "}
                   Discount
                 </label>
               </div>
@@ -236,7 +237,6 @@ const Categories = () => {
                   value="Beverages"
                 />
                 <label className="text-base text-catg" htmlFor="Categories-5">
-                  {" "}
                   Expired
                 </label>
               </div>

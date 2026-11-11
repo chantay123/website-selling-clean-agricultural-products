@@ -2,7 +2,8 @@ import { Col, Flex, Rate, Row } from "antd";
 import Button from "../Button";
 import { StarFilled } from "@ant-design/icons";
 import Fancybox from "../Fancybox";
-const style: React.CSSProperties = { background: "", padding: "" };
+import "./style.scss";
+
 const customIcons: Record<number, React.ReactNode> = {
   1: <StarFilled style={{ color: "#81c408" }} />,
   2: <StarFilled style={{ color: "#81c408" }} />,
@@ -11,380 +12,117 @@ const customIcons: Record<number, React.ReactNode> = {
   5: <StarFilled />,
 };
 
+/**
+ * The products displayed in the section.
+ *
+ * The data was hardcoded in the markup before; moving it into a list keeps
+ * the responsive markup free of repetition and makes the grid uniform.
+ */
+const bestsellerItems = [
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/best-product-4.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/best-product-2.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/best-product-6.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/best-product-1.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/best-product-5.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/best-product-3.jpg" },
+];
+
+const gridItems = [
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/vegetable-item-2.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/vegetable-item-1.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/vegetable-item-4.jpg" },
+  { name: "Organic Tomato", price: "3.12 $", image: "/image/vegetable-item-6.jpg" },
+];
+
+/** The star rating shared by every teaser of the section. */
+const Rating = () => (
+  <div className="flex font-black my-3">
+    <Flex gap="middle" vertical>
+      <Flex gap="middle">
+        <Rate
+          disabled
+          defaultValue={4}
+          character={({ index = 0 }) => customIcons[index + 1]}
+        />
+      </Flex>
+    </Flex>
+  </div>
+);
+
 const BestsellerProducts = () => {
   return (
-    <div className="mt-20 mr-20 ml-20 ">
+    <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:mx-20">
       <div className="flex justify-center">
-        <h2 className="text-5xl font-bold">Bestseller Products</h2>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center px-4">
+          Bestseller Products
+        </h2>
       </div>
-      <div className=" " style={{ margin: "0 auto" }}>
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="mt-20 ">
+
+      <Row gutter={[24, 24]} className="mt-10 lg:mt-20">
+        {bestsellerItems.map((item) => (
           <Col
-            span={8}
-            className="gutter-row bg-gray-100 p-4 rounded-md border-4 border-white "
+            key={item.image}
+            xs={24}
+            sm={12}
+            lg={8}
+            className="gutter-row bg-gray-100 p-4 rounded-md border-4 border-white"
           >
-            <Row>
-              <Col span={12}>
+            <Row gutter={[16, 16]}>
+              <Col xs={12} sm={10} lg={12}>
                 <Fancybox>
-                  <a
-                    data-fancybox="gallery"
-                    href="/image/best-product-4.jpg"
-                  >
+                  <a data-fancybox="gallery" href={item.image}>
                     <img
-                      className="rounded-full  "
-                      src="/image/best-product-4.jpg"
-                      alt=""
+                      className="rounded-full w-full h-auto"
+                      src={item.image}
+                      alt={item.name}
                     />
                   </a>
                 </Fancybox>
               </Col>
-              <Col span={12}>
-                <div className="ml-8 mt-6 ">
-                  <a href="#" className="text-xl font-bold text_store ">
-                    Organic Tomato
+              <Col xs={12} sm={14} lg={12}>
+                <div className="lg:ml-8 lg:mt-6 leading-6">
+                  <a href="#" className="text-xl font-bold text_store">
+                    {item.name}
                   </a>
-                  <div className="flex font-black my-3 ">
-                    <Flex gap="middle" vertical>
-                      <Flex gap="middle">
-                        <Rate
-                          disabled
-                          defaultValue={4}
-                          character={({ index = 0 }) => customIcons[index + 1]}
-                        />
-                      </Flex>
-                    </Flex>
-                  </div>
-                  <h4 className=" mb-5 text-2xl font-bold text_store ">
-                    3.12 $
-                  </h4>
-                  <Button label="Add to card" />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-          <Col
-            span={8}
-            className="gutter-row bg-gray-100 p-4 rounded-md border-4 border-white   "
-          >
-            <Row>
-              <Col span={12}>
-                <img
-                  className="rounded-full"
-                  src="/image/best-product-2.jpg"
-                  alt=""
-                />
-              </Col>
-              <Col span={12} className="">
-                <div className="ml-8 mt-6 leading-6">
-                  <a href="#" className="text-xl font-bold text_store ">
-                    Organic Tomato
-                  </a>
-                  <div className="flex font-black my-3 ">
-                    <Flex gap="middle" vertical>
-                      <Flex gap="middle">
-                        <Rate
-                          disabled
-                          defaultValue={4}
-                          character={({ index = 0 }) => customIcons[index + 1]}
-                        />
-                      </Flex>
-                    </Flex>
-                  </div>
-                  <h4 className=" mb-5 text-2xl font-bold text_store ">
-                    3.12 $
-                  </h4>
+                  <Rating />
+                  <h4 className="mb-5 text-2xl font-bold text_store">{item.price}</h4>
                   <Button label="Add to cart" />
                 </div>
               </Col>
             </Row>
           </Col>
-          <Col
-            span={8}
-            className="gutter-row  bg-gray-100 p-4 rounded-md border-4 border-white   "
-          >
-            <Row>
-              <Col span={12}>
-                <img
-                  className="rounded-full"
-                  src="/image/best-product-6.jpg"
-                  alt=""
-                />
-              </Col>
-              <Col span={12} className="">
-                <div className="ml-8 mt-6 leading-6">
-                  <a href="#" className="text-xl font-bold text_store ">
-                    Organic Tomato
-                  </a>
-                  <div className="flex font-black my-3 ">
-                    <Flex gap="middle" vertical>
-                      <Flex gap="middle">
-                        <Rate
-                          disabled
-                          defaultValue={4}
-                          character={({ index = 0 }) => customIcons[index + 1]}
-                        />
-                      </Flex>
-                    </Flex>
-                  </div>
-                  <h4 className=" mb-5 text-2xl font-bold text_store ">
-                    3.12 $
-                  </h4>
+        ))}
+      </Row>
+
+      <Row gutter={[24, 24]} className="mt-8 lg:mt-10">
+        {gridItems.map((item) => (
+          <Col key={item.image} xs={12} sm={12} md={6} className="gutter-row">
+            <div className="h-full">
+              <img
+                className="rounded-xl w-full h-[180px] sm:h-[220px] lg:h-[250px] object-cover"
+                src={item.image}
+                alt={item.name}
+              />
+              <div className="mt-4">
+                <a
+                  href="#"
+                  className="text-xl font-bold flex justify-center text_store text-center px-2"
+                >
+                  {item.name}
+                </a>
+                <div className="flex font-black my-3 justify-center">
+                  <Rating />
+                </div>
+                <h4 className="text-2xl font-bold flex justify-center mb-4 text_store">
+                  {item.price}
+                </h4>
+                <div className="flex justify-center">
                   <Button label="Add to cart" />
                 </div>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>
-      <div>
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col
-            span={8}
-            className="bg-gray-100 p-4 rounded-md border-4 border-white   "
-          >
-            <Row>
-              <Col span={12}>
-                <img
-                  className="rounded-full  "
-                  src="/image/best-product-1.jpg"
-                  alt=""
-                />
-              </Col>
-              <Col span={12} className="">
-                <div className="ml-8 mt-6 ">
-                  <a href="#" className="text-xl font-bold text_store ">
-                    Organic Tomato
-                  </a>
-                  <div className="flex font-black my-3 ">
-                    <Flex gap="middle" vertical>
-                      <Flex gap="middle">
-                        <Rate
-                          disabled
-                          defaultValue={4}
-                          character={({ index = 0 }) => customIcons[index + 1]}
-                        />
-                      </Flex>
-                    </Flex>
-                  </div>
-                  <h4 className=" mb-5 text-2xl font-bold text_store  ">
-                    3.12 $
-                  </h4>
-                  <Button label="Add to cart" />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-          <Col
-            span={8}
-            className="bg-gray-100 p-4 rounded-md border-4 border-white  "
-          >
-            <Row>
-              <Col span={12}>
-                <img
-                  className="rounded-full"
-                  src="/image/best-product-5.jpg"
-                  alt=""
-                />
-              </Col>
-              <Col span={12} className="">
-                <div className="ml-8 mt-6 leading-6">
-                  <a href="#" className="text-xl font-bold text_store ">
-                    Organic Tomato
-                  </a>
-                  <div className="flex font-black my-3 ">
-                    <Flex gap="middle" vertical>
-                      <Flex gap="middle">
-                        <Rate
-                          disabled
-                          defaultValue={4}
-                          character={({ index = 0 }) => customIcons[index + 1]}
-                        />
-                      </Flex>
-                    </Flex>
-                  </div>
-                  <h4 className=" mb-5 text-2xl font-bold text_store  ">
-                    3.12 $
-                  </h4>
-                  <Button label="Add to cart" />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-          <Col
-            span={8}
-            className="bg-gray-100 p-4 rounded-md border-4 border-white   "
-          >
-            <Row>
-              <Col span={12}>
-                <img
-                  className="rounded-full"
-                  src="/image/best-product-3.jpg"
-                  alt=""
-                />
-              </Col>
-              <Col span={12} className="">
-                <div className="ml-8 mt-6 leading-6">
-                  <a href="#" className="text-xl font-bold text_store  ">
-                    Organic Tomato
-                  </a>
-                  <div className="flex font-black my-3 justify-center ">
-                    <Flex gap="middle" vertical>
-                      <Flex gap="middle">
-                        <Rate
-                          disabled
-                          defaultValue={4}
-                          character={({ index = 0 }) => customIcons[index + 1]}
-                        />
-                      </Flex>
-                    </Flex>
-                  </div>
-                  <h4 className=" mb-5 text-2xl font-bold text_store  ">
-                    3.12 $
-                  </h4>
-                  <Button label="Add to cart" />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>
-      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className=" mt-10">
-        <Col className="gutter-row" span={6}>
-          <div style={style}>
-            <img
-              className="rounded-xl w-[400px] h-[250px]"
-              src="/image/vegetable-item-2.jpg"
-              alt=""
-            />
-            <div className=" mt-4 ">
-              <a
-                href="#"
-                className="text-xl font-bold flex justify-center text_store  "
-              >
-                Organic Tomato
-              </a>
-              <div className="flex font-black my-3 justify-center">
-                <Flex gap="middle" vertical>
-                  <Flex gap="middle">
-                    <Rate
-                      disabled
-                      defaultValue={4}
-                      character={({ index = 0 }) => customIcons[index + 1]}
-                    />
-                  </Flex>
-                </Flex>
-              </div>
-              <h4 className="text-2xl font-bold flex justify-center mb-4 text_store  ">
-                3.12 $
-              </h4>
-              <div className="flex justify-center ">
-                <Button label="Add to cart" />
               </div>
             </div>
-          </div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div style={style}>
-            <img
-              className="rounded-xl w-[400px] h-[250px]"
-              src="/image/vegetable-item-1.jpg"
-              alt=""
-            />
-            <div className=" mt-4 ">
-              <a
-                href="#"
-                className="text-xl font-bold flex justify-center text_store   "
-              >
-                Organic Tomato
-              </a>
-              <div className="flex font-black my-3 justify-center">
-                <Flex gap="middle" vertical>
-                  <Flex gap="middle">
-                    <Rate
-                      disabled
-                      defaultValue={4}
-                      character={({ index = 0 }) => customIcons[index + 1]}
-                    />
-                  </Flex>
-                </Flex>
-              </div>
-              <h4 className="text-2xl font-bold flex justify-center mb-4  text_store ">
-                3.12 $
-              </h4>
-              <div className="flex justify-center ">
-                <Button label="Add to cart" />
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div style={style}>
-            <img
-              className="rounded-xl w-[400px] h-[250px]"
-              src="/image/vegetable-item-4.jpg"
-              alt=""
-            />
-            <div className=" mt-4 ">
-              <a
-                href="#"
-                className="text-xl font-bold flex justify-center text_store  "
-              >
-                Organic Tomato
-              </a>
-              <div className="flex font-black my-3 justify-center ">
-                <Flex gap="middle" vertical>
-                  <Flex gap="middle">
-                    <Rate
-                      disabled
-                      defaultValue={4}
-                      character={({ index = 0 }) => customIcons[index + 1]}
-                    />
-                  </Flex>
-                </Flex>
-              </div>
-              <h4 className="text-2xl font-bold flex justify-center mb-4 text_store ">
-                3.12 $
-              </h4>
-              <div className="flex justify-center ">
-                <Button label="Add to cart" />
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div style={style}>
-            <img
-              className="rounded-xl w-[400px] h-[250px]"
-              src="/image/vegetable-item-6.jpg"
-              alt=""
-            />
-            <div className=" mt-4 ">
-              <a
-                href="#"
-                className="text-xl font-bold flex justify-center text_store   "
-              >
-                Organic Tomato
-              </a>
-              <div className="flex font-black my-3 justify-center">
-                <Flex gap="middle" vertical>
-                  <Flex gap="middle">
-                    <Rate
-                      disabled
-                      defaultValue={4}
-                      character={({ index = 0 }) => customIcons[index + 1]}
-                    />
-                  </Flex>
-                </Flex>
-              </div>
-              <h4 className="text-2xl font-bold flex justify-center mb-4 text_store ">
-                3.12 $
-              </h4>
-              <div className="flex justify-center ">
-                <Button label="Add to cart" />
-              </div>
-            </div>
-          </div>
-        </Col>
+          </Col>
+        ))}
       </Row>
     </div>
   );

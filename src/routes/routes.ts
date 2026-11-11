@@ -37,6 +37,8 @@ const Myfavorite = React.lazy(
 const Stock = React.lazy(() => import("../container/Admin/page/Stock"));
 const Report = React.lazy(() => import("../container/Admin/page/Report"));
 const Role = React.lazy(() => import("../container/Admin/page/Role"));
+const BlogList = React.lazy(() => import("../container/Blog/page/BlogList"));
+const BlogDetail = React.lazy(() => import("../container/Blog/page/BlogDetail"));
 
 const ProductAdmin = React.lazy(
   () => import("../container/Admin/page/ProductAdmin/ProductAdmin")
@@ -112,6 +114,14 @@ const publicRoute = [
   {
     path: config.routes.role,
     component: Role,
+  },
+  {
+    path: config.routes.blog,
+    component: BlogList,
+  },
+  {
+    path: config.routes.blogDetail,
+    component: BlogDetail,
   },
   {
     path: config.routes.productadmin,

@@ -503,6 +503,22 @@ Script `scripts/probe-surface.mjs` quét path × method trên toàn bộ backend
 | 19 | Backend lỗi SMTP → `POST /users/register` trả `500 "Failed to send OTP"`, tài khoản tạo ra luôn ở trạng thái *unverified* → **không lấy được access token** để verify live các endpoint private (`roles`, `reports`, `stocks`, `comments`) | 🔴 Cao | **Cần backend cấu hình SMTP** (hoặc cung cấp access token hợp lệ) → `scripts/verify-private-content.ps1 -Token "<token>"` |
 | 20 | `GET /roles/:id` và `GET /reports/:id` **không tồn tại** (404 `Cannot GET`) — chỉ có `GET /roles` + `PUT|DELETE /roles/:id` và `GET|POST /reports` + `DELETE /reports/:id` | 🟢 Thấp | Đã gỡ 2 helper sai khỏi `src/apis/index.ts` |
 | 21 | Shape response của `roles` / `reports` / `stocks` / `comments` **chưa verify được** (tất cả trả `401`) → các field trong `RoleType` / `ReportType` / `StockType` / `CommentType` đang để optional | 🟡 Trung bình | Cần access token hợp lệ để rà lại type cho khớp thực tế |
+| 22 | ~~Chưa có giao diện riêng cho blog~~ → **Đã xử lý**: thêm `/blog` (danh sách + tìm kiếm client-side), `/blog/:blogId` (chi tiết + bình luận + like + report), card dùng chung `BlogCard` | ✅ Đã sửa | `src/container/Blog/page/{BlogList,BlogDetail}/`, `src/components/BlogCard/` |
+| 23 | ~~Toàn bộ page dùng margin cố định (`ml-20 mr-20`), ảnh width cố định (`w-[400px]`) → tràn ngang trên mobile~~ → **Đã xử lý**: chuyển sang padding responsive (`px-4 sm:px-8 lg:px-20`), grid Ant Design theo breakpoint, menu mobile cho header, drawer cho sidebar admin | ✅ Đã sửa | Toàn bộ `src/components/`, `src/container/` |
+| 24 | Form auth dùng `absolute top-1/2 left-1/2` → form cao hơn viewport bị cắt trên mobile | 🟢 Thấp | Đã dùng `AuthLayout` (flexbox centering + scroll) cho toàn bộ trang auth |
+| 25 | `GET /blogs/:id/like` trả `401` khi khách → nút like yêu cầu đăng nhập | 🟢 Thấp | `src/container/Blog/page/BlogDetail/BlogDetail.tsx` |
+| 26 | `POST /blogs/:id/like` **không trả về counter** (payload `{}`), số like phải đếm client-side trong phiên | 🟢 Thấp | Backend chưa trả `likes_count` |
+
+### 12.5. Kiểm thử responsive
+
+Đã kiểm tra bằng script đo trong browser ở 3 breakpoint (`390px`, `768px`, `1280px`) trên
+các route `/`, `/shop`, `/product/:id`, `/blog`, `/blog/:id`, `/payment`, `/admin`,
+`/login`, `/register`, `/forgot-password`, `/myfavorite`, `/new-password`,
+`/verification`, `/stock`, `/report`, `/role`, `/productadmin`:
+
+- **Không route nào tràn ngang** (`scrollWidth <= innerWidth`) ở cả 3 breakpoint.
+- Menu mobile hiện ở `< 1024px`, ẩn ở `>= 1024px`; sidebar admin biến thành drawer.
+- Grid: 1 cột (`xs`), 2 cột (`sm`), 3 cột (`md`), 4 cột (`lg`/`xl`).
 
 ---
 

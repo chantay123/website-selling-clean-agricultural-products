@@ -15,8 +15,7 @@ import {
 } from "../../../../@type/global.type";
 
 import { Link, useNavigate } from "react-router-dom";
-import HeaderAdmin from "../../components/HeaderAdmin";
-import Sidebar from "../../components/Sidebar";
+import AdminLayout from "../../components/AdminLayout";
 const ProductAdmin = () => {
   // The role is only known after the profile request finishes, so the guard
   // needs to know the difference between "not an admin" and "not loaded yet".
@@ -180,13 +179,15 @@ const ProductAdmin = () => {
     return;
   }
   return (
-    <div>
-      <HeaderAdmin />
-      <div className="flex">
-        <Sidebar />
-        <Table className="mt-10 w-full " columns={columns} dataSource={data} />
-      </div>
-    </div>
+    <AdminLayout title="Quản lý sản phẩm">
+      <Table
+        className="w-full"
+        columns={columns}
+        dataSource={data}
+        pagination={{ pageSize: 10, responsive: true }}
+        scroll={{ x: "max-content" }}
+      />
+    </AdminLayout>
   );
 };
 

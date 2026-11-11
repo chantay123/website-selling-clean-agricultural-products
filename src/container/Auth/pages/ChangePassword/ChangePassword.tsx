@@ -1,11 +1,11 @@
 import { Button, Form, Input } from "antd";
-import { BG } from "../../../../constants/images";
 import { LockOutlined } from "@ant-design/icons";
 
 import { changePassword as changePasswordApi } from "../../../../apis";
 import { getApiErrorMessage } from "../../../../utils/api.adapter";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import AuthLayout from "../../components/AuthLayout";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -25,33 +25,28 @@ const ChangePassword = () => {
     }
   };
   return (
-    <div className=" login w-screen h-screen relative">
-      <img
-        className="w-full h-full object-cover"
-        src={BG.MAIN_BG}
-        alt="background"
-      />
+    <AuthLayout>
       <Form
         onFinish={changepassWordSubmit}
         name="normal_login"
-        className=" login-form absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white  xs:px-5  xs:w-full xs:h-full xs:p-20 ss:p-5 ss:w-[80%] ss:h-auto  xss:w-[80%]  smm:w-1/2 sm:w-[43%] sm:mt-20 md:w-[50%] md:mt-1 md:px-8 lg:w-[40%] xl:w-[23%]  "
+        className="login-form w-full max-w-[440px] rounded-xl bg-white p-6 sm:p-10 shadow-lg"
       >
-        <h2 className="text-black clear-both  text-4xl font-bold not-italic mb-3 mt-3 xs:text-[28px] 3xl:text-4xl ">
+        <h2 className="text-black clear-both text-3xl sm:text-4xl font-bold not-italic mb-3">
           Change password
         </h2>
-        <p className="text-black font-popins text-sm mt-2  font-medium xs:text-xs ">
+        <p className="text-black font-popins text-sm mt-2 font-medium">
           Set the news password for your account so you can sign in and access
           all features.
         </p>
         <Form.Item
-          className="text-xs   xs:pt-5"
+          className="text-xs"
           name="old_password"
           rules={[
             { required: true, message: "Please input your old_password!" },
           ]}
         >
           <Input.Password
-            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-12 "
+            className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-12"
             prefix={<LockOutlined className="mr-2" />}
             placeholder="Old Password"
           />
@@ -83,9 +78,6 @@ const ChangePassword = () => {
         </Form.Item>
         <Form.Item>
           <Button
-            onClick={() => {
-              changepassWordSubmit;
-            }}
             htmlType="submit"
             className="login-form-button w-full font-bold text-white bg-green-400 "
           >
@@ -97,14 +89,15 @@ const ChangePassword = () => {
             <hr className="w-full border-[1px]" />
           </div>
           <Button
-            htmlType="submit"
-            className="login-form-button w-full font-bold  "
+            htmlType="button"
+            onClick={() => navigate("/login")}
+            className="login-form-button w-full font-bold"
           >
             Log in
           </Button>
         </Form.Item>
       </Form>
-    </div>
+    </AuthLayout>
   );
 };
 

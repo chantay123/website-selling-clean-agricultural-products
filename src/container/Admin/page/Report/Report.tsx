@@ -6,8 +6,7 @@ import { ReportType } from "../../../../@type/global.type";
 import { useDispatch, useSelector } from "react-redux";
 import { setAdminStatus } from "../../../../redux/userReducer/userReducer";
 import { RootState } from "../../../../redux/config";
-import HeaderAdmin from "../../components/HeaderAdmin";
-import Sidebar from "../../components/Sidebar";
+import AdminLayout from "../../components/AdminLayout";
 import { toast } from "react-toastify";
 
 /**
@@ -50,7 +49,7 @@ const Report = () => {
       const response = await getReports();
       setReports(response.data);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "L·ªói t·∫£i danh s√°ch b√°o c√°o"));
+      toast.error(getApiErrorMessage(error, "L?i t?i danh s·ch b·o c·o"));
     } finally {
       setLoading(false);
     }
@@ -64,10 +63,10 @@ const Report = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteReport(id);
-      toast.success("Xo√° b√°o c√°o th√†nh c√¥ng");
+      toast.success("Xo· b·o c·o th‡nh cÙng");
       fetchReports();
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "L·ªói xo√° b√°o c√°o"));
+      toast.error(getApiErrorMessage(error, "L?i xo· b·o c·o"));
     }
   };
 
@@ -125,27 +124,21 @@ const Report = () => {
   if (profileChecked && isadmin === false) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
-        B·∫°n kh√¥ng c√≥ quy·ªÅn truy c·∫≠p trang qu·∫£n tr·ªã.
+        B?n khÙng cÛ quy?n truy c?p trang qu?n tr?.
       </div>
     );
   }
 
   return (
-    <div>
-      <HeaderAdmin />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-6">
-          <h2 className="text-2xl font-semibold mb-4">B√°o c√°o</h2>
-          <Table<ReportType>
-            loading={loading}
-            columns={columns}
-            dataSource={reports.map((report) => ({ ...report, key: report._id }))}
-            pagination={{ pageSize: 10 }}
-          />
-        </div>
-      </div>
-    </div>
+    <AdminLayout title="B·o c·o">
+      <Table<ReportType>
+        loading={loading}
+        columns={columns}
+        dataSource={reports.map((report) => ({ ...report, key: report._id }))}
+        pagination={{ pageSize: 10, responsive: true }}
+        scroll={{ x: "max-content" }}
+      />
+    </AdminLayout>
   );
 };
 
