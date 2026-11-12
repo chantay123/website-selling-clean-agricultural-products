@@ -22,6 +22,13 @@ const routes: routeTypes = {
   editadmin: "/editadmin/:editId",
   blog: "/blog",
   blogDetail: "/blog/:blogId",
+  knowledge: "/knowledge",
+  categoryadmin: "/categoryadmin",
+  supplieradmin: "/supplieradmin",
+  orderadmin: "/orderadmin",
+  banneradmin: "/banneradmin",
+  hashtagadmin: "/hashtagadmin",
+  blogadmin: "/blogadmin",
 } as const;
 
 export default routes;

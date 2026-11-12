@@ -2,7 +2,7 @@ import Layout from "antd/es/layout/layout";
 import "tailwindcss/tailwind.css";
 import "./style.scss";
 import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Badge, Dropdown, MenuProps } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -30,7 +30,7 @@ const HearderItem = () => {
             navigate("/profile");
           }}
         >
-          Profile
+          Hồ sơ
         </a>
       ),
     },
@@ -43,7 +43,7 @@ const HearderItem = () => {
             navigate("/changepassword");
           }}
         >
-          Change Password
+          Đổi mật khẩu
         </a>
       ),
     },
@@ -69,7 +69,7 @@ const HearderItem = () => {
             logout();
           }}
         >
-          Logout
+          Đăng xuất
         </a>
       ),
     },
@@ -125,15 +125,15 @@ const HearderItem = () => {
   }, [pathname]);
 
   const navLinks = [
-    { to: "/", label: "Home" },
-    { to: "/shop", label: "Shop" },
-    { to: "/blog", label: "Blog" },
+    { to: "/", label: "Trang chủ" },
+    { to: "/shop", label: "Cửa hàng" },
+    { to: "/blog", label: "Bài viết" },
   ];
 
   return (
     <Layout className="bg-white background p-3 drop-shadow-xl sticky top-0 z-30 w-full">
       <div className="mx-4 sm:mx-6 lg:mx-20 flex items-center justify-between">
-        <h1 className="text-2xl sm:text-4xl font-bold shrink-0">Fruitables</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold shrink-0">Agrimarket</h1>
 
         {/* Desktop navigation */}
         <div className="hidden lg:block">
@@ -146,14 +146,9 @@ const HearderItem = () => {
               </li>
             ))}
             <li>
-              <a className="item p-4" href="#">
-                Contact
-              </a>
-            </li>
-            <li>
-              <a className="item p-4" href="#">
-                Knowledge
-              </a>
+              <Link to="/knowledge" className="item p-4">
+                Kiến thức nông sản
+              </Link>
             </li>
           </ul>
         </div>
@@ -195,7 +190,7 @@ const HearderItem = () => {
                 type="submit"
                 className="btn-login border-2 border-secondary py-2 px-6 lg:px-10 rounded-full text-orange-500"
               >
-                Login
+                Đăng nhập
               </button>
               <button
                 onClick={() => {
@@ -204,7 +199,7 @@ const HearderItem = () => {
                 type="submit"
                 className="btn-login border-2 border-secondary py-2 px-5 lg:px-8 rounded-full text-orange-500 ml-2"
               >
-                Register
+                Đăng ký
               </button>
             </div>
           )}
@@ -212,7 +207,7 @@ const HearderItem = () => {
           {/* Mobile menu trigger */}
           <button
             type="button"
-            aria-label="Toggle navigation"
+            aria-label="Mở/đóng menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
             className="lg:hidden ml-3 p-2 rounded-md hover:bg-gray-100"
@@ -259,14 +254,9 @@ const HearderItem = () => {
               </li>
             ))}
             <li>
-              <a className="block px-2 py-3" href="#">
-                Contact
-              </a>
-            </li>
-            <li>
-              <a className="block px-2 py-3" href="#">
-                Knowledge
-              </a>
+              <Link to="/knowledge" className="block px-2 py-3">
+                Kiến thức nông sản
+              </Link>
             </li>
           </ul>
 
@@ -280,7 +270,7 @@ const HearderItem = () => {
                 type="button"
                 className="btn-login flex-1 border-2 border-secondary py-2 px-4 rounded-full text-orange-500"
               >
-                Login
+                Đăng nhập
               </button>
               <button
                 onClick={() => {
@@ -290,7 +280,7 @@ const HearderItem = () => {
                 type="button"
                 className="btn-login flex-1 border-2 border-secondary py-2 px-4 rounded-full text-orange-500"
               >
-                Register
+                Đăng ký
               </button>
             </div>
           )}

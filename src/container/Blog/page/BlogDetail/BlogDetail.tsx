@@ -81,9 +81,9 @@ const BlogDetail = () => {
   }, [blogId]);
 
   useEffect(() => {
-    if (!isAuthenticated || !blogId) return;
+    if (!blogId) return;
     fetchComments();
-  }, [isAuthenticated, blogId, fetchComments]);
+  }, [blogId, fetchComments]);
 
   /** Likes the article. The endpoint is private, so a guest is asked to sign in. */
   const handleLike = async () => {
@@ -173,15 +173,15 @@ const BlogDetail = () => {
 
       <article className="blog-detail max-w-4xl mx-auto px-5 pb-16">
         <Link to="/blog" className="text-sm text-gray-500 hover:underline">
-          &larr; Back to blog
+          &larr; Quay lại danh sách bài viết
         </Link>
 
         <h1 className="blog-detail__title mt-4 mb-3">{blog.title}</h1>
 
         <div className="blog-detail__meta flex flex-wrap gap-4 mb-6">
           <span>{blog.author_name || "Agrimarket"}</span>
-          <span>{blog.views_count ?? 0} views</span>
-          <span>{blog.comments_count ?? 0} comments</span>
+          <span>{blog.views_count ?? 0} lượt xem</span>
+          <span>{blog.comments_count ?? 0} bình luận</span>
           {blog.status ? <span>{blog.status}</span> : null}
         </div>
 
@@ -205,7 +205,7 @@ const BlogDetail = () => {
               d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23a3.75 3.75 0 0 1-1.423-1.06 3.75 3.75 0 0 0-1.423-1.06 3.75 3.75 0 0 1-1.423-.23H6.633"
             />
           </svg>
-          <span>{likes} likes</span>
+          <span>{likes} lượt thích</span>
         </button>
 
         <button
@@ -241,79 +241,77 @@ const BlogDetail = () => {
           <div className="blog-detail__cover-placeholder mb-8" />
         )}
 
-        <div className="blog-detail__content text-base">
+        <div className="blog-detail__content text-base whitespace-pre-line">
           {blog.detail || blog.description || ""}
         </div>
 
         <section className="mt-12">
           <h2 className="text-2xl font-bold mb-4">
-            Comments ({comments.length})
+            Bình luận ({comments.length})
           </h2>
 
           {!isAuthenticated ? (
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-6">
               Đăng nhập để tham gia thảo luận bài viết này.
             </p>
           ) : (
-            <>
-              <form onSubmit={handleSubmit} className="mb-8">
-                <textarea
-                  value={content}
-                  onChange={(event) => setContent(event.target.value)}
-                  placeholder="Viết bình luận của bạn..."
-                  rows={4}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="mt-3 px-6 py-2 bg-green-400 text-white rounded-full disabled:opacity-50"
-                >
-                  {submitting ? "Đang gửi..." : "Gửi bình luận"}
-                </button>
-              </form>
+            <form onSubmit={handleSubmit} className="mb-8">
+              <textarea
+                value={content}
+                onChange={(event) => setContent(event.target.value)}
+                placeholder="Viết bình luận của bạn..."
+                rows={4}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={submitting}
+                className="mt-3 px-6 py-2 bg-green-400 text-white rounded-full disabled:opacity-50"
+              >
+                {submitting ? "Đang gửi..." : "Gửi bình luận"}
+              </button>
+            </form>
+          )}
 
-              {commentsLoading ? (
-                <div className="py-6 flex justify-center">
-                  <Spin />
-                </div>
-              ) : comments.length === 0 ? (
-                <p className="text-gray-600">Chưa có bình luận nào.</p>
-              ) : (
-                <div>
-                  {comments.map((comment) => (
-                    <div key={comment._id} className="blog-comments__item">
-                      <img
-                        src={comment.avatar || "/image/avatar.jpg"}
-                        alt="Avatar"
-                        className="blog-comments__avatar"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <span className="blog-comments__author">
-                            {comment.user_name || comment.username || "Người dùng"}
-                          </span>
-                          <span className="blog-comments__date">
-                            {comment.created_at
-                              ? new Date(comment.created_at).toLocaleDateString(
-                                  "vi-VN"
-                                )
-                              : ""}
-                          </span>
-                        </div>
-                        <p className="mt-1 mb-1">{comment.content || ""}</p>
-                        <button
-                          onClick={() => handleDelete(comment._id)}
-                          className="text-sm text-red-600 underline"
-                        >
-                          Xoá
-                        </button>
-                      </div>
+          {commentsLoading ? (
+            <div className="py-6 flex justify-center">
+              <Spin />
+            </div>
+          ) : comments.length === 0 ? (
+            <p className="text-gray-600">Chưa có bình luận nào.</p>
+          ) : (
+            <div>
+              {comments.map((comment) => (
+                <div key={comment._id} className="blog-comments__item">
+                  <img
+                    src={comment.avatar || "/image/avatar.jpg"}
+                    alt="Ảnh đại diện"
+                    className="blog-comments__avatar"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className="blog-comments__author">
+                        {comment.user_name || comment.username || "Người dùng"}
+                      </span>
+                      <span className="blog-comments__date">
+                        {comment.created_at
+                          ? new Date(comment.created_at).toLocaleDateString("vi-VN")
+                          : ""}
+                      </span>
                     </div>
-                  ))}
+                    <p className="mt-1 mb-1">{comment.content || ""}</p>
+                    {isAuthenticated ? (
+                      <button
+                        onClick={() => handleDelete(comment._id)}
+                        className="text-sm text-red-600 underline"
+                      >
+                        Xoá
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
-              )}
-            </>
+              ))}
+            </div>
           )}
         </section>
       </article>

@@ -41,10 +41,10 @@ const BlogSection = () => {
   return (
     <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:mx-20">
       <h2 className="flex justify-center text-3xl sm:text-4xl font-bold">
-        From Our Blog
+        Bài viết từ Agrimarket
       </h2>
       <p className="flex justify-center text-base mt-2 mb-8">
-        News and stories about clean agricultural products
+        Cập nhật kiến thức về nông sản sạch và truy xuất nguồn gốc
       </p>
       <Row gutter={[24, 24]}>
         {latest.map((blog) => (
@@ -58,7 +58,7 @@ const BlogSection = () => {
           to="/blog"
           className="px-6 py-2 border-2 border-secondary text-primary rounded-full hover:bg-green-400 hover:text-white transition-colors"
         >
-          View all articles
+          Xem tất cả bài viết
         </Link>
       </div>
     </div>

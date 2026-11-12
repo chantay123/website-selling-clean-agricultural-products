@@ -39,12 +39,31 @@ const Report = React.lazy(() => import("../container/Admin/page/Report"));
 const Role = React.lazy(() => import("../container/Admin/page/Role"));
 const BlogList = React.lazy(() => import("../container/Blog/page/BlogList"));
 const BlogDetail = React.lazy(() => import("../container/Blog/page/BlogDetail"));
+const Knowledge = React.lazy(() => import("../container/Knowledge/page"));
 
 const ProductAdmin = React.lazy(
   () => import("../container/Admin/page/ProductAdmin/ProductAdmin")
 );
 const EditAdmin = React.lazy(
   () => import("../container/Admin/page/EditAdmin/EditAdmin")
+);
+const CategoryAdmin = React.lazy(
+  () => import("../container/Admin/page/CategoryAdmin")
+);
+const SupplierAdmin = React.lazy(
+  () => import("../container/Admin/page/SupplierAdmin")
+);
+const OrderAdmin = React.lazy(
+  () => import("../container/Admin/page/OrderAdmin")
+);
+const BannerAdmin = React.lazy(
+  () => import("../container/Admin/page/BannerAdmin")
+);
+const HashtagAdmin = React.lazy(
+  () => import("../container/Admin/page/HashtagAdmin")
+);
+const BlogAdmin = React.lazy(
+  () => import("../container/Admin/page/BlogAdmin")
 );
 const publicRoute = [
   {
@@ -124,12 +143,40 @@ const publicRoute = [
     component: BlogDetail,
   },
   {
+    path: config.routes.knowledge,
+    component: Knowledge,
+  },
+  {
     path: config.routes.productadmin,
     component: ProductAdmin,
   },
   {
     path: config.routes.editadmin,
     component: EditAdmin,
+  },
+  {
+    path: config.routes.categoryadmin,
+    component: CategoryAdmin,
+  },
+  {
+    path: config.routes.supplieradmin,
+    component: SupplierAdmin,
+  },
+  {
+    path: config.routes.orderadmin,
+    component: OrderAdmin,
+  },
+  {
+    path: config.routes.banneradmin,
+    component: BannerAdmin,
+  },
+  {
+    path: config.routes.hashtagadmin,
+    component: HashtagAdmin,
+  },
+  {
+    path: config.routes.blogadmin,
+    component: BlogAdmin,
   },
 ];
 

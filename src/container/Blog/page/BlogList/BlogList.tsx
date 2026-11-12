@@ -1,5 +1,6 @@
 import { Col, Empty, Layout, Row, Spin } from "antd";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { getBlogs } from "../../../../apis";
 import { BlogType } from "../../../../@type/global.type";
 import HeaderItem from "../../../../components/HeaderItem";
@@ -66,23 +67,28 @@ const BlogList = () => {
 
       <section className="blog-page__hero py-12 px-5">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="blog-page__title text-white">From Our Blog</h1>
+          <h1 className="blog-page__title text-white">Bài viết của Agrimarket</h1>
           <p className="blog-page__subtitle mt-3">
-            News and stories about clean agricultural products
+            Cập nhật kiến thức về nông sản sạch, truy xuất nguồn gốc và bảo
+            quản thực phẩm
           </p>
+          <Link
+            to="/knowledge"
+            className="inline-block mt-5 px-5 py-2 border border-white text-white rounded-full hover:bg-white hover:text-primary transition-colors"
+          >
+            Hướng dẫn chọn & bảo quản nông sản
+          </Link>
         </div>
       </section>
 
       <div className="max-w-6xl mx-auto px-5 py-10">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold">
-            Latest articles
-          </h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">Bài viết mới nhất</h2>
           <input
             type="search"
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Search articles..."
+            placeholder="Tìm kiếm bài viết..."
             className="w-full sm:w-72 px-4 py-2 border border-gray-300 rounded-full focus:outline-none"
           />
         </div>

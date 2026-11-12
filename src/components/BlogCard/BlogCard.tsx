@@ -40,8 +40,8 @@ const BlogCard = ({ blog }: Props) => {
           {blog.description || blog.detail || ""}
         </p>
         <div className="blog-card__meta flex gap-4 text-sm text-gray-500">
-          <span>{blog.views_count ?? 0} views</span>
-          <span>{blog.comments_count ?? 0} comments</span>
+          <span>{blog.views_count ?? 0} lượt xem</span>
+          <span>{blog.comments_count ?? 0} bình luận</span>
         </div>
       </Card>
     </Link>
