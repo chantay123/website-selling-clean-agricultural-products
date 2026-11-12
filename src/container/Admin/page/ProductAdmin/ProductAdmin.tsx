@@ -1,192 +1,525 @@
-import { Space, Table, TableProps } from "antd";
-import { deleteProduct, getMyProfile, getProducts, getSuppliers } from "../../../../apis";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useMemo, useState } from "react";
 import {
-  setAdminStatus,
-  setProduct,
-  setsupplier,
-} from "../../../../redux/userReducer/userReducer";
-import { RootState } from "../../../../redux/config";
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Table,
+  TableProps,
+  Tag,
+} from "antd";
+import { Link } from "react-router-dom";
 import {
-  ProductAttribute,
+  createProduct,
+  deleteProduct,
+  getCategories,
+  getProducts,
+  getSuppliers,
+  updateProduct,
+} from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
+import {
+  CategoryType,
   extendedProductType,
+  ProductAttribute,
   productTypes,
+  SupplierType,
 } from "../../../../@type/global.type";
-
-import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "../../components/AdminLayout";
+import { useIsAdmin } from "../../hooks/useAdminAccess";
+import { toast } from "react-toastify";
+
+/**
+ * Product administration backed by `GET /products`.
+ *
+ * The table lists the catalogue, the modal creates a product and the inline
+ * form updates the attributes of an existing one. Every write verb needs an
+ * administrator token.
+ */
 const ProductAdmin = () => {
-  // The role is only known after the profile request finishes, so the guard
-  // needs to know the difference between "not an admin" and "not loaded yet".
-  const [profileChecked, setProfileChecked] = useState(false);
-  const profile = async () => {
-    try {
-      const response = await getMyProfile();
-      dispatch(setAdminStatus(response.data?.role === "Admin"));
-    } catch (error) {
-      dispatch(setAdminStatus(false));
-      console.log(error);
-    } finally {
-      setProfileChecked(true);
-    }
-  };
-  useEffect(() => {
-    profile();
-  }, []);
+  const isAdmin = useIsAdmin();
 
-  const isadmin = useSelector((state: RootState) => state.user.isAdmin);
-  const deleteProductById = async (product_id: string) => {
-    try {
-      await deleteProduct(product_id);
-      fetchPRODUCT();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  // const [open, setOpen] = useState(false);
-  // const showModal = () => {
-  //   setOpen(true);
-  // };
 
-  // const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-  //   console.log(e);
-  //   setOpen(false);
-  // };
+  const [products, setProducts] = useState<productTypes[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [suppliers, setSuppliers] = useState<SupplierType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<productTypes | null>(null);
+  const [keyword, setKeyword] = useState("");
+  const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
+  const [form] = Form.useForm();
 
-  const dispatch = useDispatch();
-  const fetchPRODUCT = async () => {
+
+
+  const fetchProducts = async () => {
+    setLoading(true);
     try {
       const response = await getProducts();
-      dispatch(setProduct(response.data));
+      setProducts(response.data);
     } catch (error) {
-      console.log(error);
+      toast.error(getApiErrorMessage(error, "Lỗi tải danh sách sản phẩm"));
+    } finally {
+      setLoading(false);
     }
   };
+
+  // The category and supplier lists are needed by the product form.
   useEffect(() => {
-    fetchPRODUCT();
-  }, []);
-  const list = useSelector((state: RootState) => state.user.product);
-  const extendedList: extendedProductType[] = list.map((obj, index) => ({
-    ...obj,
-    key: `key-${index}`,
-  }));
-  const columns: TableProps<productTypes>["columns"] = [
+    if (isAdmin !== true) return;
+
+    const loadReferences = async () => {
+      try {
+        const [categoryResponse, supplierResponse] = await Promise.all([
+          getCategories(),
+          getSuppliers(),
+        ]);
+        setCategories(categoryResponse.data);
+        setSuppliers(supplierResponse.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadReferences();
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin === true) fetchProducts();
+  }, [isAdmin]);
+
+  const visible = useMemo(() => {
+    const term = keyword.trim().toLowerCase();
+    return products.filter((product) => {
+      const matchesCategory = categoryId
+        ? product.category?._id === categoryId
+        : true;
+      const matchesTerm = term
+        ? product.name?.toLowerCase().includes(term) ||
+          product.slug?.toLowerCase().includes(term) ||
+          product.origin?.toLowerCase().includes(term)
+        : true;
+      return matchesCategory && matchesTerm;
+    });
+  }, [products, keyword, categoryId]);
+
+  const handleCreate = () => {
+    setEditing(null);
+    form.resetFields();
+    form.setFieldsValue({ hot: false, attributes: [{}] });
+    setOpen(true);
+  };
+
+  const handleEdit = (record: productTypes) => {
+    setEditing(record);
+    const attribute = record.productAttributes?.[0] ?? ({} as ProductAttribute);
+    form.setFieldsValue({
+      name: record.name,
+      slug: record.slug,
+      description: record.description,
+      origin: record.origin,
+      thumbnail_url: record.thumbnail_url,
+      category_id: record.category?._id,
+      supplier_id: record.supplier?._id,
+      hot: record.hot,
+      attributes: [
+        {
+          weight: attribute.weight,
+          original_price: attribute.original_price,
+          discounted_percent: attribute.discounted_percent,
+          dimensions: attribute.dimensions,
+          unit_of_measurement: attribute.unit_of_measurement,
+          quantity_per_unit: attribute.quantity_per_unit,
+          certification: attribute.certification,
+          harvest_date: attribute.harvest_date,
+          link: attribute.link,
+          expiration_date: attribute.expiration_date,
+        },
+      ],
+    });
+    setOpen(true);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      setSaving(true);
+
+      // The API only accepts a single attribute object on update.
+      const [attribute] = values.attributes ?? [];
+
+      if (editing) {
+        await updateProduct(editing._id, {
+          name: values.name,
+          slug: values.slug,
+          description: values.description,
+          origin: values.origin,
+          thumbnail_url: values.thumbnail_url,
+          hot: values.hot,
+          attribute,
+        });
+        toast.success("Cập nhật sản phẩm thành công");
+      } else {
+        await createProduct({
+          name: values.name,
+          slug: values.slug,
+          description: values.description,
+          origin: values.origin,
+          thumbnail_url: values.thumbnail_url,
+          category_id: values.category_id,
+          supplier_id: values.supplier_id,
+          hot: values.hot,
+          attributes: values.attributes,
+        });
+        toast.success("Thêm sản phẩm thành công");
+      }
+
+      setOpen(false);
+      form.resetFields();
+      fetchProducts();
+    } catch (error) {
+      if (error instanceof Error) return;
+      toast.error(getApiErrorMessage(error, "Lỗi lưu sản phẩm"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProduct(id);
+      toast.success("Xoá sản phẩm thành công");
+      fetchProducts();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Lỗi xoá sản phẩm"));
+    }
+  };
+
+  const columns: TableProps<extendedProductType>["columns"] = [
     {
-      title: "Name",
+      title: "Ảnh",
+      dataIndex: "thumbnail_url",
+      width: 90,
+      render: (value?: string) =>
+        value ? (
+          <img src={value} alt="" className="w-12 h-12 object-cover rounded-md" />
+        ) : (
+          <div className="w-12 h-12 rounded-md bg-gray-200" />
+        ),
+    },
+    {
+      title: "Tên sản phẩm",
       dataIndex: "name",
-      className: " text-base text-gray-600 ",
       width: 200,
     },
     {
       title: "Slug",
       dataIndex: "slug",
-      className: " text-base text-gray-600 ",
-      width: 200,
+      width: 170,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      className: " text-base text-gray-600 ",
-      width: 200,
-    },
-    {
-      title: "Origin",
+      title: "Xuất xứ",
       dataIndex: "origin",
-      className: " text-base text-gray-600 ",
-      width: 200,
+      width: 120,
     },
     {
-      title: "Image",
-      dataIndex: "thumbnail_url",
-      className: " text-base text-gray-600 ",
-      width: 200,
+      title: "Danh mục",
+      dataIndex: "category",
+      width: 150,
+      render: (value?: CategoryType) => value?.name || "-",
     },
     {
-      title: "Action",
+      title: "Giá",
+      dataIndex: "price",
+      width: 130,
+      render: (value?: number) =>
+        value === undefined ? "-" : `${value.toLocaleString("vi-VN")} đ`,
+    },
+    {
+      title: "Kho",
+      dataIndex: "productAttributes",
+      width: 150,
+      render: (attributes?: ProductAttribute[]) =>
+        attributes?.length ? (
+          <Tag color="green">{attributes.length} mã</Tag>
+        ) : (
+          <Tag>Chưa có</Tag>
+        ),
+    },
+    {
+      title: "Thao tác",
       key: "action",
-      className: " text-base text-gray-500",
-      render: (_attributes: ProductAttribute[], productTypes) => (
-        <Space size="middle">
-          <button
-            onClick={() => deleteProductById(productTypes._id)}
-            className="rounded-md border px-4 py-2 text-white bg-red-600"
+      width: 230,
+      render: (_value, record) => (
+        <Space size="small" wrap>
+          <Button size="small" onClick={() => handleEdit(record)}>
+            Sửa
+          </Button>
+          <Link to={`/editadmin/${record._id}`}>
+            <Button size="small">Chi tiết</Button>
+          </Link>
+          <Button
+            size="small"
+            danger
+            onClick={() => handleDelete(record._id)}
           >
-            <i>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.74 9L14.394 18M9.652 18L9.26 9M19.228 5.79c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                />
-              </svg>
-            </i>
-          </button>
-          <div>
-            <Link
-              to={`/editadmin/${productTypes._id}`}
-              className="rounded-md border px-2  text-white bg-yellow-300 items-center flex hover:bg-yellow-400 "
-            >
-              <i>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                  />
-                </svg>
-              </i>
-            </Link>
-          </div>
+            Xoá
+          </Button>
         </Space>
       ),
     },
   ];
 
-  const data: extendedProductType[] = extendedList;
-
-  // The supplier list is fetched once on mount, not on every render, to
-  // avoid an endless request/dispatch loop.
-  useEffect(() => {
-    const supplier = async () => {
-      try {
-        const respone = await getSuppliers();
-        dispatch(setsupplier(respone.data));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    supplier();
-  }, []);
-
-  const navigate = useNavigate();
-  if (profileChecked && isadmin === false) {
-    navigate("*");
-    return;
+  if (isAdmin === false) {
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-500">
+        Bạn không có quyền truy cập trang quản trị.
+      </div>
+    );
   }
+
   return (
     <AdminLayout title="Quản lý sản phẩm">
-      <Table
-        className="w-full"
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 10, responsive: true }}
-        scroll={{ x: "max-content" }}
-      />
+      <div className="bg-white rounded-lg p-4">
+        <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">Sản phẩm</h3>
+            <p className="text-sm text-gray-500">
+              Tổng cộng {products.length} sản phẩm trong danh mục
+            </p>
+          </div>
+          <Button type="primary" onClick={handleCreate}>
+            + Thêm sản phẩm
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap gap-3 mb-4">
+          <Input
+            allowClear
+            placeholder="Tìm theo tên, slug, xuất xứ..."
+            className="max-w-sm"
+            value={keyword}
+            onChange={(event) => setKeyword(event.target.value)}
+          />
+          <Select
+            allowClear
+            placeholder="Lọc theo danh mục"
+            className="w-52"
+            value={categoryId}
+            onChange={setCategoryId}
+            options={categories.map((item) => ({
+              value: item._id,
+              label: item.name,
+            }))}
+          />
+        </div>
+
+        <Table<extendedProductType>
+          loading={loading}
+          columns={columns}
+          dataSource={visible.map((item, index) => ({
+            ...item,
+            key: `key-${index}`,
+          }))}
+          pagination={{ pageSize: 10, responsive: true }}
+          scroll={{ x: "max-content" }}
+        />
+      </div>
+
+      <Modal
+        title={editing ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+        open={open}
+        onCancel={() => setOpen(false)}
+        onOk={handleSubmit}
+        confirmLoading={saving}
+        okText="Lưu"
+        cancelText="Huỷ"
+        destroyOnClose
+        width={860}
+      >
+        <Form form={form} layout="vertical" className="pt-4">
+          <Row gutter={16}>
+            <Col xs={24} md={12}>
+              <Form.Item
+                label="Tên sản phẩm"
+                name="name"
+                rules={[{ required: true, message: "Vui lòng nhập tên" }]}
+              >
+                <Input placeholder="Táo Mộc Châu" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Slug" name="slug">
+                <Input placeholder="tao-moc-chau" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Xuất xứ" name="origin">
+                <Input placeholder="Ý tụ, Việt Nam" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Ảnh (URL)" name="thumbnail_url">
+                <Input placeholder="https://..." />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Danh mục" name="category_id">
+                <Select
+                  allowClear
+                  placeholder="Chọn danh mục"
+                  options={categories.map((item) => ({
+                    value: item._id,
+                    label: item.name,
+                  }))}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Nhà cung cấp" name="supplier_id">
+                <Select
+                  allowClear
+                  placeholder="Chọn nhà cung cấp"
+                  options={suppliers.map((item) => ({
+                    value: item._id,
+                    label: item.company_name,
+                  }))}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item label="Mô tả" name="description">
+            <Input.TextArea rows={3} placeholder="Mô tả sản phẩm" />
+          </Form.Item>
+
+          <Form.Item label="Thuộc tính / biến thể" name="attributes">
+            <Form.List name="attributes">
+              {(fields, { add, remove }) => (
+                <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+                  {fields.map((field) => (
+                    <div key={field.key}>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-600">
+                          Biến thể {field.name + 1}
+                        </span>
+                        {fields.length > 1 && (
+                          <Button
+                            size="small"
+                            danger
+                            onClick={() => remove(field.name)}
+                          >
+                            Xoá
+                          </Button>
+                        )}
+                      </div>
+                      <Row gutter={12}>
+                        <Col xs={12} md={6}>
+                          <Form.Item
+                            name={[field.name, "weight"]}
+                            label="Khối lượng"
+                            className="mb-2"
+                          >
+                            <InputNumber className="w-full" step={0.1} />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={12} md={6}>
+                          <Form.Item
+                            name={[field.name, "original_price"]}
+                            label="Giá gốc"
+                            className="mb-2"
+                          >
+                            <InputNumber className="w-full" min={0} />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={12} md={6}>
+                          <Form.Item
+                            name={[field.name, "discounted_percent"]}
+                            label="Giảm (%)"
+                            className="mb-2"
+                          >
+                            <InputNumber className="w-full" min={0} max={100} />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={12} md={6}>
+                          <Form.Item
+                            name={[field.name, "quantity_per_unit"]}
+                            label="Số lượng / đơn vị"
+                            className="mb-2"
+                          >
+                            <InputNumber className="w-full" min={0} />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Form.Item
+                            name={[field.name, "unit_of_measurement"]}
+                            label="Đơn vị"
+                            className="mb-2"
+                          >
+                            <Input placeholder="kg" />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Form.Item
+                            name={[field.name, "dimensions"]}
+                            label="Kích thước"
+                            className="mb-2"
+                          >
+                            <Input placeholder="10x10x5 cm" />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Form.Item
+                            name={[field.name, "certification"]}
+                            label="Chứng nhận"
+                            className="mb-2"
+                          >
+                            <Input placeholder="VietGAP" />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Form.Item
+                            name={[field.name, "harvest_date"]}
+                            label="Ngày thu hoạch"
+                            className="mb-2"
+                          >
+                            <Input placeholder="2024-01-01" />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Form.Item
+                            name={[field.name, "expiration_date"]}
+                            label="Ngày hết hạn"
+                            className="mb-2"
+                          >
+                            <Input placeholder="2024-12-31" />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Form.Item
+                            name={[field.name, "link"]}
+                            label="Liên kết"
+                            className="mb-2"
+                          >
+                            <Input placeholder="https://..." />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                  <Button onClick={() => add({})}>+ Thêm biến thể</Button>
+                </div>
+              )}
+            </Form.List>
+          </Form.Item>
+        </Form>
+      </Modal>
     </AdminLayout>
   );
 };

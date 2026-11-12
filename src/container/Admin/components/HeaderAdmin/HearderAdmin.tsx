@@ -10,10 +10,21 @@ import { RootState } from "../../../../redux/config";
 const HeaderAdmin = () => {
   const profile = useSelector((state: RootState) => state.user.profile);
 
+  // The greeting follows the hour of the day.
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 11
+      ? "Chào buổi sáng"
+      : hour < 14
+        ? "Chào buổi trưa"
+        : hour < 18
+          ? "Chào buổi chiều"
+          : "Chào buổi tối";
+
   return (
     <div className="flex items-center justify-between p-4 ">
       <div className="hidden sm:block">
-        <p className="text-gray-500 text-base">Good Morning,</p>
+        <p className="text-gray-500 text-base">{greeting},</p>
         <h1 className="text-2xl font-semibold mt-2">
           {profile?.fullName || profile?.username || "Admin"}
         </h1>

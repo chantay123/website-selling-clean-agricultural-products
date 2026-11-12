@@ -1,500 +1,287 @@
-import { Alert, Button, Form, Input, Layout } from "antd";
-
-import { getProductById, updateProduct } from "../../../../apis";
-import { getApiErrorMessage } from "../../../../utils/api.adapter";
-import { ProductAttribute } from "../../../../@type/global.type";
 import { useEffect, useState } from "react";
-
-import { useParams } from "react-router-dom";
-
-import { Content } from "antd/es/layout/layout";
-import Sidebar from "../../components/Sidebar";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Select,
+  Space,
+  Spin,
+} from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getCategories,
+  getProductById,
+  getSuppliers,
+  updateProduct,
+} from "../../../../apis";
+import { getApiErrorMessage } from "../../../../utils/api.adapter";
+import {
+  CategoryType,
+  ProductAttribute,
+  SupplierType,
+} from "../../../../@type/global.type";
+import AdminLayout from "../../components/AdminLayout";
 import { toast } from "react-toastify";
 
+/**
+ * Detail editor of one product.
+ *
+ * The screen loads the product with `GET /products/:id` and writes the
+ * changes back with `PUT /products/:id`. The form mirrors the payload the
+ * backend expects: the product fields plus a single `attribute` object.
+ */
 const EditAdmin = () => {
   const { editId } = useParams();
+  const navigate = useNavigate();
 
-  console.log(editId);
-  const [userData, setUserData] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    origin: "",
-    sold: "",
-    thumbnail_url: "",
-    attribute: {
-      weight: "",
-      original_price: "",
-      discounted_percent: "",
-      dimensions: "",
-      unit_of_measurement: "",
-      quantity_per_unit: "",
-      certification: "",
-      harvest_date: "",
-      link: "",
-      expiration_date: "",
-    },
-    hot: "",
-    numberOfReview: "",
-    rating: "",
-  });
-  console.log(userData);
-
-  const product = async () => {
-    try {
-      const respone = await getProductById(editId ?? "");
-      const data = respone.data;
-      const attribute = (data.productAttributes?.[0] ?? {}) as ProductAttribute;
-      setUserData({
-        name: data.name ?? "",
-        slug: data.slug ?? "",
-        description: data.description ?? "",
-        origin: data.origin ?? "",
-        sold: data.sold !== undefined ? String(data.sold) : "",
-        thumbnail_url: data.thumbnail_url ?? "",
-        attribute: {
-          weight: attribute.weight !== undefined ? String(attribute.weight) : "",
-          original_price:
-            attribute.original_price !== undefined
-              ? String(attribute.original_price)
-              : "",
-          discounted_percent:
-            attribute.discounted_percent !== undefined
-              ? String(attribute.discounted_percent)
-              : "",
-          dimensions: attribute.dimensions ?? "",
-          unit_of_measurement: attribute.unit_of_measurement ?? "",
-          quantity_per_unit:
-            attribute.quantity_per_unit !== undefined
-              ? String(attribute.quantity_per_unit)
-              : "",
-          certification: attribute.certification ?? "",
-          harvest_date: attribute.harvest_date ?? "",
-          link: attribute.link ?? "",
-          expiration_date: attribute.expiration_date ?? "",
-        },
-        hot: data.hot !== undefined ? String(data.hot) : "",
-        numberOfReview:
-          data.numberOfReview !== undefined ? String(data.numberOfReview) : "",
-        rating: data.rating !== undefined ? String(data.rating) : "",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [suppliers, setSuppliers] = useState<SupplierType[]>([]);
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    product();
-  }, [editId]);
+    let cancelled = false;
 
-  const editProduct = async () => {
-    const loadingToast = toast.loading("Updating....");
+    const load = async () => {
+      setLoading(true);
+      try {
+        const [productResponse, categoryResponse, supplierResponse] =
+          await Promise.all([
+            getProductById(editId ?? ""),
+            getCategories(),
+            getSuppliers(),
+          ]);
+
+        if (cancelled) return;
+
+        const product = productResponse.data;
+        if (!product) {
+          if (!cancelled) {
+            toast.error("Không tìm thấy sản phẩm");
+            navigate("/productadmin");
+          }
+          return;
+        }
+
+        const attribute =
+          (product.productAttributes?.[0] ?? {}) as ProductAttribute;
+
+        setCategories(categoryResponse.data);
+        setSuppliers(supplierResponse.data);
+
+        form.setFieldsValue({
+          name: product.name,
+          slug: product.slug,
+          description: product.description,
+          origin: product.origin,
+          thumbnail_url: product.thumbnail_url,
+          category_id: product.category?._id,
+          supplier_id: product.supplier?._id,
+          hot: product.hot,
+          weight: attribute.weight,
+          original_price: attribute.original_price,
+          discounted_percent: attribute.discounted_percent,
+          dimensions: attribute.dimensions,
+          unit_of_measurement: attribute.unit_of_measurement,
+          quantity_per_unit: attribute.quantity_per_unit,
+          certification: attribute.certification,
+          harvest_date: attribute.harvest_date,
+          link: attribute.link,
+          expiration_date: attribute.expiration_date,
+        });
+      } catch (error) {
+        toast.error(getApiErrorMessage(error, "Lỗi tải thông tin sản phẩm"));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [editId, form]);
+
+  const handleSubmit = async (values: Record<string, unknown>) => {
     try {
-      const response = await updateProduct(editId ?? "", {
-        name: userData.name,
-        slug: userData.slug,
-        description: userData.description,
-        origin: userData.origin,
-        sold: userData.sold,
-        thumbnail_url: userData.thumbnail_url,
+      setSaving(true);
+      await updateProduct(editId ?? "", {
+        name: values.name as string,
+        slug: values.slug as string,
+        description: values.description as string,
+        origin: values.origin as string,
+        thumbnail_url: values.thumbnail_url as string,
+        hot: values.hot as boolean,
         attribute: {
-          weight: userData.attribute.weight,
-          original_price: userData.attribute.original_price,
-          discounted_percent: userData.attribute.discounted_percent,
-          dimensions: userData.attribute.dimensions,
-          unit_of_measurement: userData.attribute.unit_of_measurement,
-          quantity_per_unit: userData.attribute.quantity_per_unit,
-          certification: userData.attribute.certification,
-          harvest_date: userData.attribute.harvest_date,
-          link: userData.attribute.link,
-          expiration_date: userData.attribute.expiration_date,
+          weight: values.weight as number,
+          original_price: values.original_price as number,
+          discounted_percent: values.discounted_percent as number,
+          dimensions: values.dimensions as string,
+          unit_of_measurement: values.unit_of_measurement as string,
+          quantity_per_unit: values.quantity_per_unit as number,
+          certification: values.certification as string,
+          harvest_date: values.harvest_date as string,
+          link: values.link as string,
+          expiration_date: values.expiration_date as string,
         },
-        hot: userData.hot,
-        numberOfReview: userData.numberOfReview,
-        rating: userData.rating,
       });
-      toast.update(loadingToast, {
-        render: response.message,
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.success("Cập nhật sản phẩm thành công");
+      navigate("/productadmin");
     } catch (error) {
-      toast.update(loadingToast, {
-        render: getApiErrorMessage(error, "Lỗi cập nhật sản phẩm"),
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.error(getApiErrorMessage(error, "Lỗi cập nhật sản phẩm"));
+    } finally {
+      setSaving(false);
     }
   };
+
   return (
-    <div className="flex bg-[#F2F9F6]">
-      <Sidebar />
-      <Layout className="min-h-screen overflow-hidden">
-        <Layout>
-          <Content className="bg-[#F2F9F6]">
-            <Form
-              className="mt-4 n "
-              name="basic"
-              initialValues={{ ...userData }}
-              onFinish={editProduct}
-              fields={[
-                {
-                  name: ["name"],
-                  value: userData.name,
-                },
-                {
-                  name: ["description"],
-                  value: userData.description,
-                },
-                {
-                  name: ["hot"],
-                  value: userData.hot,
-                },
-                {
-                  name: ["sold"],
-                  value: userData.sold,
-                },
-                {
-                  name: ["slug"],
-                  value: userData.slug,
-                },
-                {
-                  name: ["sold"],
-                  value: userData.sold,
-                },
-                {
-                  name: ["attributes", "weight"],
-                  value: userData.attribute?.weight,
-                },
-                {
-                  name: ["attributes", "original_price"],
-                  value: userData.attribute?.original_price,
-                },
-                {
-                  name: ["attributes", "discounted_percent"],
-                  value: userData.attribute?.discounted_percent,
-                },
-                {
-                  name: ["attributes", "dimensions"],
-                  value: userData.attribute?.dimensions,
-                },
-                {
-                  name: ["attributes", "unit_of_measurement"],
-                  value: userData.attribute?.unit_of_measurement,
-                },
-                {
-                  name: ["attributes", "quantity_per_unit"],
-                  value: userData.attribute?.quantity_per_unit,
-                },
-                {
-                  name: ["attributes", "certification"],
-                  value: userData.attribute?.certification,
-                },
-                {
-                  name: ["attributes", "harvest_date"],
-                  value: userData.attribute?.harvest_date,
-                },
-                {
-                  name: ["attributes", "link"],
-                  value: userData.attribute?.link,
-                },
-                {
-                  name: ["attributes", "expiration_date"],
-                  value: userData.attribute?.expiration_date,
-                },
+    <AdminLayout title="Chi tiết sản phẩm">
+      <Spin spinning={loading}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="bg-white rounded-lg p-4 lg:p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Thông tin sản phẩm
+          </h3>
+
+          <Row gutter={16}>
+            <Col xs={24} md={12}>
+              <Form.Item
+                label="Tên sản phẩm"
+                name="name"
+                rules={[{ required: true, message: "Vui lòng nhập tên" }]}
+              >
+                <Input placeholder="Táo Mộc Châu" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Slug" name="slug">
+                <Input placeholder="tao-moc-chau" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Xuất xứ" name="origin">
+                <Input placeholder="Ý tụ, Việt Nam" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Ảnh (URL)" name="thumbnail_url">
+                <Input placeholder="https://..." />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Danh mục" name="category_id">
+                <Select
+                  allowClear
+                  placeholder="Chọn danh mục"
+                  options={categories.map((item) => ({
+                    value: item._id,
+                    label: item.name,
+                  }))}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Nhà cung cấp" name="supplier_id">
+                <Select
+                  allowClear
+                  placeholder="Chọn nhà cung cấp"
+                  options={suppliers.map((item) => ({
+                    value: item._id,
+                    label: item.company_name,
+                  }))}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item label="Mô tả" name="description">
+            <Input.TextArea rows={3} placeholder="Mô tả sản phẩm" />
+          </Form.Item>
+
+          <Form.Item name="hot">
+            <Select
+              placeholder="Chọn trạng thái nổi bật"
+              options={[
+                { value: true, label: "Nổi bật" },
+                { value: false, label: "Thường" },
               ]}
-            >
-              <div className="relative ">
-                <h2 className="ml-4 sm:ml-20 text-2xl sm:text-3xl">Edit product</h2>
-                <div className=" w-full xs:mt-20 lg:mt-10 3xl:mt-44 3xl:px-10 lg:px-10 xs:px-5 mt-3 ">
-                  <div className="flex flex-col lg:flex-row lg:gap-12 3xl:gap-16">
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Name
-                      </h3>
-                      <Form.Item
-                        name="name"
-                        rules={[
-                          {
-                            required: true,
-                            message: (
-                              <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700"
-                                message="Please input your username"
-                                banner
-                                type="error"
-                              />
-                            ),
-                          },
-                        ]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Description
-                      </h3>
-                      <Form.Item
-                        name="description"
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Slug
-                      </h3>
-                      <Form.Item
-                        name="slug"
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Sold
-                      </h3>
-                      <Form.Item
-                        name="sold"
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-                  <div className="flex flex-col lg:flex-row lg:gap-12 3xl:gap-16">
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        weight
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "weight"]}
-                        rules={[
-                          {
-                            required: true,
-                            message: (
-                              <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700"
-                                message="Please input your username"
-                                banner
-                                type="error"
-                              />
-                            ),
-                          },
-                        ]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Original price
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "original_price"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Discounted percent
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "discounted_percent"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Dimensions
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "dimensions"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-                  <div className="flex flex-col lg:flex-row lg:gap-12 3xl:gap-16">
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Unit of measurement
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "unit_of_measurement"]}
-                        rules={[
-                          {
-                            required: true,
-                            message: (
-                              <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700"
-                                message="Please input your username"
-                                banner
-                                type="error"
-                              />
-                            ),
-                          },
-                        ]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Quantity per unit
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "quantity_per_unit"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Certification
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "certification"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Harvest date
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "harvest_date"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-                  <div className="flex flex-col lg:flex-row lg:gap-12 3xl:gap-16">
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Link
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "link"]}
-                        rules={[
-                          {
-                            required: true,
-                            message: (
-                              <Alert
-                                className="bg-transparent xs:text-xs lg:text-base text-red-700"
-                                message="Please input your username"
-                                banner
-                                type="error"
-                              />
-                            ),
-                          },
-                        ]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="w-full relative">
-                      <h3 className="absolute -top-3 left-3 px-2 mb-0 text-black bg-[#F2F9F6] z-10 rounded-md">
-                        Expiration date
-                      </h3>
-                      <Form.Item
-                        name={["attributes", "expiration_date"]}
-                        className="border-2 rounded-lg border-baltext-black w-full mb-8 flex flex-col"
-                      >
-                        <Input
-                          className="bg-transparent h-12 border-none text-black text-base focus:shadow-none focus:border-none focus:outline-none focus-visible:shadow-none focus-visible:border-none focus-visible:outline-none"
-                          style={{ background: "none" }}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Form>
-            <div className="ml-4 sm:ml-10 flex flex-wrap gap-4">
-              <Form.Item className="mt-2">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="h-12 w-40 sm:w-60 border-2 border-baltext-black rounded-full font-popins text-base btn-hover"
-                >
-                  Update
-                </Button>
+            />
+          </Form.Item>
+
+          <h3 className="text-lg font-semibold text-gray-800 mt-6 mb-4">
+            Thuộc tính sản phẩm
+          </h3>
+
+          <Row gutter={16}>
+            <Col xs={12} md={6}>
+              <Form.Item label="Khối lượng" name="weight">
+                <InputNumber className="w-full" step={0.1} />
               </Form.Item>
-              <Form.Item className="mt-2">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="h-12 w-40 sm:w-60 border-2 border-baltext-black rounded-full font-popins text-base btn-hover"
-                  // onClick={() => {
-                  //   Navigate");
-                  // }}
-                >
-                  Back Home
-                </Button>
+            </Col>
+            <Col xs={12} md={6}>
+              <Form.Item label="Giá gốc" name="original_price">
+                <InputNumber className="w-full" min={0} />
               </Form.Item>
-            </div>
-          </Content>
-        </Layout>
-      </Layout>
-    </div>
+            </Col>
+            <Col xs={12} md={6}>
+              <Form.Item label="Giảm (%)" name="discounted_percent">
+                <InputNumber className="w-full" min={0} max={100} />
+              </Form.Item>
+            </Col>
+            <Col xs={12} md={6}>
+              <Form.Item label="Số lượng / đơn vị" name="quantity_per_unit">
+                <InputNumber className="w-full" min={0} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Đơn vị" name="unit_of_measurement">
+                <Input placeholder="kg" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Kích thước" name="dimensions">
+                <Input placeholder="10x10x5 cm" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Chứng nhận" name="certification">
+                <Input placeholder="VietGAP" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Ngày thu hoạch" name="harvest_date">
+                <Input placeholder="2024-01-01" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Ngày hết hạn" name="expiration_date">
+                <Input placeholder="2024-12-31" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Liên kết" name="link">
+                <Input placeholder="https://..." />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Space wrap>
+            <Button type="primary" htmlType="submit" loading={saving}>
+              Cập nhật
+            </Button>
+            <Button onClick={() => navigate("/productadmin")}>Quay lại</Button>
+          </Space>
+        </Form>
+      </Spin>
+    </AdminLayout>
   );
 };
 

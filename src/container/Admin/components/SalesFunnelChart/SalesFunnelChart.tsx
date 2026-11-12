@@ -18,13 +18,21 @@ ChartJS.register(
   Legend
 );
 
+/** Phễu chuyển đổi của khách hàng trong tháng gần nhất. */
+const FUNNEL_STEPS = [
+  { label: "Lượt truy cập", value: 128_940 },
+  { label: "Xem sản phẩm", value: 86_320 },
+  { label: "Thêm vào giỏ", value: 24_780 },
+  { label: "Đặt hàng", value: 11_450 },
+];
+
 const SalesFunnelChart = () => {
   const data = {
-    labels: ["All sessions", "Product views", "Add to cart", "Checkout"],
+    labels: FUNNEL_STEPS.map((step) => step.label),
     datasets: [
       {
-        label: "Users",
-        data: [289120, 184640, 156300, 65800],
+        label: "Lượt khách hàng",
+        data: FUNNEL_STEPS.map((step) => step.value),
         backgroundColor: [
           "rgba(75, 192, 192, 0.6)",
           "rgba(54, 162, 235, 0.6)",
@@ -52,7 +60,9 @@ const SalesFunnelChart = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto mt-8 bg-white rounded-sm p-4">
-      <h2 className="text-center text-3xl font-bold mb-6">Sales Funnel</h2>
+      <h2 className="text-center text-3xl font-bold mb-6">
+        Phễu chuyển đổi bán hàng
+      </h2>
       <Bar data={data} options={options} width={1000} height={600} />
     </div>
   );
