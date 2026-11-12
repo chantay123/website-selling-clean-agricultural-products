@@ -26,7 +26,7 @@ const NewPassword = () => {
       navigate("/");
       dispatch(setIsFogotPassword(false));
     } catch (error: any) {
-      toast.error(getApiErrorMessage(error, "Lỗi đặt lại mật khẩu"));
+      toast.error(getApiErrorMessage(error, "Lỗi đăng nhập"));
     }
   };
   return (
@@ -37,45 +37,42 @@ const NewPassword = () => {
         className="login-form w-full max-w-[440px] rounded-xl bg-white p-6 sm:p-10 shadow-lg"
       >
         <h2 className="text-black clear-both text-3xl sm:text-4xl font-bold not-italic mb-3">
-          Create new password
+          Tạo mật khấu mới
         </h2>
         <p className="text-black font-popins text-sm mt-2 font-medium">
-          Set the news password for your account so you can sign in and access
-          all features.
+          Thiết lập mật khấu mới cho tài khoản của bạn để đăng nhập và sử dụng đầy đủ tính năng.
         </p>
         <Form.Item
           className="text-xs"
           name="email"
-          rules={[{ required: true, message: "Please input your email!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập email" }]}
         >
           <Input
             className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 rounded-full h-12"
             prefix={<MailOutlined className="mr-2" />}
-            placeholder="johnpham@gmail.com"
+            placeholder="email@agrimarket.vn"
           />
         </Form.Item>
         <Form.Item
           className="text-xs  "
           name="password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập mật khấu" }]}
         >
           <Input.Password
             className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14"
             type="password"
-            placeholder="Password"
+            placeholder="Mật khấu"
             prefix={<LockOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
         <Form.Item
           name="confirm_password"
-          rules={[
-            { required: true, message: "Please input your confirm Password!" },
-          ]}
+          rules={[{ required: true, message: "Vui lòng xác nhận lại mật khấu" }]}
         >
           <Input.Password
             className="3xl:text-base bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-14"
             type="password"
-            placeholder="confirm Password"
+            placeholder="Xác nhận mật khấu"
             prefix={<LockOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
@@ -84,11 +81,11 @@ const NewPassword = () => {
             htmlType="submit"
             className="login-form-button w-full font-bold text-white bg-green-400 "
           >
-            Continue
+            Tiếp tục
           </Button>
           <div className="flex justify-center items-center my-6">
             <hr className="w-full border-[1px]" />
-            <span className="mx-4 text-base font-bold">Or</span>
+            <span className="mx-4 text-base font-bold">Hoặc</span>
             <hr className="w-full border-[1px]" />
           </div>
           <Button
@@ -96,7 +93,7 @@ const NewPassword = () => {
             onClick={() => navigate("/login")}
             className="login-form-button w-full font-bold  "
           >
-            Log in
+            Đăng nhập
           </Button>
         </Form.Item>
       </Form>

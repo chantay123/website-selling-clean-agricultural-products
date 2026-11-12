@@ -30,7 +30,7 @@ const Register = () => {
       toast.success(message);
       navigate("/login");
     } catch (error: any) {
-      toast.error(getApiErrorMessage(error, "L?i dang k�"));
+      toast.error(getApiErrorMessage(error, "Lỗi đăng nhập"));
     }
   };
 
@@ -41,47 +41,47 @@ const Register = () => {
         name="normal_login"
         className="login-form w-full max-w-[440px] rounded-xl bg-white p-6 sm:p-10 shadow-lg"
       >
-        <h1 className="text-center text-3xl sm:text-4xl mb-6 font-bold">Sign up</h1>
+        <h1 className="text-center text-3xl sm:text-4xl mb-6 font-bold">
+          Đăng ký
+        </h1>
         <Form.Item
           className="text-xs "
           name="full_name"
-          rules={[{ required: true, message: "Please input your Full name!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập họ và tên của bạn" }]}
         >
           <Input
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
             prefix={
               <UserOutlined className="site-form-item-icon w-full mr-2" />
             }
-            placeholder="Full name"
+            placeholder="Họ và tên"
           />
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "Please input your  Password!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập mật khấu" }]}
         >
           <Input.Password
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
             type="Password"
-            placeholder="Password"
+            placeholder="Mật khấu"
             prefix={<LockOutlined className="site-form-item-icon mr-2" />}
           />
         </Form.Item>
         <Form.Item
           name="confirm_password"
-          rules={[
-            { required: true, message: "Please input your Confirm password!" },
-          ]}
+          rules={[{ required: true, message: "Vui lòng xác nhận lại mật khấu" }]}
         >
           <Input.Password
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
             type="Password"
-            placeholder="Confirm password"
+            placeholder="Xác nhận mật khấu"
             prefix={<LockOutlined className="site-form-item-icon mr-2" />}
           />
         </Form.Item>
         <Form.Item
           name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập email" }]}
         >
           <Input
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
@@ -92,12 +92,12 @@ const Register = () => {
         </Form.Item>
         <Form.Item
           name="phone"
-          rules={[{ required: true, message: "Please input your Phone!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
         >
           <Input
             className="bg-gray-300 w-full py-2 px-4 text-base font-normal border-0 h-12 rounded-full"
             type="phone"
-            placeholder="Phone"
+            placeholder="Số điện thoại"
             prefix={<PhoneOutlined className="mr-2" />}
           />
         </Form.Item>
@@ -106,10 +106,10 @@ const Register = () => {
             htmlType="submit"
             className="login-form-button w-full bg-green-400 text-white font-bold border-white mt-5"
           >
-            Sign up
+            Đăng ký
           </Button>
           <div className="flex justify-center text-center mt-3 gap-2">
-            <p> Don't have an account?</p>
+            <p> Bạn chưa có tài khoản?</p>
             <a
               className="register text-[13px] font-bold text-green-400 text-center"
               href=""
@@ -118,7 +118,7 @@ const Register = () => {
                 navigate("/login");
               }}
             >
-              Login now
+              Đăng nhập
             </a>
           </div>
         </Form.Item>

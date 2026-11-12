@@ -101,7 +101,7 @@ const Verification = () => {
           toast.success(message);
           navigate("/new-password");
         } catch (error: any) {
-          toast.error(getApiErrorMessage(error, "Mã OTP không dúng"));
+          toast.error(getApiErrorMessage(error, "MÃ£ OTP khÃ´ng Ä‘Ãºng"));
         }
       } else {
         try {
@@ -110,7 +110,7 @@ const Verification = () => {
           toast.success(message);
           navigate("/");
         } catch (error: any) {
-          toast.error(getApiErrorMessage(error, "Mã OTP không dúng"));
+          toast.error(getApiErrorMessage(error, "MÃ£ OTP khÃ´ng Ä‘Ãºng"));
         }
       }
     } else {
@@ -124,7 +124,7 @@ const Verification = () => {
       const { message } = response;
       toast.success(message);
     } catch (error: any) {
-      toast.error(getApiErrorMessage(error, "L?i g?i l?i OTP"));
+      toast.error(getApiErrorMessage(error, "Lá»—i gá»­i láº¡i OTP"));
     }
   };
 
