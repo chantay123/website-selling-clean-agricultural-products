@@ -25,6 +25,7 @@ import NotFound from "../../../../components/NotFound";
 import { toast } from "react-toastify";
 import { setcartnumber, setProduct } from "../../../../redux/userReducer/userReducer";
 import { useCallback, useEffect } from "react";
+import { formatVND } from "../../../../utils/price";
 
 const customIcons: Record<number, React.ReactNode> = {
   1: <StarFilled style={{ color: "#81c408" }} />,
@@ -32,6 +33,14 @@ const customIcons: Record<number, React.ReactNode> = {
   3: <StarFilled style={{ color: "#81c408" }} />,
   4: <StarFilled style={{ color: "#81c408" }} />,
   5: <StarFilled />,
+};
+
+/** Formats a date coming from the API for the specification table. */
+const formatDate = (value?: string) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("vi-VN");
 };
 
 const ProductDetail = () => {
@@ -50,7 +59,9 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         const response = await getProductById(productId ?? "");
-        if (!cancelled) dispatch(setProduct([response.data]));
+        if (!cancelled && response.data) {
+          dispatch(setProduct([response.data]));
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -110,9 +121,9 @@ const ProductDetail = () => {
   }, [productId]);
 
   useEffect(() => {
-    if (!isAuthenticated || !productId) return;
+    if (!productId) return;
     fetchComments();
-  }, [isAuthenticated, productId, fetchComments]);
+  }, [productId, fetchComments]);
 
   /** Publishes the review written in the "Leave a Reply" form. */
   const handleSubmitComment = async (event: React.FormEvent) => {
@@ -154,8 +165,21 @@ const ProductDetail = () => {
   // is still running would send the user to the 404 page by mistake.
   if (loading) return <Loading />;
   if (detail === undefined) return <NotFound />;
+
+  const attributes = detail.productAttributes ?? [];
+  const selectedAttribute = attributes[0];
+
+  const unit = selectedAttribute?.unit_of_measurement ?? "kg";
+  const price = selectedAttribute?.discount_price ?? detail.price ?? 0;
+  const originalPrice = selectedAttribute?.original_price ?? price;
+  const discountPercent =
+    selectedAttribute?.discounted_percent ??
+    (originalPrice > price
+      ? Math.round(((originalPrice - price) / originalPrice) * 100)
+      : 0);
+
   const buttonAdd = async (product_id: string) => {
-    const attributeId = detail?.productAttributes?.[0]?._id;
+    const attributeId = selectedAttribute?._id;
 
     if (!attributeId) {
       toast.error("Sản phẩm không có thuộc tính để thêm vào giỏ hàng");
@@ -168,18 +192,39 @@ const ProductDetail = () => {
           {
             product_id: product_id,
             product_attribute_id: attributeId,
-            quantity: 1,
+            quantity,
           },
         ],
       });
       const respones = await getCart();
       dispatch(setcartnumber(respones.data.items.length));
-      const message = "add product successfully";
-      toast.success(message);
+      toast.success("Thêm sản phẩm vào giỏ hàng thành công");
     } catch (error) {
       toast.error(getApiErrorMessage(error, "Lỗi thêm vào giỏ hàng"));
     }
   };
+
+  const specificationRows = [
+    { label: "Khối lượng", value: `${selectedAttribute?.weight ?? 1} ${unit}` },
+    { label: "Xuất xứ", value: detail.origin || "Việt Nam" },
+    {
+      label: "Chứng nhận",
+      value: selectedAttribute?.certification || "VietGAP",
+    },
+    {
+      label: "Ngày thu hoạch",
+      value: formatDate(selectedAttribute?.harvest_date),
+    },
+    {
+      label: "Hạn sử dụng",
+      value: formatDate(selectedAttribute?.expiration_date),
+    },
+    {
+      label: "Quy cách",
+      value: `${selectedAttribute?.quantity_per_unit ?? 1} ${unit}/đơn vị`,
+    },
+  ];
+
   return (
     <div>
       <Layout>
@@ -197,36 +242,86 @@ const ProductDetail = () => {
                 />
               </a>
             </div>
+            {detail.images && detail.images.length > 1 && (
+              <div className="mt-4 grid grid-cols-4 gap-2">
+                {detail.images.slice(0, 4).map((image, index) => (
+                  <div
+                    key={image._id ?? index}
+                    className="border rounded overflow-hidden"
+                  >
+                    <img
+                      className="w-full h-16 object-cover"
+                      src={image.url}
+                      alt={`${detail.name} - ảnh ${index + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </Col>
-          <Col xs={24} lg={12} className="lg:ml-5">
+          <Col xs={24} lg={16} className="lg:ml-5">
             <div>
               <h4 className="text-cool-gray-600 text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
                 {detail.name}
               </h4>
-              <p className="text-color text-lg sm:text-xl mb-6">
-                {" "}
-                Category: {detail.category?.name}
-              </p>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="text-color text-lg sm:text-xl">
+                  Danh mục: {detail.category?.name || "Nông sản"}
+                </span>
+                {detail.hot && (
+                  <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-sm font-semibold">
+                    Bán chạy
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex font-black my-3 mb-4 ">
               <Flex gap="middle" vertical>
                 <Flex gap="middle">
                   <Rate
                     disabled
-                    defaultValue={4}
+                    value={detail.rating ?? 4}
                     character={({ index = 0 }) => customIcons[index + 1]}
                   />
+                  <span className="text-color text-sm">
+                    {detail.rating ?? 4}/5 · {detail.numberOfReview ?? 0} đánh giá
+                  </span>
                 </Flex>
               </Flex>
             </div>
-            <div>
-              <p className="text-color mb-4 text-lg sm:text-xl mt-3">
-                {detail?.description}
+
+            {/* ---------------------------------------------------------------
+                Price block: the price of one kilogram, the price before the
+                discount and the discount badge.
+            ----------------------------------------------------------------*/}
+            <div className="flex flex-wrap items-end gap-4 mb-4">
+              <span className="text-3xl sm:text-4xl font-bold text-red-600">
+                {formatVND(price)}
+                <span className="text-lg font-medium">/{unit}</span>
+              </span>
+              {discountPercent > 0 && (
+                <>
+                  <span className="text-lg text-gray-400 line-through">
+                    {formatVND(originalPrice)}/{unit}
+                  </span>
+                  <span className="px-2 py-1 rounded bg-red-500 text-white text-sm font-semibold">
+                    -{discountPercent}%
+                  </span>
+                </>
+              )}
+            </div>
+            {selectedAttribute && selectedAttribute.weight > 1 && (
+              <p className="text-color mb-4">
+                Giá theo quy cách {selectedAttribute.weight} {unit}:{" "}
+                <span className="font-semibold text-cool-gray-600">
+                  {formatVND(selectedAttribute.total_price)}
+                </span>
               </p>
-              <p className="text-color text-lg sm:text-xl mb-6">
-                Susp endisse ultricies nisi vel quam suscipit. Sabertooth
-                peacock flounder chain pickerel hatchetfish, pencilfish
-                snailfish
+            )}
+
+            <div>
+              <p className="text-color mb-4 text-lg sm:text-xl mt-3 whitespace-pre-line">
+                {detail?.description}
               </p>
             </div>
             <div>
@@ -234,6 +329,7 @@ const ProductDetail = () => {
                 <button
                   className="w-8 h-8 text-center -200 border border-gray-300 rounded-full"
                   onClick={handleDecrement}
+                  aria-label="Giảm số lượng"
                 >
                   <i>
                     <MinusCircleOutlined />
@@ -248,21 +344,27 @@ const ProductDetail = () => {
                 <button
                   className="w-8 h-8 text-center  border border-gray-300 rounded-full"
                   onClick={handleIncrement}
+                  aria-label="Tăng số lượng"
                 >
                   <i className="fa fa-plus">
                     <PlusCircleOutlined />
                   </i>
                 </button>
               </div>
-              <div className="mt-6">
-                {(detail.productAttributes ?? []).map((attr) => (
+              <div className="mt-6 flex flex-wrap gap-3">
+                {attributes.length > 0 && (
                   <ButtonClick
-                    label="Add to cart"
-                    key={attr._id}
+                    label="Thêm vào giỏ hàng"
                     onClick={() => buttonAdd(detail._id)}
                   />
-                ))}
+                )}
               </div>
+              {attributes.length > 1 && (
+                <p className="text-color text-sm mt-3">
+                  Sản phẩm có {attributes.length} quy cách bán, giá trên là giá
+                  của quy cách nhỏ nhất.
+                </p>
+              )}
             </div>
           </Col>
         </Row>
@@ -279,7 +381,7 @@ const ProductDetail = () => {
                 role="tab"
                 onClick={() => setActiveTab("description")}
               >
-                Description
+                Mô tả sản phẩm
               </button>
               <button
                 className={`px-4 py-2 text-base ${
@@ -291,66 +393,33 @@ const ProductDetail = () => {
                 role="tab"
                 onClick={() => setActiveTab("reviews")}
               >
-                Reviews
+                Đánh giá ({comments.length})
               </button>
             </div>
           </nav>
           <div className="tab-content mb-5">
             {activeTab === "description" && (
               <div className="tab-pane " id="nav-about" role="tabpanel">
-                <p>
-                  The generated Lorem Ipsum is therefore always free from
-                  repetition injected humour, or non-characteristic words etc.
-                  Susp endisse ultricies nisi vel quam suscipit
-                </p>
-                <p>
-                  Sabertooth peacock flounder; chain pickerel hatchetfish,
-                  pencilfish snailfish filefish Antarctic icefish goldeye
-                  aholehole trumpetfish pilot fish airbreathing catfish,
-                  electric ray sweeper.
+                <p className="whitespace-pre-line text-color">
+                  {detail?.description}
                 </p>
                 <div className="mt-5 w-full max-w-[500px]">
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="grid grid-cols-2 bg-gray-100 text-center py-2">
-                      <div className="col-span-1">
-                        <p className="mb-0">Weight</p>
+                    {specificationRows.map((row, index) => (
+                      <div
+                        key={row.label}
+                        className={`grid grid-cols-2 text-center py-2 ${
+                          index % 2 === 0 ? "bg-gray-100" : ""
+                        }`}
+                      >
+                        <div className="col-span-1">
+                          <p className="mb-0">{row.label}</p>
+                        </div>
+                        <div className="col-span-1">
+                          <p className="mb-0">{row.value}</p>
+                        </div>
                       </div>
-                      <div className="col-span-1">
-                        <p className="mb-0">1 kg</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 text-center py-2">
-                      <div className="col-span-1">
-                        <p className="mb-0">Country of Origin</p>
-                      </div>
-                      <div className="col-span-1">
-                        <p className="mb-0">Agro Farm</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 bg-gray-100 text-center py-2">
-                      <div className="col-span-1">
-                        <p className="mb-0">Quality</p>
-                      </div>
-                      <div className="col-span-1">
-                        <p className="mb-0">Organic</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 text-center py-2">
-                      <div className="col-span-1">
-                        <p className="mb-0">Сheck</p>
-                      </div>
-                      <div className="col-span-1">
-                        <p className="mb-0">Healthy</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 bg-gray-100 text-center py-2">
-                      <div className="col-span-1">
-                        <p className="mb-0">Min Weight</p>
-                      </div>
-                      <div className="col-span-1">
-                        <p className="mb-0">250 Kg</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -358,10 +427,11 @@ const ProductDetail = () => {
             {activeTab === "reviews" && (
               <div className="tab-pane" id="nav-mission">
                 {!isAuthenticated ? (
-                  <p className="text-gray-600">
-                    Đăng nhập để xem và gửi đánh giá cho sản phẩm này.
+                  <p className="text-gray-600 mb-4">
+                    Đăng nhập để gửi đánh giá cho sản phẩm này.
                   </p>
-                ) : commentsLoading ? (
+                ) : null}
+                {commentsLoading ? (
                   <p className="text-gray-600">Đang tải đánh giá...</p>
                 ) : comments.length === 0 ? (
                   <p className="text-gray-600">
@@ -373,7 +443,7 @@ const ProductDetail = () => {
                       <img
                         src={comment.avatar || "/image/avatar.jpg"}
                         className="rounded-full w-16 h-16 sm:w-24 sm:h-24 shrink-0 object-cover"
-                        alt="Avatar"
+                        alt="Ảnh đại diện"
                       />
                       <div className="ml-0 sm:ml-4 flex-1 min-w-0">
                         <p className="mb-2 text-sm">
@@ -404,28 +474,18 @@ const ProductDetail = () => {
                           ) : null}
                         </div>
                         <p className="break-words">{comment.content || ""}</p>
-                        <button
-                          onClick={() => handleDeleteComment(comment._id)}
-                          className="mt-2 text-sm text-red-600 underline"
-                        >
-                          Xoá
-                        </button>
+                        {isAuthenticated ? (
+                          <button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            className="mt-2 text-sm text-red-600 underline"
+                          >
+                            Xoá
+                          </button>
+                        ) : null}
                       </div>
                     </div>
                   ))
                 )}
-              </div>
-            )}
-            {activeTab === "vision" && (
-              <div className="tab-pane">
-                <p className="text-gray-700">
-                  Tempor erat elitr rebum at clita. Diam dolor diam ipsum et
-                  tempor sit. Aliqu diam amet diam et eos labore. 3
-                </p>
-                <p className="mb-0">
-                  Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et
-                  eos labore. Clita erat ipsum et lorem et sit
-                </p>
               </div>
             )}
           </div>
@@ -433,14 +493,14 @@ const ProductDetail = () => {
       </div>
       <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:ml-20 lg:mr-20">
         <form action="#" onSubmit={handleSubmitComment}>
-          <h4 className="mb-5 font-bold">Leave a Reply</h4>
+          <h4 className="mb-5 font-bold">Viết đánh giá của bạn</h4>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <div className="border-b rounded">
                 <input
                   type="text"
                   className="form-control border-0 w-full p-2"
-                  placeholder="Your Name *"
+                  placeholder="Tên của bạn *"
                   value={commentName}
                   onChange={(event) => setCommentName(event.target.value)}
                 />
@@ -451,7 +511,7 @@ const ProductDetail = () => {
                 <input
                   type="email"
                   className="form-control border-0 w-full p-2"
-                  placeholder="Your Email *"
+                  placeholder="Email của bạn *"
                   value={commentEmail}
                   onChange={(event) => setCommentEmail(event.target.value)}
                 />
@@ -463,7 +523,7 @@ const ProductDetail = () => {
                   name=""
                   id=""
                   className="form-control border-0 w-full p-2"
-                  placeholder="Your Review *"
+                  placeholder="Nội dung đánh giá *"
                   spellCheck="false"
                   value={commentText}
                   onChange={(event) => setCommentText(event.target.value)}
@@ -473,7 +533,7 @@ const ProductDetail = () => {
             <div className="md:col-span-2">
               <div className="flex justify-between py-3 mb-5">
                 <div className="flex items-center">
-                  <p className="mb-0 mr-3">Please rate:</p>
+                  <p className="mb-0 mr-3">Đánh giá sản phẩm:</p>
                   <Flex gap="middle" vertical>
                     <Rate onChange={setValue} value={value} />
                   </Flex>
@@ -483,7 +543,7 @@ const ProductDetail = () => {
                   disabled={submitting}
                   className="btn border border-secondary text-primary rounded-full px-4 py-3 disabled:opacity-50"
                 >
-                  {submitting ? "Posting..." : "Post Comment"}
+                  {submitting ? "Đang gửi..." : "Gửi đánh giá"}
                 </button>
               </div>
             </div>

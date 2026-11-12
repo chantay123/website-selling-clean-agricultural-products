@@ -42,7 +42,7 @@ const MainProfile = () => {
     gender: "Male",
   });
   const onFinish = async (value: any) => {
-    const loadingToast = toast.loading("Updating....");
+    const loadingToast = toast.loading("Đang cập nhật...");
     const { address } = value;
     try {
       const response = await updateMyProfile({
@@ -106,7 +106,7 @@ const MainProfile = () => {
               className="absolute btn-cover right-4 sm:right-10 top-5 border-white border-2 bg-gray-opacity font-popins text-white"
               icon={<CameraOutlined />}
             >
-              Change Cover
+              Đổi ảnh bìa
             </Button>
           </div>
           <div>
@@ -153,8 +153,7 @@ const MainProfile = () => {
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
                         Email
-                      </h3>
-                      <Form.Item
+                      </h3>                      <Form.Item
                         name="email"
                         rules={[
                           {
@@ -179,7 +178,7 @@ const MainProfile = () => {
                     </div>
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
-                        Full name
+                        Họ và tên
                       </h3>
                       <Form.Item
                         name="full_name"
@@ -195,7 +194,7 @@ const MainProfile = () => {
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
-                        Phone
+                        Số điện thoại
                       </h3>
                       <Form.Item
                         name="phone"
@@ -224,7 +223,7 @@ const MainProfile = () => {
                   <div className="flex flex-col w-full lg:flex-row lg:gap-12 3xl:gap-16">
                     <div className="w-full relative">
                       <h3 className="absolute -top-3 left-3 px-2 mb-0 text-white bg-blue-900 z-10 rounded-md">
-                        Address
+                        Địa chỉ
                       </h3>
                       <Form.Item
                         name="address"
@@ -284,7 +283,7 @@ const MainProfile = () => {
                         htmlType="submit"
                         className="h-12 w-full sm:w-60 border-2 border-white rounded-full font-popins text-base btn-hover"
                       >
-                        Update
+                        Cập nhật
                       </Button>
                     </Form.Item>
                     <Form.Item className="mt-2 w-full sm:w-auto">
@@ -296,7 +295,7 @@ const MainProfile = () => {
                           navigate("/");
                         }}
                       >
-                        Back Home
+                        Về trang chủ
                       </Button>
                     </Form.Item>
                   </div>

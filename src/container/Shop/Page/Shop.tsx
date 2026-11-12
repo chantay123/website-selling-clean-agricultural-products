@@ -20,7 +20,7 @@ const Shop = () => {
       </Layout>
       <div>
         <h1 className="text-3xl sm:text-4xl mb-4 mt-24 sm:mt-32 mx-5 sm:mx-10 lg:ml-20 lg:mr-20">
-          Fresh fruits shop
+          Cửa hàng nông sản sạch
         </h1>
         <div className="mx-5 sm:mx-10 lg:ml-16 lg:mr-20">
           <Row gutter={[24, 24]}>

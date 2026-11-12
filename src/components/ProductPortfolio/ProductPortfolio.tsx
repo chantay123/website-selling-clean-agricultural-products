@@ -2,51 +2,72 @@ import { Col, Row } from "antd";
 import "./style.scss";
 import "tailwindcss/tailwind.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCategories } from "../../apis";
+import { setCategory } from "../../redux/userReducer/userReducer";
+import { RootState } from "../../redux/config";
 
 /**
- * The images live in `public/image`, which Vite copies to the root of the
- * build output. They must therefore be referenced with an absolute path
- * (`/image/...`); a relative path such as `../../../public/image/...` only
- * resolves in the dev server and results in a broken image in production.
+ * The categories are read from the API, the images live in `public/image`,
+ * which Vite copies to the root of the build output. They must therefore be
+ * referenced with an absolute path (`/image/...`); a relative path such as
+ * `../../../public/image/...` only resolves in the dev server and results in
+ * a broken image in production.
  */
-const portfolioItems = [
-  {
-    title: "Mushrooms of all kinds",
-    image: "/image/fruite-item-3.jpg",
-  },
-  {
-    title: "Special Location",
-    image: "/image/featur-1.jpg",
-  },
-  {
-    title: "Vegetables",
-    image: "/image/vegetable-item-1.jpg",
-  },
-  {
-    title: "Fruits",
-    image: "/image/fruite-item-1.jpg",
-  },
+const fallbackImages = [
+  "/image/fruite-item-1.jpg",
+  "/image/vegetable-item-1.jpg",
+  "/image/vegetable-item-3.png",
+  "/image/single-item.jpg",
+  "/image/featur-2.jpg",
+  "/image/banner-fruits.jpg",
 ];
 
 const ProductPortfolio = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const categories = useSelector((state: RootState) => state.user.category);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        if (!cancelled) dispatch(setCategory(response.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCategories();
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch]);
+
+  const items = categories.slice(0, 4).map((category, index) => ({
+    title: category.name,
+    image: category.image || fallbackImages[index % fallbackImages.length],
+    categoryId: category._id,
+  }));
+
   return (
     <div>
       <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:ml-20 lg:mr-12 rounded-md">
         <div className="mb-8">
           <h2 className="items-center flex justify-center text-3xl sm:text-4xl font-bold text-center px-4">
-            Product Portfolio
+            Danh mục nông sản
           </h2>
         </div>
         <div>
           <Row gutter={[24, 24]}>
-            {portfolioItems.map((item) => (
+            {items.map((item) => (
               <Col
                 className="gutter-row"
                 xs={12}
                 sm={12}
                 md={6}
-                key={item.title}
+                key={item.categoryId}
               >
                 <div className="rounded-[10px] bg-[#f4f6f8] p-3 h-full">
                   <a
@@ -54,7 +75,7 @@ const ProductPortfolio = () => {
                     href=""
                     onClick={(event) => {
                       event.preventDefault();
-                      navigate("/shop");
+                      navigate(`/shop?category=${item.categoryId}`);
                     }}
                   >
                     <div>

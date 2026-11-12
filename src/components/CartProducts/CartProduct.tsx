@@ -18,6 +18,7 @@ import { RootState } from "../../redux/config";
 import ButtonClick from "../Button/ButtonClick";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { formatVND } from "../../utils/price";
 const style: React.CSSProperties = {
   background: "#f4f6f8 ",
   paddingBottom: "1rem",
@@ -114,7 +115,7 @@ const CartProduct = () => {
     <Layout className="bg-white mx-5 sm:mx-10 lg:ml-20 lg:mr-20 mt-10 mb-10">
       <div className="mt-16 sm:mt-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <h2 className="text-3xl sm:text-4xl font-bold text-center lg:text-left">
-          Our Organic Products
+          Nông sản hữu cơ của chúng tôi
         </h2>
         <div className="w-full lg:w-auto lg:ml-72">
           <ul className="flex flex-wrap gap-2 sm:gap-4 text-sm justify-center lg:justify-start">
@@ -123,7 +124,7 @@ const CartProduct = () => {
                 to="?"
                 className="inline-block p-3 border-2 rounded-[30px]"
               >
-                All Products
+                Tất cả sản phẩm
               </Link>
             </li>
             {filterCategory.map((item) => (
@@ -141,40 +142,63 @@ const CartProduct = () => {
       </div>
       <div className="mt-8">
         <Flex wrap="wrap" gap={24}>
-          {filterProduct.map((product) => (
-            <div key={product._id} className="gutter-row w-full sm:w-[310px]">
-              <div
-                style={style}
-                className="rounded-[10px] relative w-full h-auto min-h-[380px] flex flex-col"
-              >
-                <div className="absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
-                  {product.category?.name}
-                </div>
-                <div>
-                  <Link to={`product/${product._id}`}>
-                    <img
-                      className="w-full h-[200px] rounded object-cover"
-                      src={product.thumbnail_url}
-                      alt={product.name}
+          {filterProduct.map((product) => {
+            const unit =
+              product.productAttributes?.[0]?.unit_of_measurement ?? "kg";
+            const discountPercent =
+              product.productAttributes?.[0]?.discounted_percent ?? 0;
+
+            return (
+              <div key={product._id} className="gutter-row w-full sm:w-[310px]">
+                <div
+                  style={style}
+                  className="rounded-[10px] relative w-full h-auto min-h-[380px] flex flex-col"
+                >
+                  <div className="absolute text-white px-8 py-1 m-3 rounded-[10px] bg-green-400">
+                    {product.category?.name}
+                  </div>
+                  {discountPercent > 0 && (
+                    <div className="absolute text-white px-3 py-1 m-3 ml-24 rounded-[10px] bg-red-500 text-sm font-semibold">
+                      -{discountPercent}%
+                    </div>
+                  )}
+                  <div>
+                    <Link to={`product/${product._id}`}>
+                      <img
+                        className="w-full h-[200px] rounded object-cover"
+                        src={product.thumbnail_url}
+                        alt={product.name}
+                      />
+                    </Link>
+                  </div>
+                  <h2 className="flex justify-center text-2xl font-bold mt-8 px-2 text-center">
+                    {product.name}
+                  </h2>
+                  <div className="flex items-center justify-evenly mt-5 mb-4 px-2 mt-auto">
+                    <p className="text_money p-4 text-xl font-popins font-semibold">
+                      {formatVND(product.price)}/{unit}
+                    </p>
+                    <ButtonClick
+                      label="Thêm vào giỏ"
+                      key={product._id}
+                      onClick={() => buttonAdd(product._id)}
                     />
-                  </Link>
-                </div>
-                <h2 className="flex justify-center text-2xl font-bold mt-8 px-2 text-center">
-                  {product.name}
-                </h2>
-                <div className="flex items-center justify-evenly mt-5 mb-4 px-2 mt-auto">
-                  <p className="text_money p-4 text-xl font-popins font-semibold">
-                    {product.price}$/KG
-                  </p>
-                  <ButtonClick
-                    label="Add to card"
-                    key={product._id}
-                    onClick={() => buttonAdd(product._id)}
-                  />
+                  </div>
                 </div>
               </div>
+            );
+          })}
+          {filterProduct.length === 0 && (
+            <div className="w-full text-center py-16">
+              <p className="text-2xl font-bold text-cool-gray-600">
+                Không tìm thấy sản phẩm nào
+              </p>
+              <p className="text-color mt-2">
+                Danh mục này hiện chưa có sản phẩm. Hãy thử một danh mục khác
+                nhé.
+              </p>
             </div>
-          ))}
+          )}
         </Flex>
       </div>
     </Layout>

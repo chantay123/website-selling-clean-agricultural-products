@@ -7,15 +7,15 @@ const NotFound = () => {
           404
         </p>
         <p className="mt-2 text-4xl font-bold tracking-wider text-gray-300 md:text-5xl lg:text-6xl">
-          Page Not Found
+          Không tìm thấy trang
         </p>
         <p className="my-12 text-lg text-gray-500 md:text-xl lg:text-2xl">
-          Sorry, the page you are looking for could not be found.
+          Rát tiằc, trang bạn đang tìm không tốn tại hoặc đã bề xoá.
         </p>
         <a
           href="/"
           className="flex items-center space-x-2 rounded bg-blue-600 px-4 py-2 text-gray-100 transition duration-150 hover:bg-blue-700"
-          title="Return Home"
+          title="Vỡ trang chủ"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ const NotFound = () => {
               clipRule="evenodd"
             ></path>
           </svg>
-          <span>Return Home</span>
+          <span>Vỡ trang chủ</span>
         </a>
       </div>
       <div className="flex w-1/2 justify-center p-4 lg:h-full lg:items-end">
@@ -40,7 +40,7 @@ const NotFound = () => {
           viewBox="0 0 1120.59226 777.91584"
           xmlnsXlink="http://www.w3.org/1999/xlink"
         >
-          <title>not found</title>
+          <title>không tìm thấy</title>
           <circle cx="212.59226" cy="103" r="64" fill="#ff6584"></circle>
           <path
             d="M563.68016,404.16381c0,151.01141-89.77389,203.73895-200.51559,203.73895S162.649,555.17522,162.649,404.16381,363.16457,61.04208,363.16457,61.04208,563.68016,253.1524,563.68016,404.16381Z"

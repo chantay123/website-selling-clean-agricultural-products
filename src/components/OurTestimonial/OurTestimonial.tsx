@@ -1,8 +1,8 @@
 import { Avatar, Card, Carousel, CarouselProps, Flex, Rate } from "antd";
 import React from "react";
 
-import "./style.scss";
 import { StarFilled } from "@ant-design/icons";
+import { seedTestimonials } from "../../data/seed";
 
 const customIcons: Record<number, React.ReactNode> = {
   1: <StarFilled style={{ color: "#81c408", width: "20px", height: "20px" }} />,
@@ -11,12 +11,6 @@ const customIcons: Record<number, React.ReactNode> = {
   4: <StarFilled style={{ color: "#81c408", width: "20px", height: "20px" }} />,
   5: <StarFilled />,
 };
-
-const testimonials = [
-  { name: "Phan Chan Tay", rating: 4 },
-  { name: "Nguyen Van A", rating: 5 },
-  { name: "Tran Thi B", rating: 4 },
-];
 
 const OurTestimonial = () => {
   /**
@@ -51,10 +45,10 @@ const OurTestimonial = () => {
   return (
     <div className="mt-16 sm:mt-20 mx-5 sm:mx-10 lg:mx-20">
       <h4 className="text-primary flex justify-center text-2xl">
-        Our Testimonial
+        Cảm nhận của khách hàng
       </h4>
       <h2 className="flex justify-center text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-center px-4">
-        Our Client Saying!
+        Khách hàng nói gì về chúng tôi?
       </h2>
       <Carousel
         {...settings}
@@ -62,8 +56,8 @@ const OurTestimonial = () => {
         arrows={false}
         className="mt-10 lg:mt-20"
       >
-        {testimonials.map((testimonial) => (
-          <div key={testimonial.name} className="flex justify-center px-2">
+        {seedTestimonials.map((testimonial) => (
+          <div key={testimonial.id} className="flex justify-center px-2">
             <Card
               bordered={false}
               className="bg-gray-200 w-full max-w-[400px]"
@@ -71,14 +65,11 @@ const OurTestimonial = () => {
             >
               <div className="flex items-center">
                 <Avatar className="w-16 h-16 shrink-0">
-                  <img
-                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"
-                    alt=""
-                  />
+                  <img src={testimonial.avatar} alt={testimonial.name} />
                 </Avatar>
                 <div className="ml-3 leading-9">
                   <h4 className="text-xl">{testimonial.name}</h4>
-                  <p className="text-base">Good</p>
+                  <p className="text-base">{testimonial.role}</p>
                 </div>
               </div>
               <div className="flex lg:ml-20 mt-3">
@@ -92,6 +83,9 @@ const OurTestimonial = () => {
                   </Flex>
                 </Flex>
               </div>
+              <p className="text-color mt-4 leading-6">
+                “{testimonial.content}”
+              </p>
             </Card>
           </div>
         ))}

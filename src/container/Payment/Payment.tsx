@@ -14,6 +14,7 @@ import { RootState } from "../../redux/config";
 import { cartTypes } from "../../@type/global.type";
 import { toast } from "react-toastify";
 import { getApiErrorMessage } from "../../utils/api.adapter";
+import { formatVND } from "../../utils/price";
 
 const PayMent = () => {
   const [open, setOpen] = useState(false);
@@ -146,19 +147,19 @@ const PayMent = () => {
                 <thead className="border-b ">
                   <tr>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Image
+                      Hình ảnh
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Name
+                      Tên sản phẩm
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Price
+                      Đơn giá
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Quantity
+                      Số lượng
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Total
+                      Thành tiền
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider"></th>
                   </tr>
@@ -181,7 +182,14 @@ const PayMent = () => {
                         </td>
                         <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
-                            {cart.price ?? cart.product_id.price}$/KG
+                            {formatVND(
+                              cart.price ??
+                                cart.product_id.productAttributes?.[0]
+                                  ?.discount_price ??
+                                cart.product_id.price
+                            )}
+                            /{cart.product_id.productAttributes?.[0]
+                              ?.unit_of_measurement ?? "kg"}
                           </p>
                         </td>
                         <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -213,9 +221,14 @@ const PayMent = () => {
                         </td>
                         <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <p className="mb-0 mt-4">
-                            {(quantities[cart.product_id._id] || 0) *
-                              (cart.price ?? 0)}
-                            $
+                            {formatVND(
+                              (quantities[cart.product_id._id] || 0) *
+                                (cart.price ??
+                                  cart.product_id.productAttributes?.[0]
+                                    ?.discount_price ??
+                                  cart.product_id.price ??
+                                  0)
+                            )}
                           </p>
                         </td>
                         <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -244,21 +257,25 @@ const PayMent = () => {
             className="btn border border-secondary rounded-full px-9 py-3 text-primary hover:bg-green-400 hover:text-white"
             type="button"
           >
-            Save
+            Lưu thay đổi
           </button>
           <div className="justify-end mt-5 flex">
             <div className="w-full sm:w-8/12 md:w-7/12 lg:w-6/12 xl:w-4/12">
               <div className="bg-gray-100 rounded w-full">
                 <div className="p-4">
                   <h1 className="text-2xl sm:text-3xl mb-4">
-                    Cart <span className="font-normal">Total</span>
+                    Tổng giỏ <span className="font-normal">hàng</span>
                   </h1>
-                  <p className="mb-0 text-right">Shipping to Viet Nam.</p>
+                  <p className="mb-0 text-right">
+                    Giao hàng toàn quốc, thanh toán khi nhận hàng.
+                  </p>
                 </div>
                 <div className="py-4 mb-4 border-t border-b flex justify-between">
-                  <h5 className="mb-0 ps-4 me-4">Total</h5>
+                  <h5 className="mb-0 ps-4 me-4">Tổng cộng</h5>
 
-                  <p className="mb-0 pe-4"> {listcard?.total_price}$</p>
+                  <p className="mb-0 pe-4 font-semibold">
+                    {formatVND(listcard?.total_price)}
+                  </p>
                 </div>
                 <div>
                   <button
@@ -266,10 +283,10 @@ const PayMent = () => {
                     type="button"
                     onClick={showModal}
                   >
-                    Proceed Checkout
+                    Thanh toán
                   </button>
                   <Modal
-                    title="Checkout"
+                    title="Thanh toán"
                     open={open}
                     onCancel={handleCancel}
                     cancelButtonProps={{ disabled: false }}
@@ -285,21 +302,45 @@ const PayMent = () => {
                       colon={false}
                       style={{ maxWidth: 600 }}
                     >
-                      <Form.Item label="Address" name="address">
-                        <Input />
+                      <Form.Item
+                        label="Địa chỉ"
+                        name="address"
+                        rules={[
+                          { required: true, message: "Vui lòng nhập địa chỉ" },
+                        ]}
+                      >
+                        <Input placeholder="Số nhà, đường, quận, tỉnh/thành phố" />
                       </Form.Item>
-                      <Form.Item label="Payment" name="payment">
-                        <Input />
+                      <Form.Item
+                        label="Thanh toán"
+                        name="payment"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn phương thức thanh toán",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="COD / MoMo / VNPay" />
                       </Form.Item>
-                      <Form.Item label="Phone" name="Phone">
-                        <Input />
+                      <Form.Item
+                        label="Số điện thoại"
+                        name="Phone"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập số điện thoại",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="0912 345 678" />
                       </Form.Item>
-                      <Form.Item label="Note" name="note">
-                        <Input />
+                      <Form.Item label="Ghi chú" name="note">
+                        <Input placeholder="Thời gian giao hàng mong muốn" />
                       </Form.Item>
                       <Form.Item label=" ">
                         <Button htmlType="submit" className="text_submit">
-                          Submit
+                          Xác nhận đặt hàng
                         </Button>
                       </Form.Item>
                     </Form>

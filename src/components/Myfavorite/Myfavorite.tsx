@@ -39,20 +39,20 @@ const Myfavorite = () => {
       </section>
       <div className="mx-5 sm:mx-10 lg:ml-20 lg:mr-20 mt-16 sm:mt-20">
         <div className="container-fluid py-5">
-          <h2 className="text-2xl sm:text-3xl">My favorite product</h2>
+          <h2 className="text-2xl sm:text-3xl">Sản phẩm yêu thích</h2>
           <div className="container py-5">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white ">
                 <thead className="border-b ">
                   <tr>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Image
+                      Hình ảnh
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      Name
+                      Tên sản phẩm
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider">
-                      origin
+                      Xuất xứ
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-sm sm:text-base font-medium text-gray-500 uppercase tracking-wider"></th>
                   </tr>

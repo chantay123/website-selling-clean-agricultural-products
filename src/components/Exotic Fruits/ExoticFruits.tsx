@@ -17,14 +17,15 @@ const ExoticFruits = () => {
         <Col xs={24} md={12}>
           <div className="lg:ml-20 lg:mt-[200px] px-5 text-center lg:text-left">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl text-white font-bold">
-              Fresh Exotic Fruits
+              Trái cây tươi
             </h2>
             <p className="text_store text-4xl sm:text-5xl lg:text-6xl mb-5">
-              in Our Store
+              Thu hoạch đúng vụ
             </p>
             <p className="text_detail text-base mb-10 max-w-xl mx-auto lg:mx-0">
-              The generated Lorem Ipsum is therefore always free from
-              repetition injected humour, or non-characteristic words etc.
+              Sầu riêng Riêng Vàng, xoài cát Hòa Lộc, bơ sáp 034 và nhiều loại
+              trái cây nhiệt đới được thu mua trực tiếp tại vườn, đóng gói
+              trong ngày và giao đến tận cửa với giá tại vườn.
             </p>
             <a
               onClick={(event) => {
@@ -34,7 +35,7 @@ const ExoticFruits = () => {
               href=""
               className="btn_buy inline-block border-2 rounded-[30px] text-xl px-12 py-3"
             >
-              Buy
+              Mua ngay
             </a>
           </div>
         </Col>
@@ -43,12 +44,13 @@ const ExoticFruits = () => {
             <img
               className="w-full h-auto"
               src="/image/baner-1.png"
-              alt="Fresh exotic fruits"
+              alt="Trái cây tươi tại Agrimarket"
             />
-            <div className="absolute rounded-full bg-gray-50 w-[90px] h-[90px] sm:w-[140px] sm:h-[140px] top-0 left-0">
-              <h4 className="text_Kg text-[32px] sm:text-[50px] ml-2 mt-4 sm:mt-7 font-normal">
-                2$/kg
+            <div className="absolute rounded-full bg-gray-50 w-[110px] h-[110px] sm:w-[150px] sm:h-[150px] top-0 left-0 flex flex-col items-center justify-center">
+              <h4 className="text_Kg text-[24px] sm:text-[34px] font-bold leading-tight">
+                165.000 đ
               </h4>
+              <p className="text-sm text-gray-500 mt-1">/kg sầu riêng</p>
             </div>
           </div>
         </Col>
