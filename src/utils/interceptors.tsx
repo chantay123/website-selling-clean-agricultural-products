@@ -114,7 +114,13 @@ export default function requestApi(
     ...header,
   };
 
-  const instance = axios.create({ headers });
+  const instance = axios.create({
+    headers,
+    // The free tier of Render sleeps when it is idle, so the very first
+    // request of a session can take a long time. A timeout makes the client
+    // fall back to the local catalogue instead of hanging forever.
+    timeout: 15_000,
+  });
 
   // Attach the access token to every outgoing request.
   instance.interceptors.request.use(

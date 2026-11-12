@@ -10,6 +10,13 @@
  * components already expect, so that no component has to be rewritten.
  */
 
+import {
+  deriveRealisticPrice,
+  discountPercent,
+  resolveAttributePrices,
+} from "./price";
+import { lookupCatalogPrice } from "./priceCatalog";
+
 /** Loosely typed record used while normalising an unknown API payload. */
 type LooseRecord = Record<string, unknown>;
 
@@ -21,11 +28,18 @@ type LooseRecord = Record<string, unknown>;
  * - `category` may be missing when the API only returns `category_id`, in that
  *   case a placeholder object is provided so `category?.name` keeps working.
  */
-export const normalizeProduct = <T extends LooseRecord>(product: T) => {
+export const normalizeProduct = <T extends LooseRecord>(
+  product: T,
+  options: { applyCatalog?: boolean } = {}
+) => {
   if (!product) return product;
 
-  const rawAttributes = product.attributes ?? product.attribute;
-  const attributes = Array.isArray(rawAttributes)
+  const rawAttributes =
+    product.attributes ??
+    product.attribute ??
+    product.productAttributes ??
+    product.product_attributes;
+  const rawAttributeList = Array.isArray(rawAttributes)
     ? (rawAttributes as LooseRecord[])
     : rawAttributes
       ? [rawAttributes as LooseRecord]
@@ -37,28 +51,79 @@ export const normalizeProduct = <T extends LooseRecord>(product: T) => {
     slug: "",
   };
 
+  // Every packaging (attribute) gets a consistent set of prices:
+  // `discount_price` is derived from `original_price` and the discount
+  // percentage, `total_price` is the price of the whole packaging.
+  //
+  // When the backend only stores a placeholder price (`10`, `30`, `0`) the
+  // realistic price of the catalogue is used instead.
+  const catalogPrice = options.applyCatalog
+    ? lookupCatalogPrice({
+        slug: product.slug as string | undefined,
+        name: product.name as string | undefined,
+      })
+    : undefined;
+
+  const usesPlaceholder = rawAttributeList.some((attribute) => {
+    const value = Number(attribute.original_price);
+    return !Number.isFinite(value) || value <= 0 || value < 1000;
+  });
+
+  const attributes = rawAttributeList.map((attribute) => {
+    const prices = resolveAttributePrices(
+      {
+        weight: attribute.weight as number | undefined,
+        original_price: attribute.original_price as number | undefined,
+        discounted_percent: attribute.discounted_percent as number | undefined,
+        discount_price: attribute.discount_price as number | undefined,
+        total_price: attribute.total_price as number | undefined,
+      },
+      catalogPrice && usesPlaceholder ? catalogPrice : undefined
+    );
+
+    return {
+      ...attribute,
+      ...prices,
+    };
+  });
+
   const first = attributes[0] ?? {};
 
-  // The effective price is derived from the product attributes when
-  // available, falling back to the `sold` field of the raw product.
-  const price =
-    (first.discount_price as number | undefined) ??
-    (first.total_price as number | undefined) ??
+  // The effective price is the price of one kilogram of the cheapest
+  // packaging. The `sold` field is a quantity and must never be used as a
+  // price.
+  // The displayed price is the price of one kilogram of the base packaging
+  // (the first attribute). The `sold` field is a quantity and must never be
+  // used as a price.
+  const attributePrices = attributes.map(
+    (attribute) => attribute.discount_price as number
+  );
+  const fallbackPrice = Number(product.price) || deriveRealisticPrice(0);
+  const price = attributePrices[0] ?? fallbackPrice;
+
+  const originalPrice =
     (first.original_price as number | undefined) ??
-    product.sold;
+    (Number(product.original_price) || price);
 
   return {
     ...product,
     category,
     productAttributes: attributes,
     price,
+    original_price: originalPrice,
+    discount_percent: discountPercent(originalPrice, price),
+    total_price: (first.total_price as number | undefined) ?? price,
   };
 };
 
 /** Normalise an array of products. */
 export const normalizeProducts = <T extends LooseRecord>(
-  products: T[] | null | undefined
-) => (Array.isArray(products) ? products.map(normalizeProduct) : []);
+  products: T[] | null | undefined,
+  options: { applyCatalog?: boolean } = {}
+) =>
+  Array.isArray(products)
+    ? products.map((product) => normalizeProduct(product, options))
+    : [];
 
 /**
  * Normalise a cart coming from the API.

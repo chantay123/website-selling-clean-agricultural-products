@@ -20,6 +20,13 @@ export type routeTypes = {
   editadmin: string;
   blog: string;
   blogDetail: string;
+  knowledge: string;
+  categoryadmin: string;
+  supplieradmin: string;
+  orderadmin: string;
+  banneradmin: string;
+  hashtagadmin: string;
+  blogadmin: string;
 };
 
 export type productTypes = {
@@ -41,6 +48,8 @@ export type productTypes = {
   total_price: number;
   /** Effective price derived from the product attributes. */
   price?: number;
+  /** Price before the discount is applied. */
+  original_price?: number;
   supplier?: SupplierType;
   hashtags?: string[];
   creator_id?: string;
@@ -93,6 +102,7 @@ export type CategoryType = {
   slug: string;
   items?: productTypes[];
   image?: string;
+  description?: string;
 };
 
 export type FavoriteType = {
@@ -278,6 +288,34 @@ export type CommentType = {
   /** Star rating attached to the comment, when it is a product review. */
   rating?: number;
   parent_id?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+/**
+ * Shape of an order returned by `GET /orders`.
+ *
+ * Every field is optional because the endpoint is private and its shape has
+ * not been verified against a live administrator token yet.
+ */
+export type OrderType = {
+  _id: string;
+  user_id?: string;
+  user_name?: string;
+  address?: string;
+  phone?: string;
+  payment_method?: string;
+  note?: string;
+  /** `Pending`, `Processing`, `Shipped`, `Delivered`, `Cancelled`, ... */
+  status?: string;
+  total_price?: number;
+  products?: {
+    product_id?: string;
+    product_name?: string;
+    quantity?: number;
+    price?: number;
+    product_attribute_id?: string;
+  }[];
   created_at?: string;
   updated_at?: string;
 };

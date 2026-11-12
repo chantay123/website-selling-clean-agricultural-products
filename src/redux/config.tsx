@@ -21,7 +21,9 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  blacklist: ["[api.reducerPath]"],
+  // The catalogue and the categories are always reloaded from the API so a
+  // stale copy is never shown to the visitor.
+  blacklist: ["[api.reducerPath]", "user.product", "user.category"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
